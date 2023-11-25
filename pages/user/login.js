@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { Form, Input, Button, message, Card, Typography, Spin } from "antd";
+import { Form, Input, Button, message, Typography, Spin } from "antd";
 import axios from "axios";
 
 import { UserOutlined, LockFilled } from "@ant-design/icons";
@@ -76,74 +76,66 @@ const Login = ({ app_key }) => {
         <Typography.Title level={2} style={{ fontWeight: 500 }}>
           BARANGAY COMPLAINT SYSTEM
         </Typography.Title>
-        <Card
-          styles={{
-            body: {
-              textAlign: "center",
-            },
+
+        <Form
+          labelAlign="right"
+          style={{
+            width: 400,
+            padding: 30,
+            background: "#eee",
+            borderRadius: 20,
+            border: "1px solid #fff",
           }}
-          style={{ backgroundColor: "rgba(0,0,0,0)", border: "none" }}
-          hoverable
+          onFinish={(val) => {
+            (async (_) => {
+              let { data } = await _.post("/api/auth/login", {
+                ...val,
+              });
+              if ([451, 452].includes(data.status)) {
+                message.error(data.message);
+                return;
+              }
+              if (data.status == 200) {
+                Cookies.set("loggedIn", "true");
+                Cookies.set("currentUser", JSON.stringify(data.userData));
+                message.success(data.message);
+                location?.reload();
+              }
+            })(axios);
+          }}
         >
-          <Form
-            labelAlign="right"
+          <Typography.Title
+            level={4}
             style={{
-              width: 400,
-              padding: 30,
-              background: "#eee",
-              borderRadius: 20,
-            }}
-            onFinish={(val) => {
-              (async (_) => {
-                let { data } = await _.post("/api/auth/login", {
-                  ...val,
-                });
-                if ([451, 452].includes(data.status)) {
-                  message.error(data.message);
-                  return;
-                }
-                if (data.status == 200) {
-                  Cookies.set("loggedIn", "true");
-                  Cookies.set("currentUser", JSON.stringify(data.userData));
-                  message.success(data.message);
-                  location?.reload();
-                }
-              })(axios);
+              textAlign: "center",
+              fontFamily: "sans-serif",
+              fontWeight: 300,
             }}
           >
-            <Typography.Title
-              level={4}
-              style={{
-                textAlign: "center",
-                fontFamily: "sans-serif",
-                fontWeight: 300,
-              }}
+            Admin Login
+          </Typography.Title>
+
+          <Form.Item name="email">
+            <Input prefix={<UserOutlined />} size="large" />
+          </Form.Item>
+          <Form.Item name="password">
+            <Input.Password prefix={<LockFilled />} size="large" />
+          </Form.Item>
+
+          <Form.Item noStyle>
+            <Button
+              type="primary"
+              style={{ width: "100%" }}
+              htmlType="submit"
+              size="large"
             >
-              Admin Login
-            </Typography.Title>
-
-            <Form.Item name="email">
-              <Input prefix={<UserOutlined />} size="large" />
-            </Form.Item>
-            <Form.Item name="password">
-              <Input.Password prefix={<LockFilled />} size="large" />
-            </Form.Item>
-
-            <Form.Item noStyle>
-              <Button
-                type="primary"
-                style={{ width: "100%" }}
-                htmlType="submit"
-                size="large"
-              >
-                Login
-              </Button>
-              <p>
-                Forgot password? <a>click here</a>
-              </p>
-            </Form.Item>
-          </Form>
-        </Card>
+              Login
+            </Button>
+            <p>
+              Forgot password? <a>click here</a>
+            </p>
+          </Form.Item>
+        </Form>
       </div>
     </Spin>
   );

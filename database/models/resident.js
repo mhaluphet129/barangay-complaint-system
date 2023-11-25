@@ -23,7 +23,11 @@ let ResidentSchema = new mongoose.Schema(
       enum: ["male", "female"],
       required: true,
     },
-    mobile: {
+    email: {
+      type: String,
+      required: true,
+    },
+    phoneNumber: {
       type: String,
       required: true,
     },

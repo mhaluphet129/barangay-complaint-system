@@ -6,7 +6,6 @@ import {
   Affix,
   Avatar,
   Dropdown,
-  Image,
   Breadcrumb,
 } from "antd";
 import { UserOutlined, LogoutOutlined, HomeOutlined } from "@ant-design/icons";
@@ -18,26 +17,15 @@ import EditProfile from "./components/edit_profile";
 import ReportGenerator from "./components/report_generator";
 const user = Cookies.get("currentUser");
 
-const Sider = ({ selectedIndex, selectedKey, items, image }) => {
+const Sider = ({ selectedIndex, selectedKey, items, children }) => {
   return (
     <Affix>
-      <Layout.Sider collapsible theme="light" width={300}>
-        <div
-          style={{
-            background: "#fff",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 10,
-          }}
-        >
-          <Image
-            preview={false}
-            src={image == null ? "/next.svg" : image}
-            alt="logo"
-            width={150}
-          />
-        </div>
+      <Layout.Sider
+        theme="light"
+        width={250}
+        style={{ boxShadow: "2px 0 1px -2px #888", backgroundColor: "#202d3a" }}
+      >
+        {children}
         <Menu
           onClick={selectedIndex}
           selectedKeys={selectedKey}
@@ -46,6 +34,7 @@ const Sider = ({ selectedIndex, selectedKey, items, image }) => {
           style={{
             height: "100vh",
             fontSize: 17,
+            backgroundColor: "#263544",
           }}
         />
       </Layout.Sider>
