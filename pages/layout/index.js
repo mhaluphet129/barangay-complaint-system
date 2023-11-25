@@ -207,3 +207,4 @@ const Footer = () => {
 };
 
 export { Sider, Header, Content, Footer };
+export default () => <></>;
