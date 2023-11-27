@@ -4,7 +4,7 @@ let SettlementSchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      enum: ["processed", "settled", "unsettled", "disregard"],
+      enum: ["processed", "solved", "unsolved", "disregard", "dismissed"],
     },
     description: {
       type: String,

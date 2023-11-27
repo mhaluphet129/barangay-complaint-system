@@ -3,15 +3,20 @@ import { Input, Layout, Typography } from "antd";
 import { Sider, Header, Content } from "../layout";
 
 import { VscGraph } from "react-icons/vsc";
-import { GrGroup } from "react-icons/gr";
-import { FaGears } from "react-icons/fa6";
-import { CiFileOn, CiSearch } from "react-icons/ci";
+import { FaUsers } from "react-icons/fa6";
+import { CiSearch } from "react-icons/ci";
+import { BsPersonFillLock } from "react-icons/bs";
+import { PlusOutlined } from "@ant-design/icons";
 
 import Residents from "../components/residents";
 import Dashboard from "../components/dashboard";
+import Admin from "../components/admins";
+
+import SmsComposer from "../components/sms_composer";
 
 const MyApp = ({ app_key }) => {
   const [selectedKey, setSelectedKey] = useState("dashboard");
+  const [openComposer, setOpenComposer] = useState(false);
   const selectedItemsStyle = {
     color: "#aaa",
     backgroundColor: "#202d3a",
@@ -23,7 +28,13 @@ const MyApp = ({ app_key }) => {
     <>
       <Layout>
         <Sider
-          selectedIndex={(e) => setSelectedKey(e.key)}
+          selectedIndex={(e) => {
+            if (e.key == "compose") {
+              setOpenComposer(true);
+            } else {
+              setSelectedKey(e.key);
+            }
+          }}
           selectedKey={selectedKey}
           items={[
             {
@@ -38,27 +49,27 @@ const MyApp = ({ app_key }) => {
                     },
             },
             {
-              label: "Admin",
-              key: "admin",
-              icon: <GrGroup />,
+              label: "Residents",
+              key: "residents",
+              icon: <FaUsers />,
               style:
-                selectedKey == "admin" ? selectedItemsStyle : { color: "#aaa" },
-            },
-            {
-              label: "Helpers",
-              key: "helpers",
-              icon: <FaGears />,
-              style:
-                selectedKey == "helpers"
+                selectedKey == "residents"
                   ? selectedItemsStyle
                   : { color: "#aaa" },
             },
             {
-              label: "Residents",
-              key: "residents",
-              icon: <CiFileOn />,
+              label: "Admin",
+              key: "admin",
+              icon: <BsPersonFillLock />,
               style:
-                selectedKey == "residents"
+                selectedKey == "admin" ? selectedItemsStyle : { color: "#aaa" },
+            },
+            {
+              label: "Compose Message",
+              key: "compose",
+              icon: <PlusOutlined />,
+              style:
+                selectedKey == "compose"
                   ? selectedItemsStyle
                   : { color: "#aaa" },
             },
@@ -111,9 +122,16 @@ const MyApp = ({ app_key }) => {
           <Content selectedKey={selectedKey} setSelectedKey={setSelectedKey}>
             {selectedKey == "dashboard" ? <Dashboard /> : null}
             {selectedKey == "residents" ? <Residents /> : null}
+            {selectedKey == "admin" ? <Admin /> : null}
           </Content>
         </Layout>
       </Layout>
+      {/* ETC */}
+      <SmsComposer
+        open={openComposer}
+        close={() => setOpenComposer(false)}
+        onSend={() => {}}
+      />
     </>
   );
 };
