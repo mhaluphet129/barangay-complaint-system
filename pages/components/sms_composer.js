@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
+  AutoComplete,
   Button,
   Input,
   List,
@@ -25,11 +26,14 @@ const SmsComposer = ({ open, close, onSend }) => {
   const [mobilenum, setMobileNumer] = useState([]);
   const [inputMsg, setInputMsg] = useState("");
   const [currentUser, setCurrentUser] = useState({});
+  const [residents, setResidents] = useState([]);
+  const timerRef = useRef(null);
 
   //* flags
   const [loader, setLoader] = useState("");
   const [messageFlags, setMessageFlags] = useState([]);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = () => {
     setLoader("submit");
@@ -74,15 +78,48 @@ const SmsComposer = ({ open, close, onSend }) => {
     }
   };
 
+  const searchName = async (keyword) => {
+    if (keyword != "" && keyword != null) {
+      let { data } = await axios.get("/api/resident/search-resident", {
+        params: {
+          searchKeyword: keyword,
+        },
+      });
+      if (data.status == 200) {
+        setResidents(data.searchData);
+        setLoading(false);
+      }
+    }
+  };
+
+  const runTimer = (key) => {
+    setLoading(true);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(function () {
+      searchName(key);
+    }, 500);
+  };
+
   useEffect(() => {
     setCurrentUser(JSON.parse(Cookies.get("currentUser")));
   }, []);
 
   return (
-    <Modal open={open} onCancel={close} title="SMS Composer" footer={null}>
+    <Modal
+      open={open}
+      onCancel={() => {
+        setResidents([]);
+        close();
+      }}
+      title="SMS Composer"
+      footer={null}
+      destroyOnClose
+    >
       <Segmented
         block
-        options={["Residents", "Number-Only"]}
+        options={["Residents", "Number Only"]}
         onChange={(e) => {
           setMode(e);
           setSubmitted(false);
@@ -91,6 +128,7 @@ const SmsComposer = ({ open, close, onSend }) => {
         value={mode}
         style={{
           marginBottom: 15,
+          padding: 5,
         }}
         disabled={loader == "submit"}
       />
@@ -101,36 +139,47 @@ const SmsComposer = ({ open, close, onSend }) => {
             <QuestionCircleOutlined />
           </Tooltip>
           <br />
-          {"under constructions"}
-          <br />
-          {/* <Select
-            disabled={loader == "submit"}
-            style={{ width: 350 }}
-            maxLength={10}
-            min={0}
-            value={mobilenum}
-            mode="tags"
-            onChange={(e) => {
-              const reg = /^(09\d{9})|\+(\d{12})$/;
-              const number = e[e.length - 1];
-              if (
-                mobilenum
-                  .map((e) => e.replace(/^0|(\+63)/, ""))
-                  .includes(number.replace(/^0|(\+63)/, ""))
-              ) {
-                message.warning("Number already added");
-              } else if (reg.test(number)) {
-                setMobileNumer(e);
-              } else {
-                message.error(
-                  "Invalid number. It should be start in 09 or +639, no alpha character, maximum of 11 digits."
-                );
-              }
+          <AutoComplete
+            style={{
+              width: 300,
             }}
-          /> */}
+            loading={loading}
+            filterOption={(inputValue, option) =>
+              option.value?.toUpperCase().indexOf(inputValue.toUpperCase()) !==
+              -1
+            }
+            onChange={(_) => {
+              runTimer(_);
+            }}
+            options={residents.map((e) => {
+              return {
+                label: `${e.name} ${e.lastname} (${e.phoneNumber})`,
+                value: `${e.name} ${e.lastname}`,
+              };
+            })}
+            onSelect={(e) =>
+              setMobileNumer([
+                residents.filter((_) => _.name + " " + _.lastname == e)[0]
+                  .phoneNumber,
+              ])
+            }
+            autoFocus
+            allowClear
+          />
+          <br />
+          Message
+          <br />
+          <Input.TextArea
+            autoSize={{
+              minRows: 3,
+              maxRows: 5,
+            }}
+            disabled={loader == "submit"}
+            onChange={(e) => setInputMsg(e.target.value)}
+          />
         </>
       )}
-      {mode == "Number-Only" && (
+      {mode == "Number Only" && (
         <>
           Specific Number{" "}
           <Tooltip title="You can put multiple number by pressing 'enter'.">
@@ -207,7 +256,7 @@ const SmsComposer = ({ open, close, onSend }) => {
         style={{ marginTop: 5 }}
         type="primary"
         onClick={
-          mobilenum.length > 0 && inputMsg != ""
+          mobilenum?.length > 0 && inputMsg != ""
             ? onSubmit
             : () => message.warning("No number/message added")
         }

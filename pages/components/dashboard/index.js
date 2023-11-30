@@ -8,9 +8,29 @@ import { MdAdminPanelSettings } from "react-icons/md";
 import { FaArrowRight } from "react-icons/fa";
 import { FaFile } from "react-icons/fa";
 
-import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
-ChartJS.register(ArcElement, Tooltip, Legend, Title);
+import { Pie, Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  Title,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+} from "chart.js";
+
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  Title,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement
+);
 
 const Dashboard = () => {
   const loadingFlag = true;
@@ -41,6 +61,8 @@ const Dashboard = () => {
       icon: <MdAdminPanelSettings style={{ fontSize: 60, opacity: 0.4 }} />,
     },
   ];
+
+  const mock = [];
   return (
     <>
       <Row gutter={[16, 16]}>
@@ -197,6 +219,145 @@ const Dashboard = () => {
                   },
                 ],
               }}
+            />
+          </div>
+        </Card>
+      </div>
+
+      <div style={{ marginTop: 10 }}>
+        <Card
+          bodyStyle={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          hoverable
+        >
+          <div style={{ width: "70vw" }}>
+            <Line
+              data={{
+                labels: [
+                  "Jan",
+                  "Feb",
+                  "Mar",
+                  "Apr",
+                  "May",
+                  "Jun",
+                  "Jul",
+                  "Aug",
+                  "Sep",
+                  "Oct",
+                  "Nov",
+                  "Dec",
+                ],
+                datasets: Array(5)
+                  .fill({})
+                  .map((e, i) => {
+                    return {
+                      id: i,
+                      label: `Sitio ${i + 1}`,
+                      data: Array(12)
+                        .fill(0)
+                        .map((e) => Math.floor(Math.random() * 6)),
+                      backgroundColor: `#${Math.floor(
+                        Math.random() * 16777215
+                      ).toString(16)}`,
+                    };
+                  }),
+              }}
+              options={{
+                responsive: true,
+                hover: {
+                  mode: "point",
+                },
+                // interaction: {
+                //   mode: "index",
+                //   intersect: false,
+                // },
+                animations: {
+                  y: {
+                    easing: "easeInOutElastic",
+                    from: (ctx) => {
+                      if (ctx.type === "data") {
+                        if (ctx.mode === "default" && !ctx.dropped) {
+                          ctx.dropped = true;
+                          return 0;
+                        }
+                      }
+                    },
+                  },
+                },
+                plugins: {
+                  legend: {
+                    position: "top",
+                  },
+                  title: {
+                    display: true,
+                    text: "SMS Complaints by Sitio",
+                    font: {
+                      size: 20,
+                    },
+                  },
+                },
+                scales: {
+                  y: {
+                    min: 0,
+                    stacked: false,
+                    title: {
+                      display: true,
+                      text: "Number of Complaints",
+                    },
+                    ticks: {
+                      stepSize: 2,
+                    },
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: "SMS Complaints by Category",
+                    },
+                    grid: {
+                      display: false,
+                    },
+                  },
+                },
+                onHover: function (event, chartElement) {},
+              }}
+              plugins={[
+                {
+                  id: "intersectDataVerticalLine",
+                  beforeDraw: (chart) => {
+                    if (chart.getActiveElements().length) {
+                      const activePoint = chart.getActiveElements()[0];
+                      const chartArea = chart.chartArea;
+                      const ctx = chart.ctx;
+                      ctx.save();
+                      // grey vertical hover line - full chart height
+                      ctx.beginPath();
+                      ctx.moveTo(activePoint.element.x, chartArea.top);
+                      ctx.lineTo(activePoint.element.x, chartArea.bottom);
+                      ctx.lineWidth = 2;
+                      ctx.strokeStyle = "rgba(0,0,0, 0.1)";
+                      ctx.stroke();
+                      ctx.restore();
+
+                      // colored vertical hover line - ['data point' to chart bottom] - only for charts 1 dataset
+                      if (chart.data.datasets.length === 1) {
+                        ctx.beginPath();
+                        ctx.moveTo(
+                          activePoint.element.x,
+                          activePoint.element.y
+                        );
+                        ctx.lineTo(activePoint.element.x, chartArea.bottom);
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = chart.data.datasets[0].borderColor;
+                        ctx.stroke();
+                        ctx.restore();
+                      }
+                    }
+                  },
+                },
+              ]}
             />
           </div>
         </Card>
