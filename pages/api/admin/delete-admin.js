@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
   if (req.method != "DELETE") throw Error("Request Method is not acceptable");
 
-  return await Residents.Admin({ _id: req.query.id })
+  return await Admin.findOneAndDelete({ _id: req.query.id })
     .then(() => {
       res.json({
         success: true,

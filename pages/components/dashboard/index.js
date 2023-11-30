@@ -21,6 +21,8 @@ import {
   LineElement,
 } from "chart.js";
 
+import jason from "../../assets/json/constant.json";
+
 ChartJS.register(
   ArcElement,
   Tooltip,
@@ -250,20 +252,20 @@ const Dashboard = () => {
                   "Nov",
                   "Dec",
                 ],
-                datasets: Array(5)
-                  .fill({})
-                  .map((e, i) => {
-                    return {
-                      id: i,
-                      label: `Sitio ${i + 1}`,
-                      data: Array(12)
-                        .fill(0)
-                        .map((e) => Math.floor(Math.random() * 6)),
-                      backgroundColor: `#${Math.floor(
-                        Math.random() * 16777215
-                      ).toString(16)}`,
-                    };
-                  }),
+                datasets: jason.barangay.map((e, i) => {
+                  return {
+                    id: i,
+                    label: e,
+                    data:
+                      // Array(12)
+                      //   .fill(0)
+                      //   .map((e) => Math.floor(Math.random() * 100))
+                      [1, 2, 3],
+                    backgroundColor: `#${Math.floor(
+                      Math.random() * 16777215
+                    ).toString(16)}`,
+                  };
+                }),
               }}
               options={{
                 responsive: true,
