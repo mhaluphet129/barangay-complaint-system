@@ -5,7 +5,7 @@ import { Sider, Header, Content } from "../layout";
 import { VscGraph } from "react-icons/vsc";
 import { FaUsers } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
-import { BsPersonFillLock } from "react-icons/bs";
+import { BsPersonFillLock, BsFillPrinterFill } from "react-icons/bs";
 import { PlusOutlined } from "@ant-design/icons";
 
 import Residents from "../components/residents";
@@ -13,10 +13,12 @@ import Dashboard from "../components/dashboard";
 import Admin from "../components/admins";
 
 import SmsComposer from "../components/sms_composer";
+import PrintForms from "../components/print_forms";
 
 const MyApp = ({ app_key }) => {
   const [selectedKey, setSelectedKey] = useState("dashboard");
   const [openComposer, setOpenComposer] = useState(false);
+  const [openForms, setOpenForms] = useState(false);
   const selectedItemsStyle = {
     color: "#aaa",
     backgroundColor: "#202d3a",
@@ -29,10 +31,18 @@ const MyApp = ({ app_key }) => {
       <Layout>
         <Sider
           selectedIndex={(e) => {
-            if (e.key == "compose") {
-              setOpenComposer(true);
-            } else {
-              setSelectedKey(e.key);
+            switch (e.key) {
+              case "compose": {
+                setOpenComposer(true);
+                break;
+              }
+              case "print_form": {
+                setOpenForms(true);
+                break;
+              }
+              default: {
+                setSelectedKey(e.key);
+              }
             }
           }}
           selectedKey={selectedKey}
@@ -68,10 +78,13 @@ const MyApp = ({ app_key }) => {
               label: "Compose Message",
               key: "compose",
               icon: <PlusOutlined />,
-              style:
-                selectedKey == "compose"
-                  ? selectedItemsStyle
-                  : { color: "#aaa" },
+              style: { color: "#aaa" },
+            },
+            {
+              label: "Print Form",
+              key: "print_form",
+              icon: <BsFillPrinterFill />,
+              style: { color: "#aaa" },
             },
           ]}
         >
@@ -126,11 +139,17 @@ const MyApp = ({ app_key }) => {
           </Content>
         </Layout>
       </Layout>
+
       {/* ETC */}
       <SmsComposer
         open={openComposer}
         close={() => setOpenComposer(false)}
         onSend={() => {}}
+      />
+      <PrintForms
+        open={openForms}
+        close={() => setOpenForms(false)}
+        funcOpen={() => setOpenForms(true)}
       />
     </>
   );

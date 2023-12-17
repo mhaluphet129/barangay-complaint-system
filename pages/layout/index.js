@@ -23,7 +23,10 @@ const Sider = ({ selectedIndex, selectedKey, items, children }) => {
       <Layout.Sider
         theme="light"
         width={250}
-        style={{ boxShadow: "2px 0 1px -2px #888", backgroundColor: "#202d3a" }}
+        style={{
+          boxShadow: "2px 0 1px -2px #888",
+          backgroundColor: "#202d3a",
+        }}
       >
         {children}
         <Menu
@@ -32,9 +35,9 @@ const Sider = ({ selectedIndex, selectedKey, items, children }) => {
           items={items}
           defaultSelectedKeys="dashboard"
           style={{
-            height: "100vh",
             fontSize: 17,
             backgroundColor: "#263544",
+            height: "100vh",
           }}
         />
       </Layout.Sider>

@@ -1,0 +1,46 @@
+.label-under {
+  position: relative;
+  display: inline;
+}
+
+.label-under label {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 30px;
+  width: 100%;
+  text-align: center;
+}
+
+.label-under .input {
+  width: 200px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #a0a0a0;
+}
+
+thead {
+  display: table-row-group;
+}
+
+@page {
+  size: legal;
+  margin: 0.5in;
+}
+
+.custom-textarea {
+  border-bottom: 1px solid #000 !important;
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+@media print {
+  html,
+  body {
+    width: 215.9mm !important;
+    height: 355.6mm !important;
+    overflow: initial !important;
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+}
