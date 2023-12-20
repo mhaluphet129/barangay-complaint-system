@@ -19,6 +19,10 @@
   border-bottom: 1px solid #a0a0a0;
 }
 
+.first-line-margin::first-letter {
+  margin-left: 40px;
+}
+
 thead {
   display: table-row-group;
 }
@@ -41,6 +45,7 @@ thead {
     height: 355.6mm !important;
     overflow: initial !important;
     padding-right: 5%;
-    padding-left: 5%;
+    padding-left: 2.5%;
+    padding-top: 2.5%;
   }
 }
