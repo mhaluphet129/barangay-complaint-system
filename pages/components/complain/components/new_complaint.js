@@ -1,0 +1,180 @@
+import React, { useState, useRef, useEffect } from "react";
+import { Modal, Form, AutoComplete, Input, Button, message } from "antd";
+import Cookies from "js-cookie";
+import axios from "axios";
+
+// TODO: add image
+
+const NewComplain = ({ open, close }) => {
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [searchResult, setSearchResult] = useState([]);
+  const [residentId, setResidentId] = useState();
+  const timerRef = useRef(null);
+
+  let currentUser = Cookies.get("currentUser");
+
+  const searchName = async (keyword) => {
+    if (keyword != "" && keyword != null) {
+      let { data } = await axios.get("/api/resident/search-resident", {
+        params: {
+          searchKeyword: keyword,
+        },
+      });
+      if (data.status == 200) {
+        setSearchResult(data.searchData);
+        setLoading(false);
+      }
+    }
+  };
+
+  const runTimer = (key) => {
+    setLoading(true);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(function () {
+      searchName(key);
+    }, 500);
+  };
+
+  const handleFinish = (val) => {
+    // * send an sms to Responder
+    // * settlement init type "processed"
+
+    if (!residentId) {
+      return message.error("Please select a resident first");
+    }
+    val.residentId = residentId;
+    val.inchargeId = currentUser._id;
+    (async (_) => {
+      let { data } = await _.post("/api/complain/new-complain", val);
+    })(axios);
+  };
+
+  useEffect(() => {
+    currentUser = JSON.parse(currentUser);
+  }, [currentUser]);
+
+  return (
+    <Modal
+      open={open}
+      onCancel={() => {
+        form.resetFields();
+        close();
+      }}
+      closable={false}
+      footer={null}
+      title="New Complain"
+      centered
+    >
+      <Form
+        form={form}
+        onFinish={handleFinish}
+        labelAlign="left"
+        labelCol={{
+          span: 8,
+        }}
+        style={{ marginTop: 25 }}
+      >
+        <Form.Item
+          label="Resident"
+          name="resident"
+          rules={[
+            { required: true, message: "This field is blank. Please provide" },
+          ]}
+        >
+          <AutoComplete
+            popupClassName="certain-category-search-dropdown"
+            popupMatchSelectWidth={350}
+            onChange={(e) => {
+              if (e != "") runTimer(e);
+              else setSearchResult([]);
+            }}
+            onSelect={(e, _) => setResidentId(_.key)}
+            onKeyDown={(e) => {
+              if (e.key === "Backspace") {
+                form.resetFields(["resident"]);
+              }
+            }}
+            options={searchResult.map((e) => {
+              return {
+                label: `${e?.name} ${
+                  e?.middlename
+                    ? `${e?.middlename[0].toLocaleUpperCase()}.`
+                    : ""
+                } ${e?.lastname}`,
+                value: `${e?.name} ${
+                  e?.middlename
+                    ? `${e?.middlename[0].toLocaleUpperCase()}.`
+                    : ""
+                } ${e?.lastname}`,
+                key: e?._id,
+              };
+            })}
+          />
+        </Form.Item>
+        <Form.Item
+          name="respondentName"
+          label="Respondent Name"
+          rules={[
+            { required: true, message: "This field is blank. Please provide" },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="respondentNumber"
+          label="Respondent Number"
+          rules={[
+            { required: true, message: "This field is blank. Please provide" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                const reg = /^(09\d{9})|\+(\d{12})$/;
+                const number = getFieldValue("respondentNumber");
+                if (/^09/.test(number) && number.length > 11) {
+                  return Promise.reject(
+                    "Number should have a maximum length of 11"
+                  );
+                } else if (/^\+639/.test(number) && number.length > 13) {
+                  return Promise.reject(
+                    "Number should have a maximum length of 12"
+                  );
+                } else if (reg.test(number)) {
+                  return Promise.resolve();
+                } else {
+                  return Promise.reject(
+                    "Invalid number. It should be start in 09 or +639, no alpha character, maximum of 11 digits."
+                  );
+                }
+              },
+            }),
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item name="description" label="Description">
+          <Input.TextArea
+            autoSize={{
+              minRows: 8,
+              maxRows: 15,
+            }}
+            placeholder="This is optional"
+          />
+        </Form.Item>
+        <Form.Item noStyle>
+          <Button
+            onClick={() => form.validateFields().then(() => form.submit())}
+            size="large"
+            type="primary"
+            block
+          >
+            CONFIRM
+          </Button>
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
+export default NewComplain;

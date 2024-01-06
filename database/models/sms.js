@@ -8,6 +8,7 @@ let SmsSchema = new mongoose.Schema(
     },
     message: {
       type: String,
+      required: true,
     },
     keywords: {
       type: Array,
@@ -19,10 +20,10 @@ let SmsSchema = new mongoose.Schema(
     number: {
       type: String,
     },
-    status: {
-      type: String,
-      enum: ["disregard", "solved", "unsolved", "dismissed", "processed"],
-    },
+    // status: {
+    //   type: String,
+    //   enum: ["disregard", "solved", "unsolved", "dismissed", "processed"],
+    // },
   },
   { timestamps: true }
 );

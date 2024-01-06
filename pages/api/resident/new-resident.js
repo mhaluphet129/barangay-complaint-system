@@ -15,8 +15,8 @@ export default async function handler(req, res) {
       });
     })
     .catch((e) => {
-      console.log(e);
       res.json({
+        error: Object.keys(e.errors),
         success: false,
         message: "Error in the Server.",
       });

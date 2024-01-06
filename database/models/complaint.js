@@ -14,24 +14,14 @@ let SettlementSchema = new mongoose.Schema(
   { _id: 0, timestamps: true }
 );
 
-let ResponseSchema = new mongoose.Schema(
-  {
-    fullname: {
-      type: String,
-    },
-    responded: {
-      type: Boolean,
-    },
-  },
-  { timestamps: false, _id: 0 }
-);
-
 let ComplaintSchema = new mongoose.Schema(
   {
-    smsId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Sms",
-    },
+    smsId: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Sms",
+      },
+    ],
     residentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Resident",
@@ -41,14 +31,23 @@ let ComplaintSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Admin",
     },
-    keywords: {
-      type: Array,
+    respondentName: {
+      type: String,
+      required: true,
     },
-    respondent: ResponseSchema,
+    respondentNumber: {
+      type: String,
+      required: true,
+    },
+    isResponded: {
+      type: Boolean,
+      default: "false",
+    },
     amicSettlement: {
       type: Number,
-      //   increased per settlement
+      default: 1,
     },
+    images: Array,
   },
   { timestamps: true }
 );

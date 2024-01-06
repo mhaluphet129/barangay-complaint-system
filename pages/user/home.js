@@ -7,10 +7,12 @@ import { FaUsers } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
 import { BsPersonFillLock, BsFillPrinterFill } from "react-icons/bs";
 import { PlusOutlined } from "@ant-design/icons";
+import { BiMessageRoundedError } from "react-icons/bi";
 
 import Residents from "../components/residents";
 import Dashboard from "../components/dashboard";
 import Admin from "../components/admins";
+import Complain from "../components/complain";
 
 import SmsComposer from "../components/sms_composer";
 import PrintForms from "../components/print_forms";
@@ -75,6 +77,15 @@ const MyApp = ({ app_key }) => {
                 selectedKey == "admin" ? selectedItemsStyle : { color: "#aaa" },
             },
             {
+              label: "Complains",
+              key: "complain",
+              icon: <BiMessageRoundedError />,
+              style:
+                selectedKey == "complain"
+                  ? selectedItemsStyle
+                  : { color: "#aaa" },
+            },
+            {
               label: "Compose Message",
               key: "compose",
               icon: <PlusOutlined />,
@@ -136,6 +147,7 @@ const MyApp = ({ app_key }) => {
             {selectedKey == "dashboard" ? <Dashboard /> : null}
             {selectedKey == "residents" ? <Residents /> : null}
             {selectedKey == "admin" ? <Admin /> : null}
+            {selectedKey == "complain" ? <Complain /> : null}
           </Content>
         </Layout>
       </Layout>

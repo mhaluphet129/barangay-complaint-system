@@ -8,7 +8,6 @@ let ResidentSchema = new mongoose.Schema(
     },
     middlename: {
       type: String,
-      required: true,
     },
     lastname: {
       type: String,
@@ -36,6 +35,14 @@ let ResidentSchema = new mongoose.Schema(
       required: true,
     },
     civilStatus: {
+      type: String,
+      reqruired: true,
+    },
+    username: {
+      type: String,
+      reqruired: true,
+    },
+    password: {
       type: String,
       reqruired: true,
     },

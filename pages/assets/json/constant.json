@@ -118,5 +118,12 @@
     "9 zone-1",
     "9A",
     "9B"
+  ],
+  "sms_formats": [
+    {
+      "id": 1,
+      "type": "sms_to_respondent_1",
+      "message": "Hello Mr/Ms @RESPONDER_NAME, \n\n Someone complained you this day. Please see and visit our establishment. Thank you."
+    }
   ]
 }

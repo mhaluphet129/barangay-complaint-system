@@ -95,11 +95,6 @@ const Header = ({ app_key }) => {
                       }),
                   },
                   {
-                    label: "Report",
-                    key: "edit",
-                    children: [],
-                  },
-                  {
                     type: "divider",
                   },
                   {

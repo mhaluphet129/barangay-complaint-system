@@ -9,7 +9,6 @@ import ResidentForm from "./components/resident_form";
 const Residents = () => {
   const [openNewResident, setOpenNewResident] = useState({
     open: false,
-    title: "",
     mode: "",
     data: {},
   });
@@ -51,7 +50,6 @@ const Residents = () => {
             onClick={() =>
               setOpenNewResident({
                 open: true,
-                title: "Edit Resident",
                 mode: "edit",
                 data: row,
               })
@@ -105,7 +103,11 @@ const Residents = () => {
           fontWeight: 400,
         }}
         onClick={() =>
-          setOpenNewResident({ open: true, title: "New Resident", mode: "new" })
+          setOpenNewResident({
+            open: true,
+            mode: "new",
+            data: {},
+          })
         }
       >
         New
@@ -130,7 +132,7 @@ const Residents = () => {
     <>
       <ResidentForm
         {...openNewResident}
-        close={() => setOpenNewResident(false)}
+        close={() => setOpenNewResident({ open: false, mode: "", data: {} })}
         refresh={() => setTrigger(trigger + 1)}
       />
       <Table
