@@ -50,7 +50,7 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
   const getCurrentStepsStatus = (i) => {
     let status = "process";
 
-    if (i == 0) {
+    if (data && i == 0) {
       if (Object.keys(data).length != 0) {
         let _ = data;
 
