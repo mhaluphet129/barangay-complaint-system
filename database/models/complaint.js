@@ -47,6 +47,7 @@ let ComplaintSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
+    description: String,
     images: Array,
   },
   { timestamps: true }

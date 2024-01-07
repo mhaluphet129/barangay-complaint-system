@@ -49,6 +49,12 @@ const NewComplain = ({ open, close }) => {
     val.inchargeId = currentUser._id;
     (async (_) => {
       let { data } = await _.post("/api/complain/new-complain", val);
+      if (data?.success) {
+        message.success(data?.message ?? "Successfully Created.");
+        close();
+      } else {
+        message.error(data?.message ?? "Error in the Server.");
+      }
     })(axios);
   };
 

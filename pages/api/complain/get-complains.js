@@ -1,5 +1,6 @@
 import dbConnect from "@/database/dbConnect";
 import Complain from "@/database/models/complaint";
+import Resident from "@/database/models/resident";
 
 export default async function handler(req, res) {
   await dbConnect();

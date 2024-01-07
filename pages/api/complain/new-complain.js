@@ -31,7 +31,6 @@ export default async function handler(req, res) {
   // create init settlement
   const newSettlement = {
     type: "processed",
-    description,
   };
 
   let newComplain = Complaint({
@@ -41,6 +40,7 @@ export default async function handler(req, res) {
     inchargeId,
     respondentName,
     respondentNumber,
+    description,
   });
   return await newComplain
     .save()
