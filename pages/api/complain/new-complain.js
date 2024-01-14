@@ -15,6 +15,7 @@ export default async function handler(req, res) {
     description,
     respondentName,
     respondentNumber,
+    images,
   } = req.body;
 
   // get an SMS template and create an SMS and send to the respondent
@@ -41,6 +42,7 @@ export default async function handler(req, res) {
     respondentName,
     respondentNumber,
     description,
+    images,
   });
   return await newComplain
     .save()

@@ -38,14 +38,6 @@ let ResidentSchema = new mongoose.Schema(
       type: String,
       reqruired: true,
     },
-    username: {
-      type: String,
-      reqruired: true,
-    },
-    password: {
-      type: String,
-      reqruired: true,
-    },
   },
   { timestamps: true }
 );

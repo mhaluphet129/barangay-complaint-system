@@ -117,10 +117,6 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
             status: getCurrentStepsStatus(0),
             title: "Basic Info",
           },
-          {
-            status: getCurrentStepsStatus(1),
-            title: "Login Credentials",
-          },
         ]}
       />
       <Spin spinning={loading == "saving"}>

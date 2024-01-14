@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
-  Table,
   Button,
   Tag,
   message,
@@ -9,190 +8,254 @@ import {
   Card,
   Space,
   Tooltip,
+  Badge,
+  Typography,
+  Input,
+  Skeleton,
+  Divider,
+  Select,
+  Row,
+  Col,
 } from "antd";
-import { PlusOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 
-import dayjs from "dayjs";
 import axios from "axios";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 import NewComplain from "./components/new_complaint";
 import CompainViewer from "./components/complain_viewer";
 
 // TODO: added automatic sms every 15 days from complains created date for amec settlement
 
-const Complain = () => {
-  const [trigger, setTrigger] = useState(0);
-  const [loading, setLoading] = useState("");
+const Complain = ({ appKey }) => {
   const [complains, setComplains] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searching, setSearching] = useState(false);
   const [openNewComplain, setOpenNewComplain] = useState(false);
+  const [searchWord, setSearchWord] = useState("");
+  const [viewerOpts, setViewerOpts] = useState({ open: false, data: null });
+  const [listOptions, setListOptions] = useState({
+    total: 0,
+    index: 0,
+    loading: false,
+  });
 
-  const columns = [
-    {
-      title: "Complain ID",
-      render: (_, row) => row?._id.substr(-6),
-    },
-    {
-      title: "Resident/Complainer",
-      render: (_, row) => row.residentId?.name + " " + row.residentId?.lastname,
-    },
-    {
-      title: "Responder",
-      dataIndex: "respondentName",
-    },
-    {
-      title: "Is Responded ?",
-      render: (_, row) =>
-        row?.isResponded ? (
-          <CheckOutlined
-            style={{
-              color: "#0f0",
-            }}
-          />
-        ) : (
-          <CloseOutlined
-            style={{
-              color: "#f00",
-            }}
-          />
-        ),
-    },
-    {
-      title: "Status",
-      render: (_, row) => {
-        let type = row?.settlement?.at(-1).type;
-        let color = "blue";
+  const timerRef = useRef(null);
 
-        if (["unsolved", "disregard", "dismissed"].includes(type))
-          color = "red";
-        else if (type == "solved") color = "green";
+  const loadMoreData = (searchKey, clear, filter = {}) => {
+    if (listOptions.loading) {
+      return;
+    }
 
-        return <Tag color={color}>{type?.toLocaleUpperCase()}</Tag>;
-      },
-    },
-    {
-      title: "Added Date",
-      render: (_, row) => dayjs(row?.dateOfBirth).format("MMM DD, YYYY"),
-    },
-  ];
-
-  const tableHeader = () => (
-    <div>
-      <Button
-        icon={<PlusOutlined />}
-        style={{
-          backgroundColor: "green",
-          color: "#fff",
-          fontWeight: 400,
-        }}
-        onClick={() => setOpenNewComplain(true)}
-      >
-        New Complain
-      </Button>
-    </div>
-  );
-
-  useEffect(() => {
-    setLoading("fetch");
+    setListOptions({ ...listOptions, loading: true });
     (async (_) => {
-      let { data } = await axios.get("/api/complain/get-complains");
-      if (data.success) {
-        setComplains(data.complain);
-        setLoading("");
+      let { data } = await _.get("/api/complain/get-complains", {
+        params: {
+          page: 5,
+          index: clear ? 0 : listOptions.index,
+          ...(filter.type ? { type: filter.type } : {}),
+          searchKey,
+        },
+      });
+      if (data?.success) {
+        if (clear) setComplains(data?.complain);
+        else setComplains([...complains, ...data?.complain]);
+        setLoading(false);
+        setSearching(false);
+        setListOptions({
+          ...listOptions,
+          index: listOptions.index + 1,
+          loading: false,
+          total: data.total,
+        });
       } else {
         message.error(data?.message ?? "Error in the server.");
-        setLoading("");
+        setListOptions({
+          ...listOptions,
+          loading: false,
+        });
+        setSearching(false);
+        setLoading(false);
       }
     })(axios);
-  }, [trigger]);
+  };
+
+  const runTimer = (searchKeyword) => {
+    setSearching(true);
+    setListOptions({ total: 0, index: 0, loading: false });
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(function () {
+      loadMoreData(searchKeyword, true);
+    }, 500);
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    loadMoreData();
+  }, []);
+
   return (
     <>
       <NewComplain
         open={openNewComplain}
         close={() => setOpenNewComplain(false)}
+        appkey={appKey}
       />
-      <CompainViewer />
+      <CompainViewer
+        {...viewerOpts}
+        close={() => setViewerOpts({ open: false, data: null })}
+        refresh={() => loadMoreData("", true)}
+        setData={(data) => setViewerOpts({ ...viewerOpts, data })}
+      />
       {/* end of context */}
-      <Card
-        bodyStyle={{
-          padding: 20,
+      {/* utility function above List */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <List
-          itemLayout="horizontal"
-          dataSource={complains}
-          renderItem={(item, index) => (
-            <List.Item
+        <Space>
+          <Input.Search
+            placeholder="Search via ID, respondent name, responder name"
+            style={{ width: 400 }}
+            loading={searching}
+            onChange={(e) => {
+              setSearchWord(e.target.value);
+              if (e.target.value != "") runTimer(e.target.value);
+              else loadMoreData(e, true);
+            }}
+            allowClear
+          />
+          <>
+            TYPE:
+            <Select
               style={{
-                padding: 0,
-                paddingTop: 10,
+                width: 100,
               }}
-            >
-              <List.Item.Meta
-                title={
-                  <Space>
-                    <Tooltip title="Complain ID">
-                      {item?._id.substr(-6)}
-                    </Tooltip>
-                    {item?.isResponded ? (
-                      <Tag color="green">Responded</Tag>
-                    ) : (
-                      <Tag color="red">Not Responded</Tag>
-                    )}
-                  </Space>
-                }
-                description={
-                  <>
-                    Complain by:{" "}
-                    {`${item?.residentId?.name} ${item?.residentId?.lastname} `}
-                    <br />
-                    Respondent: {item?.respondentName}
-                    <br />
-                    <span style={{ marginTop: 25 }}>{item?.description}</span>
-                  </>
-                }
-              />
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
+              defaultValue={null}
+              options={[
+                {
+                  label: "All",
+                  value: null,
+                },
+                {
+                  label: "Walk-in",
+                  value: "walk-in",
+                },
+                {
+                  label: "Website",
+                  value: "web",
+                },
+              ]}
+              onChange={(e) => loadMoreData(searchWord, true, { type: e })}
+            />
+          </>
+        </Space>
+        <Space>
+          {/* <Tooltip title="Filter Option">
+            <Button icon={<SettingOutlined />} />
+          </Tooltip> */}
+          <Button
+            icon={<PlusOutlined />}
+            style={{
+              backgroundColor: "green",
+              color: "#fff",
+              fontWeight: 400,
+            }}
+            onClick={() => setOpenNewComplain(true)}
+          >
+            New Complain
+          </Button>
+        </Space>
+      </div>
+      <Card
+        style={{
+          marginTop: 10,
+        }}
+        bodyStyle={{
+          padding: 10,
+        }}
+      >
+        <div id="scrollableDiv" style={{ height: "75vh", overflow: "scroll" }}>
+          <InfiniteScroll
+            dataLength={complains.length}
+            next={loadMoreData}
+            hasMore={listOptions.total > complains.length}
+            loader={
+              <Skeleton
+                paragraph={{
+                  rows: 1,
                 }}
-              >
-                {/* {(() => {
-                  let type = item?.settlement?.at(-1).type;
-                  let color = "blue";
-
-                  if (["unsolved", "disregard", "dismissed"].includes(type))
-                    color = "red";
-                  else if (type == "solved") color = "green";
-
-                  return <Tag color={color}>{type?.toLocaleUpperCase()}</Tag>;
-                })()} */}
-
-                <Steps
+                active
+              />
+            }
+            endMessage={
+              complains.length != 0 ? (
+                <Divider plain>
+                  <Typography.Text type="secondary" italic>
+                    No more documents to be loaded.
+                  </Typography.Text>
+                </Divider>
+              ) : null
+            }
+            scrollableTarget="scrollableDiv"
+          >
+            <List
+              itemLayout="horizontal"
+              dataSource={complains}
+              loading={loading}
+              renderItem={(item, index) => (
+                <List.Item
                   style={{
-                    marginTop: 8,
+                    marginLeft: 20,
+                    cursor: "pointer",
                   }}
-                  type="inline"
-                  current={0}
-                  items={[
-                    {
-                      title: "Step 1",
-                      description: "This is a Step 1.",
-                    },
-                    {
-                      title: "Step 2",
-                      description: "This is a Step 2.",
-                    },
-                    {
-                      title: "Step 3",
-                      description: "This is a Step 3.",
-                    },
-                  ]}
-                />
-              </div>
-            </List.Item>
-          )}
-        />
+                  onClick={() => setViewerOpts({ open: true, data: item })}
+                >
+                  <List.Item.Meta
+                    title={<span>ID: {item?._id?.substr(-6)}</span>}
+                    description={
+                      <Row>
+                        <Col span={8}>
+                          Complain by:{" "}
+                          {`${item?.residentId?.name} ${item?.residentId?.lastname} `}
+                          <br />
+                          Type:{" "}
+                          {item?.type && (
+                            <Tag>{item?.type.toLocaleUpperCase()}</Tag>
+                          )}
+                          <br />
+                          Respondent: {item?.respondentName}
+                          <br />
+                          Responded:{" "}
+                          {item?.isResponded ? (
+                            <Tag color="green">Responded</Tag>
+                          ) : (
+                            <Tag color="red">Not Responded</Tag>
+                          )}
+                        </Col>
+                        <Col span={8}>
+                          <strong style={{ color: "#000" }}>
+                            Description:
+                          </strong>
+                          <br />
+                          <Typography.Paragraph>
+                            {item?.description}
+                          </Typography.Paragraph>
+                        </Col>
+                        <Col span={8}>Nothing goes from here</Col>
+                      </Row>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          </InfiniteScroll>
+        </div>
       </Card>
     </>
   );

@@ -47,8 +47,13 @@ let ComplaintSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
+    type: {
+      type: String,
+      enum: ["walk-in", "web"],
+      default: "walk-in",
+    },
     description: String,
-    images: Array,
+    images: [String],
   },
   { timestamps: true }
 );

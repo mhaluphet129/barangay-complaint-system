@@ -1,18 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Modal, Form, AutoComplete, Input, Button, Image, message } from "antd";
+import {
+  Modal,
+  Form,
+  AutoComplete,
+  Input,
+  Button,
+  Image,
+  message,
+  Typography,
+} from "antd";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { PickerDropPane } from "filestack-react";
 
-const NewComplain = ({ open, close, appkey }) => {
+const Complain = ({ appkey }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
   const [residentId, setResidentId] = useState();
   const timerRef = useRef(null);
   const [photos, setPhotos] = useState([]);
-
-  let currentUser = Cookies.get("currentUser");
 
   const searchName = async (keyword) => {
     if (keyword != "" && keyword != null) {
@@ -45,7 +52,7 @@ const NewComplain = ({ open, close, appkey }) => {
       return message.error("Please select a resident first");
     }
     val.residentId = residentId;
-    val.inchargeId = currentUser._id;
+    // val.inchargeId = currentUser._id;
     val.images = photos;
 
     (async (_) => {
@@ -59,22 +66,21 @@ const NewComplain = ({ open, close, appkey }) => {
     })(axios);
   };
 
-  useEffect(() => {
-    currentUser = JSON.parse(currentUser);
-  }, [currentUser]);
+  //   useEffect(() => {
+  //     currentUser = JSON.parse(currentUser);
+  //   }, [currentUser]);
 
   return (
-    <Modal
-      open={open}
-      onCancel={() => {
-        form.resetFields();
-        close();
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        flexDirection: "column",
       }}
-      closable={false}
-      footer={null}
-      title="New Complain"
-      centered
     >
+      <Typography.Title level={2}>ONLINE COMPLAINT FORM</Typography.Title>
       <Form
         form={form}
         onFinish={handleFinish}
@@ -82,7 +88,12 @@ const NewComplain = ({ open, close, appkey }) => {
         labelCol={{
           span: 8,
         }}
-        style={{ marginTop: 25 }}
+        style={{
+          padding: 25,
+          width: 700,
+          background: "#eee",
+          borderRadius: 10,
+        }}
       >
         <Form.Item
           label="Resident"
@@ -209,9 +220,19 @@ const NewComplain = ({ open, close, appkey }) => {
             CONFIRM
           </Button>
         </Form.Item>
+        <Typography.Link
+          style={{ textAlign: "center", display: "block" }}
+          onClick={() => (window.location.href = "/")}
+        >
+          or go back to login
+        </Typography.Link>
       </Form>
-    </Modal>
+    </div>
   );
 };
 
-export default NewComplain;
+export async function getServerSideProps() {
+  return { props: { appkey: process.env.FILESTACK_KEY } };
+}
+
+export default Complain;

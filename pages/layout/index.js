@@ -155,14 +155,6 @@ const Content = ({ selectedKey, children }) => {
               justifyContent: "space-between",
             }}
           >
-            <Typography.Text
-              style={{
-                fontSize: 22,
-                fontWeight: 300,
-              }}
-            >
-              {selectedKey.charAt(0).toUpperCase() + selectedKey.slice(1)}
-            </Typography.Text>
             <Breadcrumb
               items={[
                 {

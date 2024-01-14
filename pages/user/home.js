@@ -147,7 +147,7 @@ const MyApp = ({ app_key }) => {
             {selectedKey == "dashboard" ? <Dashboard /> : null}
             {selectedKey == "residents" ? <Residents /> : null}
             {selectedKey == "admin" ? <Admin /> : null}
-            {selectedKey == "complain" ? <Complain /> : null}
+            {selectedKey == "complain" ? <Complain appKey={app_key} /> : null}
           </Content>
         </Layout>
       </Layout>
