@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import {
   Modal,
   Form,
@@ -8,8 +8,9 @@ import {
   Image,
   message,
   Typography,
+  InputNumber,
+  Tooltip,
 } from "antd";
-import Cookies from "js-cookie";
 import axios from "axios";
 import { PickerDropPane } from "filestack-react";
 
@@ -20,6 +21,8 @@ const Complain = ({ appkey }) => {
   const [residentId, setResidentId] = useState();
   const timerRef = useRef(null);
   const [photos, setPhotos] = useState([]);
+  const [pin, setPin] = useState();
+  const [pinConfirmed, setPinConfirmed] = useState(false);
 
   const searchName = async (keyword) => {
     if (keyword != "" && keyword != null) {
@@ -48,27 +51,69 @@ const Complain = ({ appkey }) => {
   const handleFinish = (val) => {
     // * send an sms to Responder
 
-    if (!residentId) {
-      return message.error("Please select a resident first");
-    }
+    if (!residentId) return message.error("Please select a resident first");
+    if (!pinConfirmed)
+      return message.error("Pin is invalid or blank. Please provide.");
+
     val.residentId = residentId;
-    // val.inchargeId = currentUser._id;
+    val.type = "web";
     val.images = photos;
 
     (async (_) => {
       let { data } = await _.post("/api/complain/new-complain", val);
       if (data?.success) {
         message.success(data?.message ?? "Successfully Created.");
-        close();
+
+        // reset
+        form.resetFields();
+        setPinConfirmed(false);
+        setPin();
+        setPhotos([]);
+        setResidentId();
+        setLoading(false);
       } else {
         message.error(data?.message ?? "Error in the Server.");
       }
     })(axios);
   };
 
-  //   useEffect(() => {
-  //     currentUser = JSON.parse(currentUser);
-  //   }, [currentUser]);
+  const sendPin = (id) => {
+    (async (_) => {
+      await _.post("/api/complain/send-a-pin", {
+        id,
+      }).then(({ data }) => {
+        if (data?.success) {
+          console.log(data?.pin);
+          alert(
+            "for dev purposes, the pin is can be seen in console, please check."
+          );
+          message.success(
+            data?.message ?? "Code is sent to resident phone number."
+          );
+        } else {
+          message.error(data?.message ?? "Error in the server.");
+        }
+      });
+    })(axios);
+  };
+
+  const confirmPin = () => {
+    (async (_) => {
+      await _.get("/api/complain/pin-confirm", {
+        params: {
+          residentId,
+          pin,
+        },
+      }).then(({ data }) => {
+        if (data?.success) {
+          setPinConfirmed(true);
+          message.success(data?.message ?? "Success");
+        } else {
+          message.error(data?.message ?? "Error in the server.");
+        }
+      });
+    })(axios);
+  };
 
   return (
     <div
@@ -99,38 +144,73 @@ const Complain = ({ appkey }) => {
           label="Resident"
           name="resident"
           rules={[
-            { required: true, message: "This field is blank. Please provide" },
+            {
+              required: true,
+              message: "Name or Pin is blank. Please provide.",
+            },
           ]}
         >
-          <AutoComplete
-            popupClassName="certain-category-search-dropdown"
-            popupMatchSelectWidth={350}
-            onChange={(e) => {
-              if (e != "") runTimer(e);
-              else setSearchResult([]);
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
             }}
-            onSelect={(e, _) => setResidentId(_.key)}
-            onKeyDown={(e) => {
-              if (e.key === "Backspace") {
-                form.resetFields(["resident"]);
-              }
-            }}
-            options={searchResult.map((e) => {
-              return {
-                label: `${e?.name} ${
-                  e?.middlename
-                    ? `${e?.middlename[0].toLocaleUpperCase()}.`
-                    : ""
-                } ${e?.lastname}`,
-                value: `${e?.name} ${
-                  e?.middlename
-                    ? `${e?.middlename[0].toLocaleUpperCase()}.`
-                    : ""
-                } ${e?.lastname}`,
-                key: e?._id,
-              };
-            })}
-          />
+          >
+            <Tooltip title="PIN code is send after selecting resident for confirmation.">
+              <AutoComplete
+                popupClassName="certain-category-search-dropdown"
+                popupMatchSelectWidth={false}
+                style={{
+                  marginRight: 10,
+                  width: 200,
+                }}
+                onChange={(e) => {
+                  if (e != "") runTimer(e);
+                  else setSearchResult([]);
+                }}
+                onSelect={(e, _) => {
+                  setResidentId(_.key);
+                  sendPin(_.key);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Backspace") {
+                    form.resetFields(["resident"]);
+                  }
+                }}
+                options={searchResult.map((e) => {
+                  return {
+                    label: `${e?.name} ${
+                      e?.middlename
+                        ? `${e?.middlename[0].toLocaleUpperCase()}.`
+                        : ""
+                    } ${e?.lastname}`,
+                    value: `${e?.name} ${
+                      e?.middlename
+                        ? `${e?.middlename[0].toLocaleUpperCase()}.`
+                        : ""
+                    } ${e?.lastname}`,
+                    key: e?._id,
+                  };
+                })}
+              />
+            </Tooltip>
+            <span style={{ marginRight: 10 }}> Code:</span>{" "}
+            <InputNumber
+              placeholder="Input 6 digit code sent from sms"
+              maxLength={6}
+              style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+              controls={false}
+              onChange={setPin}
+              disabled={pinConfirmed}
+            />
+            <Button
+              style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+              onClick={confirmPin}
+              disabled={pinConfirmed}
+            >
+              SUBMIT
+            </Button>
+          </div>
         </Form.Item>
         <Form.Item
           name="respondentName"

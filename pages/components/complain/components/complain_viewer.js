@@ -199,7 +199,6 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
               columns={[
                 {
                   title: "Message Content",
-                  width: 200,
                   render: (_, row) => (
                     <Typography.Paragraph
                       ellipsis={{
@@ -220,6 +219,8 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
                 },
                 {
                   title: "Created At",
+                  align: "center",
+                  width: 120,
                   render: (_, row) =>
                     dayjs(row?.createdAt).format("MMM DD, YYYY - hh:mm a"),
                 },
