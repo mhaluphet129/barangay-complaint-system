@@ -21,6 +21,8 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 
+// TODO: admin username should not be editable on edit profile
+
 const SmsComposer = ({ open, close, onSend }) => {
   const [mode, setMode] = useState("Residents");
   const [mobilenum, setMobileNumer] = useState([]);
@@ -32,19 +34,43 @@ const SmsComposer = ({ open, close, onSend }) => {
   //* flags
   const [loader, setLoader] = useState("");
   const [messageFlags, setMessageFlags] = useState([]);
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = () => {
-    setLoader("submit");
-    setSubmitted(true);
-    setMessageFlags(mobilenum.map(() => null));
+  // utils
+  function processPhoneNumber(input) {
+    if (input.startsWith("09")) {
+      return "639" + input.substring(2);
+    } else if (input.startsWith("+639")) {
+      return "639" + input.substring(4);
+    } else {
+      return input;
+    }
+  }
 
-    const sendSmsRequest = async (index) => {
-      return new Promise((resolve) => {
+  const sendSmsRequest = async (index) => {
+    const _number = mobilenum[index];
+    setMessageFlags((_) => {
+      _[index] = "1";
+      return _;
+    });
+    return new Promise((resolve, reject) => {
+      if (
+        mode == "Residents" &&
+        !(
+          _number.startsWith("09") ||
+          _number.startsWith("+639") ||
+          _number.startsWith("639")
+        )
+      ) {
+        reject({
+          message: "Resident Number is invalid",
+        });
+      } else {
+        const number = processPhoneNumber(_number);
+
         (async (_) => {
           let { data } = await axios.post("/api/sms/send-sms", {
-            number: mobilenum[index],
+            number,
             message: inputMsg,
             originator: currentUser.name + " " + currentUser.lastname,
             status: "processed",
@@ -53,29 +79,58 @@ const SmsComposer = ({ open, close, onSend }) => {
           if (data.success) resolve(true);
           else resolve(false);
         })(axios);
-      });
-    };
+      }
+    });
+  };
 
-    let requests = mobilenum.map((e, i) => () => sendSmsRequest(i));
-    (async () => {
-      for (const request of requests) {
-        let index = requests.indexOf(request);
+  const onSubmit = () => {
+    setMessageFlags(Array(mobilenum.length).fill(null));
 
-        await request().then((e) => {
+    return Promise.all(
+      mobilenum.map(
+        async (e, i) =>
+          await sendSmsRequest(i).catch((e) => {
+            return {
+              error: true,
+              message: e.message,
+            };
+          })
+      )
+    ).then((e) => {
+      setLoader("submit");
+
+      (async () => {
+        for (const request of e) {
+          if (typeof request == "object") {
+            if (request.error) {
+              setLoader("");
+              message.error(request.message);
+              return;
+            }
+          }
+
+          let index = e.indexOf(request);
           setMessageFlags((_) => {
             _[index] = e;
             return _;
           });
-        });
-        if (index == requests.length - 1) {
+        }
+
+        if (messageFlags.filter((_) => _ == null || _ == false).length == 0) {
           setLoader("");
           message.success("SMS requests done");
+          setMobileNumer([]);
+          setResidents([]);
+          close();
+        } else {
+          message.error("There are some number that cannot be sent");
         }
+      })();
+
+      if (onSend != null) {
+        onSend();
       }
-    })();
-    if (onSend != null) {
-      onSend();
-    }
+    });
   };
 
   const searchName = async (keyword) => {
@@ -111,6 +166,8 @@ const SmsComposer = ({ open, close, onSend }) => {
       open={open}
       onCancel={() => {
         setResidents([]);
+        setMessageFlags([]);
+        setMobileNumer([]);
         close();
       }}
       title="SMS Composer"
@@ -122,7 +179,6 @@ const SmsComposer = ({ open, close, onSend }) => {
         options={["Residents", "Number Only"]}
         onChange={(e) => {
           setMode(e);
-          setSubmitted(false);
           setMobileNumer([]);
         }}
         value={mode}
@@ -224,7 +280,7 @@ const SmsComposer = ({ open, close, onSend }) => {
           />
         </>
       )}
-      {submitted ? (
+      {mobilenum.length > 0 ? (
         <List
           size="small"
           dataSource={mobilenum}
@@ -245,8 +301,10 @@ const SmsComposer = ({ open, close, onSend }) => {
                     <CloseOutlined />
                   </Typography.Text>
                 </Tooltip>
-              ) : (
+              ) : messageFlags[i] == "1" ? (
                 <Spin />
+              ) : (
+                <></>
               )}
             </List.Item>
           )}

@@ -49,7 +49,7 @@ let ComplaintSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["walk-in", "web"],
+      enum: ["walk-in", "web", "sms"],
       default: "walk-in",
     },
     description: String,

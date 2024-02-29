@@ -1,10 +1,19 @@
 let mongoose = require("mongoose");
 let jason = require("../../pages/assets/json/constant.json");
 
+// ! sent an sms
+// * heirachy of sms creation
+// * send an sms -> if success -> create model with date timestamp return by sms provider
+
+// ! receive an sms
+// * check if number exist on sms entries
+// * if exist, attach on convo, otherwise create new convo
+
 let SmsSchema = new mongoose.Schema(
   {
     originator: {
-      type: String,
+      type: String || mongoose.Schema.Types.ObjectId,
+      ref: "Admin",
     },
     message: {
       type: String,
@@ -20,12 +29,12 @@ let SmsSchema = new mongoose.Schema(
     number: {
       type: String,
     },
-    // status: {
-    //   type: String,
-    //   enum: ["disregard", "solved", "unsolved", "dismissed", "processed"],
-    // },
+    createdAt: {
+      type: Date,
+      required: true,
+    },
   },
-  { timestamps: true }
+  { timestamps: false }
 );
 
 SmsSchema.pre("validate", function (next) {

@@ -6,20 +6,18 @@ import { VscGraph } from "react-icons/vsc";
 import { FaUsers } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
 import { BsPersonFillLock, BsFillPrinterFill } from "react-icons/bs";
-import { PlusOutlined } from "@ant-design/icons";
+import { LiaSmsSolid } from "react-icons/lia";
 import { BiMessageRoundedError } from "react-icons/bi";
 
 import Residents from "../components/residents";
 import Dashboard from "../components/dashboard";
 import Admin from "../components/admins";
 import Complain from "../components/complain";
-
-import SmsComposer from "../components/sms_composer";
 import PrintForms from "../components/print_forms";
+import SMS from "../components/sms";
 
-const MyApp = ({ app_key }) => {
+const MyApp = ({ app_key, sms_key }) => {
   const [selectedKey, setSelectedKey] = useState("dashboard");
-  const [openComposer, setOpenComposer] = useState(false);
   const [openForms, setOpenForms] = useState(false);
   const selectedItemsStyle = {
     color: "#aaa",
@@ -34,10 +32,6 @@ const MyApp = ({ app_key }) => {
         <Sider
           selectedIndex={(e) => {
             switch (e.key) {
-              case "compose": {
-                setOpenComposer(true);
-                break;
-              }
               case "print_form": {
                 setOpenForms(true);
                 break;
@@ -86,10 +80,11 @@ const MyApp = ({ app_key }) => {
                   : { color: "#aaa" },
             },
             {
-              label: "Compose Message",
-              key: "compose",
-              icon: <PlusOutlined />,
-              style: { color: "#aaa" },
+              label: "SMS",
+              key: "sms",
+              icon: <LiaSmsSolid />,
+              style:
+                selectedKey == "sms" ? selectedItemsStyle : { color: "#aaa" },
             },
             {
               label: "Print Form",
@@ -148,16 +143,13 @@ const MyApp = ({ app_key }) => {
             {selectedKey == "residents" ? <Residents /> : null}
             {selectedKey == "admin" ? <Admin /> : null}
             {selectedKey == "complain" ? <Complain appKey={app_key} /> : null}
+            {selectedKey == "sms" ? <SMS sms_key={sms_key} /> : null}
           </Content>
         </Layout>
       </Layout>
 
       {/* ETC */}
-      <SmsComposer
-        open={openComposer}
-        close={() => setOpenComposer(false)}
-        onSend={() => {}}
-      />
+
       <PrintForms
         open={openForms}
         close={() => setOpenForms(false)}
@@ -168,7 +160,9 @@ const MyApp = ({ app_key }) => {
 };
 
 export async function getServerSideProps() {
-  return { props: { app_key: process.env.FILESTACK_KEY } };
+  return {
+    props: { app_key: process.env.FILESTACK_KEY, sms_key: process.env.SMS_KEY },
+  };
 }
 
 export default MyApp;
