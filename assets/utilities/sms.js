@@ -43,7 +43,7 @@ class SMS {
       );
 
       if (response.data.status == 200) {
-        new Promise.all(
+        Promise.all(
           response.data.data.map((e, i) => {
             return new Promise(async (resolve, reject) => {
               let res = await axios.get("/api/sms/is-registered-as-complain", {
