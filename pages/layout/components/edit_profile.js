@@ -11,7 +11,6 @@ const EditProfile = ({ openEditModal, setOpenEditModal }) => {
 
   const handleFinish = async (val) => {
     delete val.profilephoto;
-    console.log(val);
 
     if (Object.values(val).includes(undefined)) {
       message.error("Please fill empty field.");

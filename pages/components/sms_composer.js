@@ -72,8 +72,7 @@ const SmsComposer = ({ open, close, onSend }) => {
           let { data } = await axios.post("/api/sms/send-sms", {
             number,
             message: inputMsg,
-            originator: currentUser.name + " " + currentUser.lastname,
-            status: "processed",
+            originator: currentUser._id,
           });
 
           if (data.success) resolve(true);

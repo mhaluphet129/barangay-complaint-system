@@ -1,53 +1,40 @@
 let mongoose = require("mongoose");
-let jason = require("../../pages/assets/json/constant.json");
-
-// ! sent an sms
-// * heirachy of sms creation
-// * send an sms -> if success -> create model with date timestamp return by sms provider
-
-// ! receive an sms
-// * check if number exist on sms entries
-// * if exist, attach on convo, otherwise create new convo
+let { getKeyword } = require("../../assets/utilities/keyword_generator");
 
 let SmsSchema = new mongoose.Schema(
   {
     originator: {
-      type: String || mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Admin",
-    },
-    message: {
-      type: String,
-      required: true,
-    },
-    keywords: {
-      type: Array,
     },
     residentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Resident",
     },
-    number: {
+    message: {
       type: String,
-    },
-    createdAt: {
-      type: Date,
       required: true,
     },
+    number: {
+      type: String,
+      required: true,
+    },
+    keywords: Array,
+    toComplain: {
+      type: Boolean,
+      default: false,
+    },
+    type: {
+      type: String,
+      required: true,
+      enum: ["inbound", "outbound"],
+    },
   },
-  { timestamps: false }
+  { timestamps: true }
 );
 
 SmsSchema.pre("validate", function (next) {
-  const stopWords = [...jason.english_stop_word, ...jason.tagalog_stop_word];
-  const words = this.message
-    .replace(/[^\w\s]/gi, "")
-    .toLowerCase()
-    .split(/\s+/);
-  const filteredWords = words
-    .filter((word) => word.trim() !== "")
-    .filter((word) => !stopWords.includes(word));
-  const uniqueWords = [...new Set(filteredWords)];
-  this.keywords = uniqueWords;
+  this.keywords = getKeyword(this.message);
   next();
 });
 

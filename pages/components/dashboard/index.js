@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // icons
 import { Card, Col, Row, Skeleton } from "antd";
@@ -21,7 +21,8 @@ import {
   LineElement,
 } from "chart.js";
 
-import jason from "../../assets/json/constant.json";
+import jason from "../../../assets/json/constant.json";
+import axios from "axios";
 
 ChartJS.register(
   ArcElement,
@@ -34,41 +35,64 @@ ChartJS.register(
   LineElement
 );
 
-const Dashboard = () => {
-  const loadingFlag = true;
+const Dashboard = ({ setSelectedKey }) => {
+  const [dashboardData, setDashboardData] = useState({
+    smsCount: 0,
+    complainCount: 0,
+    residentsCount: 0,
+    adminCount: 0,
+  });
+  const [notLoading, setNotLoading] = useState(true);
 
-  let dashboardData = [
+  let dashboardDataValue = [
     {
       title: "SMS",
-      count: 100,
+      count: dashboardData.smsCount,
       color: "#00c0ef",
       icon: <IoChatbubblesSharp style={{ fontSize: 60, opacity: 0.4 }} />,
+      onClick: () => setSelectedKey("sms"),
     },
     {
       title: "Complaints",
-      count: 31,
+      count: dashboardData.complainCount,
       color: "#05a55a",
       icon: <FaFile style={{ fontSize: 60, opacity: 0.4 }} />,
+      onClick: () => setSelectedKey("complain"),
     },
     {
       title: "Residents",
-      count: 44,
+      count: dashboardData.residentsCount,
       color: "#f39c13",
       icon: <IoIosPersonAdd style={{ fontSize: 60, opacity: 0.4 }} />,
+      onClick: () => setSelectedKey("residents"),
     },
     {
       title: "Incharge",
-      count: 6,
+      count: dashboardData.adminCount,
       color: "#db4b38",
       icon: <MdAdminPanelSettings style={{ fontSize: 60, opacity: 0.4 }} />,
+      onClick: () => setSelectedKey("admin"),
     },
   ];
 
-  const mock = [];
+  useEffect(() => {
+    (async (_) => {
+      setNotLoading(false);
+      let res = await _.get("/api/admin/dashboard-data");
+
+      if (res.data.success) {
+        setNotLoading(true);
+        setDashboardData(res.data.data);
+      } else {
+        setNotLoading(true);
+      }
+    })(axios);
+  }, []);
+
   return (
     <>
       <Row gutter={[16, 16]}>
-        {dashboardData.map((e, i) => {
+        {dashboardDataValue.map((e, i) => {
           const [hovered, setHovered] = useState(false);
           return (
             <Col span={6} key={i}>
@@ -78,7 +102,7 @@ const Dashboard = () => {
               >
                 <Row style={{ margin: 10 }}>
                   <Col span={18}>
-                    {loadingFlag ? (
+                    {notLoading ? (
                       <div
                         style={{
                           display: "block",
@@ -100,7 +124,7 @@ const Dashboard = () => {
                         color: "#fff",
                       }}
                     >
-                      {loadingFlag ? e.title : <Skeleton.Button active />}
+                      {notLoading ? e.title : <Skeleton.Button active />}
                     </div>
                   </Col>
 
@@ -108,7 +132,7 @@ const Dashboard = () => {
                     span={6}
                     style={{ display: "flex", alignItems: "center" }}
                   >
-                    {loadingFlag ? (
+                    {notLoading ? (
                       e.icon
                     ) : (
                       <Skeleton.Node style={{ height: 65, width: 65 }} active />
@@ -128,8 +152,8 @@ const Dashboard = () => {
                   onMouseEnter={() => setHovered(true)}
                   onMouseLeave={() => setHovered(false)}
                 >
-                  {loadingFlag ? (
-                    <>
+                  {notLoading ? (
+                    <div onClick={e.onClick}>
                       <span
                         style={{
                           color: "#fff",
@@ -154,7 +178,7 @@ const Dashboard = () => {
                           style={{ width: 10, height: 10 }}
                         />
                       </span>
-                    </>
+                    </div>
                   ) : (
                     <Skeleton.Input active />
                   )}
@@ -180,7 +204,7 @@ const Dashboard = () => {
                 plugins: {
                   title: {
                     display: true,
-                    text: "SMS-Complaint status",
+                    text: "SMS Complaint status",
                     position: "top",
                     font: {
                       size: 20,

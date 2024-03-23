@@ -222,7 +222,13 @@ const Complain = ({ appKey }) => {
                       <Row>
                         <Col span={8}>
                           Complain by:{" "}
-                          {`${item?.residentId?.name} ${item?.residentId?.lastname} `}
+                          {item?.residentId ? (
+                            `${item?.residentId?.name} ${item?.residentId?.lastname}`
+                          ) : (
+                            <Typography.Text type="secondary" strong>
+                              N/A
+                            </Typography.Text>
+                          )}
                           <br />
                           Type:{" "}
                           {item?.type && (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input, Layout, Typography } from "antd";
 import { Sider, Header, Content } from "../layout";
 
@@ -15,16 +15,25 @@ import Admin from "../components/admins";
 import Complain from "../components/complain";
 import PrintForms from "../components/print_forms";
 import SMS from "../components/sms";
+import Cookies from "js-cookie";
 
 const MyApp = ({ app_key, sms_key }) => {
   const [selectedKey, setSelectedKey] = useState("dashboard");
   const [openForms, setOpenForms] = useState(false);
+  const [currentUser, setCurrentUser] = useState({});
   const selectedItemsStyle = {
     color: "#aaa",
     backgroundColor: "#202d3a",
     borderRadius: 0,
     borderLeft: "2px solid #3a96ff",
   };
+
+  useEffect(() => {
+    try {
+      const _ = Cookies.get("currentUser");
+      setCurrentUser(JSON.parse(_));
+    } catch {}
+  }, []);
 
   return (
     <>
@@ -63,13 +72,17 @@ const MyApp = ({ app_key, sms_key }) => {
                   ? selectedItemsStyle
                   : { color: "#aaa" },
             },
-            {
-              label: "Admin",
-              key: "admin",
-              icon: <BsPersonFillLock />,
-              style:
-                selectedKey == "admin" ? selectedItemsStyle : { color: "#aaa" },
-            },
+            currentUser && currentUser.role == "superadmin"
+              ? {
+                  label: "Admin",
+                  key: "admin",
+                  icon: <BsPersonFillLock />,
+                  style:
+                    selectedKey == "admin"
+                      ? selectedItemsStyle
+                      : { color: "#aaa" },
+                }
+              : null,
             {
               label: "Complains",
               key: "complain",
@@ -139,7 +152,9 @@ const MyApp = ({ app_key, sms_key }) => {
         <Layout>
           <Header app_key={app_key} />
           <Content selectedKey={selectedKey} setSelectedKey={setSelectedKey}>
-            {selectedKey == "dashboard" ? <Dashboard /> : null}
+            {selectedKey == "dashboard" ? (
+              <Dashboard setSelectedKey={setSelectedKey} />
+            ) : null}
             {selectedKey == "residents" ? <Residents /> : null}
             {selectedKey == "admin" ? <Admin /> : null}
             {selectedKey == "complain" ? <Complain appKey={app_key} /> : null}

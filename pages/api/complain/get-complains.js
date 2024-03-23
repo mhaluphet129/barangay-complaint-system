@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         },
       },
       {
-        $unwind: "$residentId",
+        $unwind: { path: "$residentId", preserveNullAndEmptyArrays: true },
       },
       {
         $addFields: {
@@ -52,20 +52,18 @@ export default async function handler(req, res) {
         $match: {
           $and: [
             {
-              ...(type == undefined
-                ? { $or: [{ type: "walk-in" }, { type: "web" }] }
-                : { type }),
+              ...(type == undefined ? {} : { type }),
             },
-            {
-              $or: [
-                { tempId: { $regex: re } },
-                { tempId1: { $regex: re } },
-                { "residentId.name": { $regex: re } },
-                { "lastname.name": { $regex: re } },
-                { fullName: { $regex: re } },
-                { respondentName: { $regex: re } },
-              ],
-            },
+            // {
+            //   $or: [
+            //     { tempId: { $regex: re } },
+            //     { tempId1: { $regex: re } },
+            //     { "residentId.name": { $regex: re } },
+            //     { "lastname.name": { $regex: re } },
+            //     { fullName: { $regex: re } },
+            //     { respondentName: { $regex: re } },
+            //   ],
+            // },
           ],
         },
       },
@@ -76,6 +74,7 @@ export default async function handler(req, res) {
         $limit: Number.parseInt(page),
       },
     ]);
+
     const doc2 = await Complain.aggregate([
       {
         $lookup: {

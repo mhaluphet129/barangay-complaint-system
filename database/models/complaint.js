@@ -16,12 +16,6 @@ let SettlementSchema = new mongoose.Schema(
 
 let ComplaintSchema = new mongoose.Schema(
   {
-    smsId: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Sms",
-      },
-    ],
     residentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Resident",
@@ -31,14 +25,8 @@ let ComplaintSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Admin",
     },
-    respondentName: {
-      type: String,
-      required: true,
-    },
-    respondentNumber: {
-      type: String,
-      required: true,
-    },
+    respondentName: String,
+    respondentNumber: String,
     isResponded: {
       type: Boolean,
       default: "false",
