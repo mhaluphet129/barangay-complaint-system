@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Calendar,
@@ -9,9 +9,6 @@ import {
   Modal,
   Row,
   Space,
-  Steps,
-  Table,
-  Tag,
   Tooltip,
   Typography,
   message,
@@ -19,9 +16,14 @@ import {
 import dayjs from "dayjs";
 import axios from "axios";
 
+import Conversation from "./conversation";
+
+// ! complain form outside should send a pin and starter sms based on format given
+
 const CompainViewer = ({ open, close, data, setData, refresh }) => {
   const [openCalendar, setOpenCalendar] = useState(false);
   const [modal, contextHolder] = Modal.useModal();
+  const [chatOpt, setChatOpt] = useState({ open: false });
   let _modal = null;
 
   return (
@@ -74,7 +76,7 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
         closable={false}
         width="100%"
         onCancel={close}
-        zIndex={1}
+        zIndex={999}
         centered
       >
         <Row gutter={[32, 32]}>
@@ -97,9 +99,15 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
               </Tooltip>
               <div>
                 Complainant Name:{" "}
-                <strong>
-                  {`${data?.residentId?.name} ${data?.residentId?.lastname}`}
-                </strong>
+                {data?.residentId ? (
+                  <strong>
+                    {`${data?.residentId?.name} ${data?.residentId?.lastname}`}
+                  </strong>
+                ) : (
+                  <Typography.Text type="secondary" strong>
+                    N/A
+                  </Typography.Text>
+                )}
               </div>
               <span>
                 Complain date:
@@ -177,55 +185,6 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
               Responded:{" "}
               <strong>{data?.isResponded ? "Responded" : "Not yet"}</strong>
             </span>
-
-            <Divider>
-              <Typography.Title
-                level={3}
-                style={{
-                  padding: 0,
-                  margin: 0,
-                }}
-              >
-                SMS
-              </Typography.Title>
-            </Divider>
-            <Table
-              style={{ height: "100%" }}
-              dataSource={data?.smsId}
-              pagination={false}
-              scroll={{
-                y: 200,
-              }}
-              columns={[
-                {
-                  title: "Message Content",
-                  render: (_, row) => (
-                    <Typography.Paragraph
-                      ellipsis={{
-                        rows: 2,
-                        expandable: true,
-                        symbol: "more",
-                      }}
-                    >
-                      {row?.message}
-                    </Typography.Paragraph>
-                  ),
-                },
-                {
-                  title: "type",
-                  align: "center",
-                  width: 120,
-                  render: (_, row) => <Tag color="blue">OUTBOUND</Tag>,
-                },
-                {
-                  title: "Created At",
-                  align: "center",
-                  width: 120,
-                  render: (_, row) =>
-                    dayjs(row?.createdAt).format("MMM DD, YYYY - hh:mm a"),
-                },
-              ]}
-            />
           </Col>
           <Col
             span={6}
@@ -306,6 +265,14 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
             <Button
               style={{ marginTop: 10 }}
               size="large"
+              block
+              onClick={() => setChatOpt({ open: true })}
+            >
+              Conversation
+            </Button>
+            <Button
+              style={{ marginTop: 10 }}
+              size="large"
               onClick={() => setOpenCalendar(true)}
               disabled
               block
@@ -314,31 +281,15 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
             </Button>
           </Col>
         </Row>
-        {/* <Steps
-      type="navigation"
-      size="small"
-      //   current={current}
-      //   onChange={onChange}
-      items={[
-        {
-          status: "finish",
-          title: "finish 1",
-        },
-        {
-          status: "finish",
-          title: "finish 2",
-        },
-        {
-          status: "process",
-          title: "current process",
-        },
-        {
-          status: "wait",
-          title: "wait",
-        },
-      ]}
-    /> */}
       </Modal>
+
+      {/* context */}
+      <Conversation
+        open={chatOpt.open}
+        close={() => setChatOpt(false)}
+        residentId={data?.residentId}
+        number={data?.respondentNumber}
+      />
     </>
   );
 };

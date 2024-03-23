@@ -60,7 +60,10 @@ const Complain = ({ appkey }) => {
     val.images = photos;
 
     (async (_) => {
-      let { data } = await _.post("/api/complain/new-complain", val);
+      let { data } = await _.post("/api/complain/new-complain", {
+        ...val,
+        template: "sms_to_respondent_1",
+      });
       if (data?.success) {
         message.success(data?.message ?? "Successfully Created.");
 
@@ -83,10 +86,10 @@ const Complain = ({ appkey }) => {
         id,
       }).then(({ data }) => {
         if (data?.success) {
-          console.log(data?.pin);
           alert(
             "for dev purposes, the pin is can be seen in console, please check."
           );
+          console.log(data.pin);
           message.success(
             data?.message ?? "Code is sent to resident phone number."
           );

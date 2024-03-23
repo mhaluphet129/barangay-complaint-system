@@ -1,21 +1,24 @@
 import dbConnect from "../../../database/dbConnect";
-import Admin from "../../../database/models/admin";
+import Complain from "../../../database/models/complaint";
 
 export default async function handler(req, res) {
   await dbConnect();
 
   if (req.method != "GET") throw Error("Request Method is not acceptable");
 
-  return await Admin.find({ role: "admin" })
-    .then((doc) => {
-      res.json({
+  let { number } = req.query;
+
+  return await Complain.findOne({ respondentNumber: number, type: "sms" })
+    .then((e) => {
+      return res.json({
         success: true,
-        admins: doc,
+        message: "Sent Successfully",
+        isRegistered: e != null,
       });
     })
     .catch((e) => {
       console.log(e);
-      res.json({
+      return res.json({
         success: false,
         message: "Error in the Server.",
       });

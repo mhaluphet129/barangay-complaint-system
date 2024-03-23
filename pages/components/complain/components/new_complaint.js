@@ -49,7 +49,10 @@ const NewComplain = ({ open, close, appkey }) => {
     val.images = photos;
 
     (async (_) => {
-      let { data } = await _.post("/api/complain/new-complain", val);
+      let { data } = await _.post("/api/complain/new-complain", {
+        ...val,
+        template: "sms_to_respondent_1",
+      });
       if (data?.success) {
         message.success(data?.message ?? "Successfully Created.");
         close();

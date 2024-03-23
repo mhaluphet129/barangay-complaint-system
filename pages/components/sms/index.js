@@ -1,12 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, message, Tag, Tabs, Space, Tooltip } from "antd";
+import {
+  Table,
+  Button,
+  message,
+  Tag,
+  Tabs,
+  Space,
+  Tooltip,
+  Popconfirm,
+  Typography,
+} from "antd";
 import dayjs from "dayjs";
-import axios from "axios";
+import Cookies from "js-cookie";
 
-import { PlusOutlined, EyeOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  CloseOutlined,
+  CheckOutlined,
+  AppstoreAddOutlined,
+} from "@ant-design/icons";
 
 import SmsComposer from "../sms_composer";
-import SMSService from "@/pages/assets/utilities/sms";
+import SMSService from "@/assets/utilities/sms";
+import { getKeyword } from "@/assets/utilities/keyword_generator";
+import SMSViewer from "./components/sms_viewer";
+
+// TODO: Add filter
+// Todo: fix registered as complai
 
 const SMS = ({ sms_key }) => {
   const [openNewSms, setOpenNewSms] = useState(false);
@@ -15,7 +35,10 @@ const SMS = ({ sms_key }) => {
   const [sms, setSms] = useState([]);
   const [inSms, setInSms] = useState([]);
   const [selectedTabs, setSelectedTabs] = useState("outgoing");
+  const [smsViewerOpt, setSmsViewerOpt] = useState({ open: false, data: null });
+
   const _ = new SMSService(sms_key);
+  let currentUser = Cookies.get("currentUser");
 
   const topKeyword = (msg) => {
     if (msg.length > 3) {
@@ -41,35 +64,35 @@ const SMS = ({ sms_key }) => {
 
   const columns = [
     {
-      title: "Sender",
-      render: (_, row) =>
-        typeof row?.originator == "object"
-          ? `${row?.originator?.name} ${row?.originator?.lastname}`
-          : row?.originator,
+      title: "Sent to",
+      dataIndex: "phone",
     },
     {
-      title: "Sent to",
-      dataIndex: "number",
+      title: "Message",
+      width: 300,
+      dataIndex: "message",
     },
     {
       title: "Keywords",
-      render: (_, row) => topKeyword(row?.keywords),
+      dataIndex: "message",
+      render: (_) => topKeyword(getKeyword(_)),
     },
     {
       title: "Added Date",
-      render: (_, row) => dayjs(row?.createdAt).format("MMM DD, YYYY"),
+      dataIndex: "timestamp",
+      render: (_) => dayjs(new Date(_ * 1000)).format("MMM DD, YYYY"),
     },
-    {
-      title: "Functions",
-      align: "center",
-      render: (_, row) => (
-        <Space>
-          <Tooltip title="view full">
-            <Button icon={<EyeOutlined />} />
-          </Tooltip>
-        </Space>
-      ),
-    },
+    // {
+    //   title: "Functions",
+    //   align: "center",
+    //   render: (_, row) => (
+    //     <Space>
+    //       <Tooltip title="view full">
+    //         <Button icon={<EyeOutlined />} />
+    //       </Tooltip>
+    //     </Space>
+    //   ),
+    // },
   ];
 
   const columns2 = [
@@ -80,11 +103,83 @@ const SMS = ({ sms_key }) => {
     {
       title: "Message",
       dataIndex: "message",
+      render: (_) => (
+        <Typography.Paragraph
+          style={{
+            maxWidth: 300,
+          }}
+          ellipsis={{
+            rows: 1,
+          }}
+        >
+          {_}
+        </Typography.Paragraph>
+      ),
+    },
+    {
+      title: "Registered as Complain",
+      dataIndex: "toComplain",
+      align: "center",
+      render: (_) =>
+        _ ? (
+          <CheckOutlined
+            style={{
+              color: "#5cb85c",
+            }}
+          />
+        ) : (
+          <CloseOutlined
+            style={{
+              color: "#f00",
+            }}
+          />
+        ),
     },
     {
       title: "Date Received",
       dataIndex: "timestamp",
       render: (_) => dayjs.unix(_).format("MMM DD, YYYY - hh:mma"),
+    },
+    {
+      title: "Functions",
+      align: "center",
+      render: (q, row) => (
+        <Space>
+          <Tooltip title="Register as Complain">
+            <Popconfirm
+              title="Confirmation"
+              description="You are about to register this sms to the system"
+              okText="Confirm"
+              okButtonProps={{
+                size: "large",
+              }}
+              cancelButtonProps={{
+                size: "large",
+              }}
+              onConfirm={async (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+
+                await _.toComplain(q, JSON.parse(currentUser)._id).then((e) => {
+                  if (e.success) setTrigger(trigger + 1);
+                });
+              }}
+              onCancel={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+              }}
+            >
+              <Button
+                icon={<AppstoreAddOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+              />
+            </Popconfirm>
+          </Tooltip>
+        </Space>
+      ),
     },
   ];
 
@@ -104,25 +199,26 @@ const SMS = ({ sms_key }) => {
     </div>
   );
 
-  const fetchOutgoingSMS = () => {
+  const fetchOutgoingSMS = (page) => {
     setLoading("fetch");
-    (async (_) => {
-      let { data } = await axios.get("/api/sms/get-sms");
-      if (data.success) {
-        setSms(data.sms);
+
+    (async (q) => {
+      let { success, data } = await q.getReceivedSms({ page });
+
+      if (success) {
+        setSms(data);
         setLoading("");
       } else {
         message.error(data?.message ?? "Error in the server.");
         setLoading("");
       }
-    })(axios);
+    })(_);
   };
 
   const fetchIngoingSMS = (page) => {
     setLoading("fetch");
     (async (q) => {
-      let { success, data } = await q.getSms({ page });
-
+      let { success, data } = await q.getSentSms({ page });
       if (success) {
         setInSms(data);
         setLoading("");
@@ -131,9 +227,13 @@ const SMS = ({ sms_key }) => {
   };
 
   useEffect(() => {
-    if (selectedTabs == "outgoing") fetchOutgoingSMS();
+    if (selectedTabs == "outgoing") fetchOutgoingSMS(0);
     else fetchIngoingSMS(0);
   }, [trigger, selectedTabs]);
+
+  useEffect(() => {
+    currentUser = JSON.parse(currentUser);
+  }, [currentUser]);
 
   return (
     <>
@@ -166,6 +266,11 @@ const SMS = ({ sms_key }) => {
                 loading={loading == "fetch"}
                 dataSource={inSms}
                 rowKey={(e) => e._id}
+                onRow={(_) => {
+                  return {
+                    onClick: () => setSmsViewerOpt({ open: true, data: _ }),
+                  };
+                }}
               />
             ),
           },
@@ -177,6 +282,11 @@ const SMS = ({ sms_key }) => {
         open={openNewSms}
         close={() => setOpenNewSms(false)}
         onSend={() => setTrigger(trigger + 1)}
+      />
+      <SMSViewer
+        open={smsViewerOpt.open}
+        close={() => setSmsViewerOpt({ open: false, data: null })}
+        sms={smsViewerOpt.data}
       />
     </>
   );
