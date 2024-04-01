@@ -3,7 +3,7 @@ import Complaint from "@/database/models/complaint";
 import SMS from "@/database/models/sms";
 import jason from "@/assets/json/constant.json";
 
-// TODO: add sms here
+// TODO: add sms here if there's is a respondent numbet and name
 
 export default async function handler(req, res) {
   await dbConnect();

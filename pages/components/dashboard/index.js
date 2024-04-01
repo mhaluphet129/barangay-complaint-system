@@ -43,6 +43,7 @@ const Dashboard = ({ setSelectedKey }) => {
     adminCount: 0,
   });
   const [notLoading, setNotLoading] = useState(true);
+  const [pieData, setPieData] = useState([]);
 
   let dashboardDataValue = [
     {
@@ -75,6 +76,17 @@ const Dashboard = ({ setSelectedKey }) => {
     },
   ];
 
+  const parsedPieData = () => {
+    ["processed", "solved", "unsolved", "disregard", "dismissed"];
+    let process = pieData?.filter((e) => e._id == "processed")[0]?.count ?? 0;
+    let solve = pieData?.filter((e) => e._id == "solved")[0]?.count ?? 0;
+    let unsolve = pieData?.filter((e) => e._id == "unsolved")[0]?.count ?? 0;
+    let disregard = pieData?.filter((e) => e._id == "disregard")[0]?.count ?? 0;
+    let dismissed = pieData?.filter((e) => e._id == "dismissed")[0]?.count ?? 0;
+
+    return [process, solve, unsolve, disregard, dismissed];
+  };
+
   useEffect(() => {
     (async (_) => {
       setNotLoading(false);
@@ -83,6 +95,7 @@ const Dashboard = ({ setSelectedKey }) => {
       if (res.data.success) {
         setNotLoading(true);
         setDashboardData(res.data.data);
+        setPieData(res.data.data.pieData);
       } else {
         setNotLoading(true);
       }
@@ -204,7 +217,7 @@ const Dashboard = ({ setSelectedKey }) => {
                 plugins: {
                   title: {
                     display: true,
-                    text: "SMS Complaint status",
+                    text: "Complaint status",
                     position: "top",
                     font: {
                       size: 20,
@@ -219,16 +232,16 @@ const Dashboard = ({ setSelectedKey }) => {
               }}
               data={{
                 labels: [
-                  "SMS-disregarded",
-                  "complaints_solved",
-                  "complaints_unsolved",
-                  "complaints_dismissed",
-                  "complaints_processed",
+                  "Disregarded",
+                  "Solved",
+                  "Unsolved",
+                  "Dismissed",
+                  "Processed",
                 ],
                 datasets: [
                   {
                     label: "count: ",
-                    data: [1, 2, 3, 4],
+                    data: parsedPieData(),
                     backgroundColor: [
                       "rgba(136,28,29)",
                       "rgba(52,125,34)",

@@ -3,6 +3,7 @@ import SMS from "@/database/models/sms";
 import Complain from "@/database/models/complaint";
 import Resident from "@/database/models/resident";
 import Admin from "@/database/models/admin";
+import Complaint from "@/database/models/complaint";
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -17,7 +18,21 @@ export default async function handler(req, res) {
     smsCount = await SMS.countDocuments();
     complainCount = await Complain.countDocuments();
     residentsCount = await Resident.countDocuments();
-    adminCount = await Admin.countDocuments();
+    adminCount = await Admin.countDocuments({ role: "admin" });
+
+    let pieData = await Complaint.aggregate([
+      {
+        $project: {
+          lastStatus: { $arrayElemAt: ["$settlement", -1] },
+        },
+      },
+      {
+        $group: {
+          _id: "$lastStatus.type",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
 
     return res.json({
       success: true,
@@ -26,6 +41,7 @@ export default async function handler(req, res) {
         complainCount,
         residentsCount,
         adminCount,
+        pieData,
       },
     });
   } catch (e) {

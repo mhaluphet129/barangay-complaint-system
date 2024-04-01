@@ -54,16 +54,16 @@ export default async function handler(req, res) {
             {
               ...(type == undefined ? {} : { type }),
             },
-            // {
-            //   $or: [
-            //     { tempId: { $regex: re } },
-            //     { tempId1: { $regex: re } },
-            //     { "residentId.name": { $regex: re } },
-            //     { "lastname.name": { $regex: re } },
-            //     { fullName: { $regex: re } },
-            //     { respondentName: { $regex: re } },
-            //   ],
-            // },
+            {
+              $or: [
+                { tempId: { $regex: re } },
+                { tempId1: { $regex: re } },
+                { "residentId.name": { $regex: re } },
+                { "lastname.name": { $regex: re } },
+                { fullName: { $regex: re } },
+                { respondentName: { $regex: re } },
+              ],
+            },
           ],
         },
       },

@@ -15,6 +15,7 @@ class SMS {
           message,
         },
       });
+
       if (response.data.status == 200) {
         resolve({
           success: true,
@@ -108,8 +109,8 @@ class SMS {
   }
 
   async toComplain(sms, inchargeId) {
-    sms.type = "inbound";
-    sms.originator = inchargeId;
+    // sms.type = "inbound";
+    // sms.originator = inchargeId;
     // {
     //   "api": Boolean,
     //   "device": Number,
@@ -120,28 +121,16 @@ class SMS {
     //   "timestamp": Number
     // }
     return await axios
-      .post("/api/sms/create-sms", sms)
-      .then(async (response) => {
-        if (response.data?.success) {
-          // create a complain
-          return await axios
-            .post("/api/complain/new-complain", {
-              inchargeId,
-              isResponded: true,
-              respondentNumber: sms.phone,
-            })
-            .then((e) => {
-              message.success("Successfully registered as complain");
-              return {
-                success: true,
-                sms: response.data,
-              };
-            });
-        } else {
-          return {
-            success: false,
-          };
-        }
+      .post("/api/complain/new-complain", {
+        inchargeId,
+        isResponded: false,
+        complainerNumber: sms.number,
+      })
+      .then((e) => {
+        message.success("Successfully registered as complain");
+        return {
+          success: true,
+        };
       });
   }
 }

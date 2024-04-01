@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
   if (req.method != "GET") throw Error("Request Method is not acceptable");
 
-  return await SMS.find()
+  return await SMS.find({ type: req.query.type })
     .then((e) => {
       return res.json({
         success: true,

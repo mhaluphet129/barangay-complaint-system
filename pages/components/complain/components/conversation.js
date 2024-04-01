@@ -1,22 +1,123 @@
 import React, { useEffect, useState } from "react";
-import { Button, Drawer, Input, Spin, Typography, message } from "antd";
+import {
+  Button,
+  Drawer,
+  Empty,
+  Input,
+  Segmented,
+  Spin,
+  Typography,
+  message,
+} from "antd";
 import { SendOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const Conversation = ({ open, close, residentId, number }) => {
+const Conversation = ({
+  open,
+  close,
+  residentId,
+  complainerNumber,
+  complainantName,
+  complainantNumber,
+  complainId,
+}) => {
   const [chat, setChat] = useState([]);
   const [fetching, setFetching] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
-  const [currentNumber, setCurrentNumber] = useState("");
   const [text, setText] = useState("");
   const [trigger, setTrigger] = useState(0);
+  const [isSending, setIsSending] = useState(false);
+  const [selectedTab, setSelectedTab] = useState("Complainer");
+  const [_complainantNumber, setComplainantNumber] = useState("");
+  const [complainantOpt, setComplainantOpt] = useState(false);
+  const [inputComplainantNumber, setInputComplainantNumber] = useState("");
+
+  const getTitle = () => {
+    if (selectedTab == "Complainer") {
+      if (residentId) {
+        return residentId?.name + " " + residentId?.lastname;
+      } else return residentId?.phoneNumber;
+    } else {
+      if (complainantName) return complainantName;
+      else return complainantNumber;
+    }
+  };
+
+  const handleEmptyChat = () => {
+    if (selectedTab == "Complainant") {
+      return !["", "Not Set"].includes(_complainantNumber) ? (
+        <Typography.Title
+          type="secondary"
+          level={5}
+          italic
+          style={{ textAlign: "center" }}
+        >
+          You can now message the Complainer
+        </Typography.Title>
+      ) : complainantOpt ? (
+        <div
+          style={{
+            display: "flex",
+          }}
+        >
+          <Input
+            placeholder="Enter Phone Number starts with 639"
+            maxLength={12}
+            onChange={(e) => setInputComplainantNumber(e.target.value)}
+            addonAfter={
+              <span
+                style={{ cursor: "pointer" }}
+                onClick={handleSetComplainantNumber}
+              >
+                SET
+              </span>
+            }
+          />
+        </div>
+      ) : (
+        <Empty
+          description={
+            <Typography.Text type="secondary" italic>
+              Complainant Number is not set
+            </Typography.Text>
+          }
+        >
+          <Button type="primary" onClick={() => setComplainantOpt(true)}>
+            Set Complainant Number to Begin Conversation
+          </Button>
+        </Empty>
+      );
+    } else return <>HIMALA</>;
+  };
+
+  const handleSetComplainantNumber = () => {
+    if (!inputComplainantNumber.startsWith("639")) {
+      message.warning("Phone Number should start in 639");
+      return;
+    }
+    (async (_) => {
+      let { data } = await _.post("/api/complain/update-complainant-number", {
+        id: complainId,
+        number: inputComplainantNumber,
+      });
+
+      if (data?.success) {
+        message.success(data?.message ?? "Success");
+        setComplainantNumber(inputComplainantNumber);
+      } else {
+        message.error(data?.message);
+      }
+    })(axios);
+  };
 
   const handleSend = () => {
+    setIsSending(true);
     (async (_) => {
       let res = await _.post("/api/sms/send-sms", {
-        number: currentNumber,
+        number:
+          selectedTab == "Complainer" ? complainerNumber : _complainantNumber,
         message: text,
         originator: currentUser._id,
         ...(residentId ? { residentId } : {}),
@@ -26,31 +127,37 @@ const Conversation = ({ open, close, residentId, number }) => {
 
       if (res.data.success) {
         setTrigger(trigger + 1);
+        setText("");
+        setIsSending(false);
       } else {
         message.error(res.data?.message ?? "Error in the server");
+        setIsSending(false);
       }
     })(axios);
   };
 
   useEffect(() => {
     if (open) {
-      if (residentId) {
-      } else setCurrentNumber(number);
-
       (async (_) => {
         setFetching(true);
 
         let res = await _.get("/api/sms/get-sms-specific", {
-          params: residentId
-            ? {
-                residentId,
-                adminId: currentUser._id,
-              }
-            : {
-                adminId: currentUser._id,
-                number,
-              },
+          params:
+            selectedTab == "Complainer" && residentId
+              ? {
+                  residentNumber: residentId.phoneNumber,
+                  residentId: residentId._id,
+                  adminId: currentUser._id,
+                }
+              : {
+                  adminId: currentUser._id,
+                  number:
+                    selectedTab == "Complainer"
+                      ? complainerNumber
+                      : complainantNumber,
+                },
         });
+
         if (res.data?.success ?? false) {
           setFetching(false);
           setChat(res.data?.sms ?? []);
@@ -59,14 +166,37 @@ const Conversation = ({ open, close, residentId, number }) => {
         }
       })(axios);
     }
-  }, [open, trigger]);
+
+    setComplainantNumber(
+      [null, undefined].includes(complainantNumber)
+        ? "Not Set"
+        : complainantNumber
+    );
+  }, [open, trigger, selectedTab]);
 
   useEffect(() => {
     setCurrentUser(JSON.parse(Cookies.get("currentUser")));
   }, []);
 
   return (
-    <Drawer open={open} onClose={close} width="35%" title={currentNumber}>
+    <Drawer
+      open={open}
+      onClose={close}
+      width="35%"
+      title={getTitle()}
+      extra={
+        <Segmented
+          options={["Complainer", "Complainant"]}
+          onChange={(e) => setSelectedTab(e)}
+          style={{ padding: 5 }}
+        />
+      }
+      styles={{
+        body: {
+          overflow: "hidden",
+        },
+      }}
+    >
       <div
         style={{
           width: "100%",
@@ -75,8 +205,10 @@ const Conversation = ({ open, close, residentId, number }) => {
           borderRadius: 5,
           marginBottom: 10,
           padding: 10,
-          display: "flex",
-          flexDirection: "column-reverse",
+          // display: "flex",
+          justifyContent: "flex-end",
+          flexDirection: "column",
+          overflow: "scroll",
         }}
       >
         {fetching ? (
@@ -86,7 +218,7 @@ const Conversation = ({ open, close, residentId, number }) => {
             <ChatBubble type={e.type} message={e.message} date={e.createdAt} />
           ))
         ) : (
-          "No Message"
+          handleEmptyChat()
         )}
       </div>
       <div
@@ -99,6 +231,11 @@ const Conversation = ({ open, close, residentId, number }) => {
           placeholder="Write something...."
           value={text}
           onChange={(e) => setText(e.target.value)}
+          disabled={
+            chat.length == 0 &&
+            selectedTab == "Complainant" &&
+            [null, undefined, "Not Set"].includes(_complainantNumber)
+          }
         />
         <Button
           size="large"
@@ -106,7 +243,12 @@ const Conversation = ({ open, close, residentId, number }) => {
           icon={<SendOutlined />}
           type="primary"
           onClick={handleSend}
-          disabled={text == ""}
+          disabled={
+            (text == "" || chat.length == 0) &&
+            selectedTab == "Complainant" &&
+            [null, undefined, "Not Set"].includes(_complainantNumber)
+          }
+          loading={isSending}
           ghost
         />
       </div>
@@ -144,7 +286,7 @@ const ChatBubble = ({ type, message, date }) => {
           fontSize: "0.95em",
         }}
       >
-        {dayjs(date).format("MMM DD YYYY hh:mma")}
+        {dayjs(date).format("MMM DD 'YY hh:mma")}
       </Typography.Text>
     </div>
   );

@@ -7,9 +7,7 @@ const SMSViewer = ({ open, close, sms }) => {
     <Modal open={open} onCancel={close} title={sms?.phone} footer={null}>
       <Typography.Text type="secondary">
         Received at{" "}
-        {dayjs(new Date(sms?.timestamp * 1000)).format(
-          "MMMM DD, YYYY - hh:mma"
-        )}
+        {dayjs(new Date(sms?.createdAt)).format("MMMM DD 'YY - hh:mma")}
       </Typography.Text>
       <br />
       <br />

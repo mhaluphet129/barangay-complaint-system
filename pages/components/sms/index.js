@@ -24,6 +24,7 @@ import SmsComposer from "../sms_composer";
 import SMSService from "@/assets/utilities/sms";
 import { getKeyword } from "@/assets/utilities/keyword_generator";
 import SMSViewer from "./components/sms_viewer";
+import axios from "axios";
 
 // TODO: Add filter
 // Todo: fix registered as complai
@@ -33,8 +34,7 @@ const SMS = ({ sms_key }) => {
   const [trigger, setTrigger] = useState(0);
   const [loading, setLoading] = useState("");
   const [sms, setSms] = useState([]);
-  const [inSms, setInSms] = useState([]);
-  const [selectedTabs, setSelectedTabs] = useState("outgoing");
+  const [selectedTabs, setSelectedTabs] = useState("inbound");
   const [smsViewerOpt, setSmsViewerOpt] = useState({ open: false, data: null });
 
   const _ = new SMSService(sms_key);
@@ -65,7 +65,7 @@ const SMS = ({ sms_key }) => {
   const columns = [
     {
       title: "Sent to",
-      dataIndex: "phone",
+      dataIndex: "number",
     },
     {
       title: "Message",
@@ -79,8 +79,8 @@ const SMS = ({ sms_key }) => {
     },
     {
       title: "Added Date",
-      dataIndex: "timestamp",
-      render: (_) => dayjs(new Date(_ * 1000)).format("MMM DD, YYYY"),
+      dataIndex: "createdAt",
+      render: (_) => dayjs(_).format("MMM DD, YYYY hh:mma"),
     },
     // {
     //   title: "Functions",
@@ -98,7 +98,8 @@ const SMS = ({ sms_key }) => {
   const columns2 = [
     {
       title: "Number",
-      dataIndex: "phone",
+      dataIndex: "number",
+      render: (_) => `+${_}`,
     },
     {
       title: "Message",
@@ -119,6 +120,7 @@ const SMS = ({ sms_key }) => {
     {
       title: "Registered as Complain",
       dataIndex: "toComplain",
+      width: 100,
       align: "center",
       render: (_) =>
         _ ? (
@@ -137,8 +139,8 @@ const SMS = ({ sms_key }) => {
     },
     {
       title: "Date Received",
-      dataIndex: "timestamp",
-      render: (_) => dayjs.unix(_).format("MMM DD, YYYY - hh:mma"),
+      dataIndex: "createdAt",
+      render: (_) => dayjs(_).format("MMM DD, YYYY hh:mma"),
     },
     {
       title: "Functions",
@@ -199,36 +201,26 @@ const SMS = ({ sms_key }) => {
     </div>
   );
 
-  const fetchOutgoingSMS = (page) => {
+  const fetchSms = (page, type) => {
     setLoading("fetch");
-
     (async (q) => {
-      let { success, data } = await q.getReceivedSms({ page });
-
-      if (success) {
-        setSms(data);
+      let res = await q.get("/api/sms/get-sms", {
+        params: {
+          type,
+        },
+      });
+      if (res.data.success) {
+        setSms(res.data.sms);
         setLoading("");
       } else {
         message.error(data?.message ?? "Error in the server.");
         setLoading("");
       }
-    })(_);
-  };
-
-  const fetchIngoingSMS = (page) => {
-    setLoading("fetch");
-    (async (q) => {
-      let { success, data } = await q.getSentSms({ page });
-      if (success) {
-        setInSms(data);
-        setLoading("");
-      } else setLoading("");
-    })(_);
+    })(axios);
   };
 
   useEffect(() => {
-    if (selectedTabs == "outgoing") fetchOutgoingSMS(0);
-    else fetchIngoingSMS(0);
+    fetchSms(0, selectedTabs);
   }, [trigger, selectedTabs]);
 
   useEffect(() => {
@@ -243,8 +235,26 @@ const SMS = ({ sms_key }) => {
         activeKey={selectedTabs}
         items={[
           {
-            label: "Outgoing",
-            key: "outgoing",
+            label: "INGOING",
+            key: "inbound",
+            children: (
+              <Table
+                columns={columns2}
+                style={{ borderRadius: 0 }}
+                loading={loading == "fetch"}
+                dataSource={sms}
+                rowKey={(e) => e._id}
+                onRow={(_) => {
+                  return {
+                    onClick: () => setSmsViewerOpt({ open: true, data: _ }),
+                  };
+                }}
+              />
+            ),
+          },
+          {
+            label: "OUTGOING",
+            key: "outbound",
             children: (
               <Table
                 title={tableHeader}
@@ -253,24 +263,6 @@ const SMS = ({ sms_key }) => {
                 loading={loading == "fetch"}
                 dataSource={sms}
                 rowKey={(e) => e._id}
-              />
-            ),
-          },
-          {
-            label: "Ingoing",
-            key: "ingoing",
-            children: (
-              <Table
-                columns={columns2}
-                style={{ borderRadius: 0 }}
-                loading={loading == "fetch"}
-                dataSource={inSms}
-                rowKey={(e) => e._id}
-                onRow={(_) => {
-                  return {
-                    onClick: () => setSmsViewerOpt({ open: true, data: _ }),
-                  };
-                }}
               />
             ),
           },

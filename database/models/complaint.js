@@ -27,6 +27,8 @@ let ComplaintSchema = new mongoose.Schema(
     },
     respondentName: String,
     respondentNumber: String,
+    // temp number from inbound sms (no resident, no respondent)
+    complainerNumber: String,
     isResponded: {
       type: Boolean,
       default: "false",

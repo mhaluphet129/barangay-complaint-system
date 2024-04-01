@@ -14,10 +14,7 @@ export default async function handler(req, res) {
   return await sms
     .sendMessage(number, message)
     .then(async (e) => {
-      return await Sms({
-        ...req.body,
-        createdAt: new Data(e.data?.timestamp),
-      })
+      return await Sms({ ...req.body, type: "outbound" })
         .save()
         .then(() => {
           return res.json({
@@ -26,16 +23,18 @@ export default async function handler(req, res) {
           });
         })
         .catch((e) => {
+          console.log(e);
           return res.json({
             success: false,
-            message: "Error in the Server.",
+            message: "Phone SMS Service not activated",
           });
         });
     })
     .catch((e) => {
+      console.log(e);
       return res.json({
         success: false,
-        message: e.message,
+        message: e?.message ?? "Error",
       });
     });
 }

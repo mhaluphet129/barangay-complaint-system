@@ -17,13 +17,21 @@ import dayjs from "dayjs";
 import axios from "axios";
 
 import Conversation from "./conversation";
+import NewComplain from "./new_complaint";
+import SettlementViewer from "./settlement_viewer";
 
 // ! complain form outside should send a pin and starter sms based on format given
 
-const CompainViewer = ({ open, close, data, setData, refresh }) => {
+const ComplainViewer = ({ open, close, data, setData, refresh }) => {
   const [openCalendar, setOpenCalendar] = useState(false);
   const [modal, contextHolder] = Modal.useModal();
   const [chatOpt, setChatOpt] = useState({ open: false });
+  const [complainOpt, setComplainOpt] = useState({ open: false, data: null });
+  const [settlementOpt, setSettlementOpt] = useState({
+    open: false,
+    data: null,
+    id: null,
+  });
   let _modal = null;
 
   return (
@@ -87,7 +95,8 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
                   Complainant
                 </Typography.Title>
               </Divider>
-              <Tooltip title="complete complain id">
+              <Tooltip title="Complain ID">
+                <span style={{ marginRight: 5 }}>id:</span>
                 <Typography.Link
                   onClick={() => {
                     navigator.clipboard.writeText(data?._id);
@@ -104,16 +113,14 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
                     {`${data?.residentId?.name} ${data?.residentId?.lastname}`}
                   </strong>
                 ) : (
-                  <Typography.Text type="secondary" strong>
-                    N/A
+                  <Typography.Text type="secondary" italic>
+                    Not Yet
                   </Typography.Text>
                 )}
               </div>
               <span>
-                Complain date:
-                <strong>
-                  {dayjs(data?.createdAt).format("MMMM DD, YYYY")}
-                </strong>
+                Complain date:{" "}
+                <strong>{dayjs(data?.createdAt).format("MMMM DD 'YY")}</strong>
               </span>
               <span>
                 Type of Complain:{" "}
@@ -169,21 +176,44 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
                 </Typography.Title>
               </Divider>
               <Typography.Title
-                level={4}
+                level={5}
                 style={{
                   padding: 0,
                   margin: 0,
                 }}
               >
-                {data?.respondentName}
+                Respondent Name:{" "}
+                {data?.respondentName ?? (
+                  <Typography.Text type="secondary" italic>
+                    Not Yet
+                  </Typography.Text>
+                )}
               </Typography.Title>
-              <Typography.Text type="secondary">
-                {data?.respondentNumber}
-              </Typography.Text>
+
+              <Typography.Title
+                level={5}
+                style={{
+                  padding: 0,
+                  margin: 0,
+                }}
+              >
+                Respondent Number:{" "}
+                {data?.respondentNumber ?? (
+                  <Typography.Text type="secondary" italic>
+                    Not Yet
+                  </Typography.Text>
+                )}
+              </Typography.Title>
             </div>
             <span>
               Responded:{" "}
-              <strong>{data?.isResponded ? "Responded" : "Not yet"}</strong>
+              {data?.isResponded ? (
+                <strong> Responded </strong>
+              ) : (
+                <Typography.Text type="secondary" italic>
+                  Not yet
+                </Typography.Text>
+              )}
             </span>
           </Col>
           <Col
@@ -214,7 +244,7 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
                     width: 370,
                     centered: true,
                     maskClosable: true,
-                    zIndex: 2,
+                    zIndex: 9999,
                     footer: [
                       <Space
                         style={{
@@ -259,7 +289,18 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
                 Mark Responded
               </Button>
             )}
-            <Button style={{ marginTop: 10 }} size="large" block>
+            <Button
+              style={{ marginTop: 10 }}
+              size="large"
+              onClick={() =>
+                setSettlementOpt({
+                  open: true,
+                  data: data.settlement,
+                  id: data._id,
+                })
+              }
+              block
+            >
               View Settlement
             </Button>
             <Button
@@ -270,7 +311,17 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
             >
               Conversation
             </Button>
-            <Button
+            {data?.type && data?.type == "sms" && (
+              <Button
+                style={{ marginTop: 10 }}
+                size="large"
+                onClick={() => setComplainOpt({ open: true, data })}
+                block
+              >
+                UPDATE
+              </Button>
+            )}
+            {/* <Button
               style={{ marginTop: 10 }}
               size="large"
               onClick={() => setOpenCalendar(true)}
@@ -278,7 +329,7 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
               block
             >
               Set Calendar
-            </Button>
+            </Button> */}
           </Col>
         </Row>
       </Modal>
@@ -288,10 +339,46 @@ const CompainViewer = ({ open, close, data, setData, refresh }) => {
         open={chatOpt.open}
         close={() => setChatOpt(false)}
         residentId={data?.residentId}
-        number={data?.respondentNumber}
+        complainerNumber={
+          typeof data?.residentId == "object"
+            ? data?.residentId?.phoneNumber
+            : data?.complainerNumber
+        }
+        complainantName={data?.respondentName}
+        complainantNumber={data?.respondentNumber}
+        complainId={data?._id}
+      />
+      <NewComplain
+        {...complainOpt}
+        close={() => setComplainOpt({ open: false, data: null })}
+        Respondent={true}
+        handleFinish={(val) => {
+          (async (_) => {
+            let res = await _.post("/api/complain/update-complain", {
+              ...val,
+              numberToBeReplaced:
+                typeof data?.residentId == "object"
+                  ? data?.residentId?.phoneNumber
+                  : data?.complainerNumber,
+            });
+
+            if (res.data?.success) {
+              setComplainOpt({ open: false, data: null });
+              message.success(res.data?.message ?? "Success");
+              refresh();
+              close();
+            }
+          })(axios);
+        }}
+      />
+      <SettlementViewer
+        open={settlementOpt.open}
+        close={() => setSettlementOpt({ open: false, data: null, id: null })}
+        settlement={settlementOpt.data}
+        id={settlementOpt.id}
       />
     </>
   );
 };
 
-export default CompainViewer;
+export default ComplainViewer;

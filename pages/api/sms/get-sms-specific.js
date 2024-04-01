@@ -6,16 +6,28 @@ export default async function handler(req, res) {
 
   if (req.method != "GET") throw Error("Request Method is not acceptable");
 
-  const { residentId, number, adminId } = req.query;
+  const { residentId, residentNumber, number, adminId } = req.query;
   let query = {};
-
+  console.log(req.query);
   if (residentId)
     query = {
-      $and: [{ originator: adminId }, { residentId }],
+      $or: [
+        {
+          $and: [{ originator: adminId }, { number: residentNumber }],
+        },
+        { residentId },
+      ],
     };
   else
     query = {
-      $and: [{ originator: adminId }, { number }],
+      $or: [
+        {
+          $and: [{ originator: adminId }, { number }],
+        },
+        {
+          number,
+        },
+      ],
     };
 
   return await SMS.find(query)

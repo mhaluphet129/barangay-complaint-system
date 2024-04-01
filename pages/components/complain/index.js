@@ -102,6 +102,30 @@ const Complain = ({ appKey }) => {
         open={openNewComplain}
         close={() => setOpenNewComplain(false)}
         appkey={appKey}
+        handleFinish={(val) => {
+          // * send an sms to Responder
+
+          if ([null, undefined, ""].includes(val.residentId)) {
+            message.warning("Please select a resident before adding complain");
+            return;
+          }
+          val.residentId = residentId;
+          val.inchargeId = currentUser._id;
+          val.images = photos;
+
+          (async (_) => {
+            let { data } = await _.post("/api/complain/new-complain", {
+              ...val,
+              template: "sms_to_respondent_1",
+            });
+            if (data?.success) {
+              message.success(data?.message ?? "Successfully Created.");
+              close();
+            } else {
+              message.error(data?.message ?? "Error in the Server.");
+            }
+          })(axios);
+        }}
       />
       <CompainViewer
         {...viewerOpts}
@@ -150,6 +174,10 @@ const Complain = ({ appKey }) => {
                   label: "Website",
                   value: "web",
                 },
+                {
+                  label: "SMS",
+                  value: "sms",
+                },
               ]}
               onChange={(e) => loadMoreData(searchWord, true, { type: e })}
             />
@@ -197,7 +225,7 @@ const Complain = ({ appKey }) => {
               complains.length != 0 ? (
                 <Divider plain>
                   <Typography.Text type="secondary" italic>
-                    No more documents to be loaded.
+                    No more complains to be loaded
                   </Typography.Text>
                 </Divider>
               ) : null
@@ -217,7 +245,7 @@ const Complain = ({ appKey }) => {
                   onClick={() => setViewerOpts({ open: true, data: item })}
                 >
                   <List.Item.Meta
-                    title={<span>ID: {item?._id?.substr(-6)}</span>}
+                    title={<span>Complain ID: {item?._id?.substr(-6)}</span>}
                     description={
                       <Row>
                         <Col span={8}>
@@ -239,9 +267,9 @@ const Complain = ({ appKey }) => {
                           <br />
                           Responded:{" "}
                           {item?.isResponded ? (
-                            <Tag color="green">Responded</Tag>
+                            <Tag color="green">YES</Tag>
                           ) : (
-                            <Tag color="red">Not Responded</Tag>
+                            <Tag color="red">NO</Tag>
                           )}
                         </Col>
                         <Col span={8}>
@@ -253,7 +281,7 @@ const Complain = ({ appKey }) => {
                             {item?.description}
                           </Typography.Paragraph>
                         </Col>
-                        <Col span={8}>Nothing goes from here</Col>
+                        {/* <Col span={8}>Nothing goes from here</Col> */}
                       </Row>
                     }
                   />
