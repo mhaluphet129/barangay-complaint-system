@@ -131,9 +131,6 @@ const Login = ({ app_key }) => {
             >
               Login
             </Button>
-            <p>
-              Forgot password? <a>click here</a>
-            </p>
           </Form.Item>
         </Form>
       </div>

@@ -75,8 +75,10 @@ const SmsComposer = ({ open, close, onSend }) => {
             originator: currentUser._id,
           });
 
+          console.log(data);
+
           if (data.success) resolve(true);
-          else resolve(false);
+          else reject(false);
         })(axios);
       }
     });
@@ -237,7 +239,7 @@ const SmsComposer = ({ open, close, onSend }) => {
       {mode == "Number Only" && (
         <>
           Specific Number{" "}
-          <Tooltip title="You can put multiple number by pressing 'enter'.">
+          <Tooltip title="You can put multiple number by pressing 'enter'">
             <QuestionCircleOutlined />
           </Tooltip>
           <br />

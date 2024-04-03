@@ -34,7 +34,6 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
         message.success(res?.data?.message ?? "Success");
         setLoader("");
         refresh();
-        setCurrentStep(0);
         close();
       } else {
         message.error(
@@ -94,16 +93,12 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
       open={open}
       onCancel={() => {
         form.resetFields();
-        setCurrentStep(0);
         close();
       }}
       closable={false}
       footer={
-        <Button
-          onClick={() => (currentStep == 0 ? setCurrentStep(1) : form.submit())}
-          loading={loading == "saving"}
-        >
-          {currentStep == 0 ? "Next" : "Register"}
+        <Button onClick={form.submit} loading={loading == "saving"}>
+          Register
         </Button>
       }
       centered
@@ -267,16 +262,6 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
                   <Select.Option value="livein">Live-in</Select.Option>
                   <Select.Option value="others">Others</Select.Option>
                 </Select>
-              </Form.Item>
-            </>
-          )}
-          {currentStep == 1 && (
-            <>
-              <Form.Item label="Username" name="username">
-                <Input />
-              </Form.Item>
-              <Form.Item label="Password" name="password">
-                <Input.Password />
               </Form.Item>
             </>
           )}

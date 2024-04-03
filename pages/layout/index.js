@@ -81,6 +81,9 @@ const Header = ({ app_key }) => {
             paddingInline: 10,
           }}
         >
+          <Typography.Text style={{ marginRight: 10 }}>
+            Administrator
+          </Typography.Text>
           <div style={{ display: "flex", alignSelf: "center" }}>
             <Dropdown
               menu={{
@@ -122,9 +125,6 @@ const Header = ({ app_key }) => {
               />
             </Dropdown>
           </div>
-          <Typography.Text style={{ marginLeft: 10 }}>
-            Administrator
-          </Typography.Text>
         </Layout.Header>
       </Affix>
 
