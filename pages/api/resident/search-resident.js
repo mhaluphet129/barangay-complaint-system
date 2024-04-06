@@ -1,5 +1,5 @@
-import dbConnect from "../../../database/dbConnect";
-import Residents from "../../../database/models/resident";
+import dbConnect from "@/database/dbConnect";
+import Residents from "@/database/models/resident";
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -24,11 +24,8 @@ export default async function handler(req, res) {
   })
     .collation({ locale: "en" })
     .sort({ name: 1 })
-    .then((e) => {
-      res.json({ status: 200, searchData: e });
-      resolve();
-    })
-    .catch((err) => {
-      res.status(500).json({ success: false, message: "Error: " + err });
-    });
+    .then((e) => res.json({ status: 200, searchData: e }))
+    .catch((err) =>
+      res.status(500).json({ success: false, message: "Error: " + err })
+    );
 }
