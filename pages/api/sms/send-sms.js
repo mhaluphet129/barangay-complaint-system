@@ -35,7 +35,7 @@ export default async function handler(req, res) {
       console.log(e);
       return res.json({
         success: false,
-        message: "Phone SMS Service not activated" ?? "Error",
+        message: e?.message ?? "Error",
       });
     });
 }

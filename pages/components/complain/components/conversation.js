@@ -38,7 +38,7 @@ const Conversation = ({
     if (selectedTab == "Complainer") {
       if (residentId) {
         return residentId?.name + " " + residentId?.lastname;
-      } else return residentId?.phoneNumber;
+      } else return complainerNumber;
     } else {
       if (complainantName) return complainantName;
       else return complainantNumber;

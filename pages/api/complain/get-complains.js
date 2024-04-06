@@ -85,7 +85,7 @@ export default async function handler(req, res) {
         },
       },
       {
-        $unwind: "$residentId",
+        $unwind: { path: "$residentId", preserveNullAndEmptyArrays: true },
       },
       {
         $addFields: {
@@ -108,13 +108,12 @@ export default async function handler(req, res) {
         $match: {
           $and: [
             {
-              ...(type == undefined
-                ? { $or: [{ type: "walk-in" }, { type: "web" }] }
-                : { type }),
+              ...(type == undefined ? {} : { type }),
             },
             {
               $or: [
                 { tempId: { $regex: re } },
+                { tempId1: { $regex: re } },
                 { "residentId.name": { $regex: re } },
                 { "lastname.name": { $regex: re } },
                 { fullName: { $regex: re } },
