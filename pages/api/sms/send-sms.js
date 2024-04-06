@@ -2,6 +2,7 @@ import dbConnect from "../../../database/dbConnect";
 import Sms from "../../../database/models/sms";
 
 import SMSService from "@/assets/utilities/sms";
+import { parsedPhoneNumber } from "@/assets/utilities/phonenumber_utils";
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -12,7 +13,7 @@ export default async function handler(req, res) {
   const { number, message } = req.body;
 
   return await sms
-    .sendMessage(number, message)
+    .sendMessage(parsedPhoneNumber(number), message)
     .then(async (e) => {
       return await Sms({ ...req.body, type: "outbound" })
         .save()

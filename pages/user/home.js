@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Layout, Typography } from "antd";
+import { Input, Layout, Tooltip, Typography } from "antd";
 import { Sider, Header, Content } from "../layout";
 
 import { VscGraph } from "react-icons/vsc";
@@ -124,14 +124,11 @@ const MyApp = ({ app_key, sms_key }) => {
               backgroundColor: "#263544",
               paddingBottom: 10,
               paddingTop: 10,
+              paddingRight: 15,
+              paddingLeft: 15,
             }}
           >
-            <div
-              style={{
-                marginRight: 15,
-                marginLeft: 15,
-              }}
-            >
+            <Tooltip title="Temporarily Disabled">
               <Input
                 suffix={<CiSearch color="#a0a0a0" />}
                 style={{
@@ -145,8 +142,9 @@ const MyApp = ({ app_key, sms_key }) => {
                     color: "#bfbfbf",
                   },
                 }}
+                disabled
               />
-            </div>
+            </Tooltip>
           </div>
         </Sider>
         <Layout>

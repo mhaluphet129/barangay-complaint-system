@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Layout,
   Menu,
@@ -56,6 +56,19 @@ const Header = ({ app_key }) => {
     title: "",
     data: null,
   });
+  const [currentUser, setCurrentUser] = useState();
+
+  const getName = () =>
+    `${currentUser?.name[0].toLocaleUpperCase()}${currentUser?.name.slice(
+      1
+    )} ${currentUser?.lastname[0].toLocaleUpperCase()}${currentUser?.lastname.slice(
+      1
+    )}`;
+
+  useEffect(() => {
+    let user = Cookies.get("currentUser");
+    if (user) setCurrentUser(JSON.parse(user));
+  }, []);
 
   return (
     <>
@@ -81,8 +94,9 @@ const Header = ({ app_key }) => {
             paddingInline: 10,
           }}
         >
-          <Typography.Text style={{ marginRight: 10 }}>
-            Administrator
+          <Typography.Text style={{ marginRight: 10, textAlign: "end" }}>
+            {getName()} <br />
+            <strong>{currentUser?.role.toLocaleUpperCase()}</strong>
           </Typography.Text>
           <div style={{ display: "flex", alignSelf: "center" }}>
             <Dropdown

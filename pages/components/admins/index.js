@@ -3,12 +3,31 @@ import { Table, Popconfirm, Button, message } from "antd";
 import dayjs from "dayjs";
 import axios from "axios";
 
-import { DeleteOutlined } from "@ant-design/icons";
+import NewAdmin from "./new_admin";
+
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
 const Admins = () => {
   const [trigger, setTrigger] = useState(0);
   const [loading, setLoading] = useState("");
   const [admins, setAdmins] = useState([]);
+  const [openNewAdmin, setOpenNewAmin] = useState(false);
+
+  const tableHeader = () => (
+    <div>
+      <Button
+        icon={<PlusOutlined />}
+        style={{
+          backgroundColor: "green",
+          color: "#fff",
+          fontWeight: 400,
+        }}
+        onClick={() => setOpenNewAmin(true)}
+      >
+        New Admin
+      </Button>
+    </div>
+  );
 
   const columns = [
     {
@@ -67,6 +86,21 @@ const Admins = () => {
     },
   ];
 
+  const handleNewAdmin = (val) => {
+    return (async (_) => {
+      let { data } = await _.post("/api/admin/new-admin", val);
+
+      if (data.success) {
+        message.success(data?.message ?? "Success");
+        setTrigger(trigger + 1);
+        return true;
+      } else {
+        message.error(data?.message ?? "Error");
+        return false;
+      }
+    })(axios);
+  };
+
   useEffect(() => {
     setLoading("fetch");
     (async (_) => {
@@ -83,10 +117,17 @@ const Admins = () => {
   return (
     <>
       <Table
+        title={tableHeader}
         columns={columns}
         style={{ borderRadius: 0 }}
         loading={loading == "fetch"}
         dataSource={admins}
+      />
+      {/* context */}
+      <NewAdmin
+        open={openNewAdmin}
+        close={() => setOpenNewAmin(false)}
+        handleFinish={handleNewAdmin}
       />
     </>
   );

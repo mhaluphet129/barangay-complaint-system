@@ -44,6 +44,7 @@ let ComplaintSchema = new mongoose.Schema(
     },
     description: String,
     images: [String],
+    northBarangay: String,
   },
   { timestamps: true }
 );

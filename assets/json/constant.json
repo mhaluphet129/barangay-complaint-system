@@ -125,5 +125,19 @@
       "type": "sms_to_respondent_1",
       "message": "Hello Mr/Ms @RESPONDER_NAME, \n\n Someone complained you this day. Please see and visit our establishment. Thank you."
     }
+  ],
+  "months": [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
   ]
 }

@@ -34,6 +34,89 @@ export default async function handler(req, res) {
       },
     ]);
 
+    let graphData = await Complaint.aggregate([
+      {
+        $group: {
+          _id: {
+            month: { $month: "$createdAt" },
+            address: "$northBarangay",
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          month: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$_id.month", 1] }, then: "January" },
+                { case: { $eq: ["$_id.month", 2] }, then: "February" },
+                { case: { $eq: ["$_id.month", 3] }, then: "March" },
+                { case: { $eq: ["$_id.month", 4] }, then: "April" },
+                { case: { $eq: ["$_id.month", 5] }, then: "May" },
+                { case: { $eq: ["$_id.month", 6] }, then: "June" },
+                { case: { $eq: ["$_id.month", 7] }, then: "July" },
+                { case: { $eq: ["$_id.month", 8] }, then: "August" },
+                { case: { $eq: ["$_id.month", 9] }, then: "September" },
+                { case: { $eq: ["$_id.month", 10] }, then: "October" },
+                { case: { $eq: ["$_id.month", 11] }, then: "November" },
+                { case: { $eq: ["$_id.month", 12] }, then: "December" },
+              ],
+            },
+          },
+          address: "$_id.address",
+          count: 1,
+        },
+      },
+      {
+        $group: {
+          _id: "$address",
+          data: {
+            $push: {
+              month: "$month",
+              count: "$count",
+            },
+          },
+        },
+      },
+    ])
+      .then((result) => {
+        const monthIndex = {
+          January: 0,
+          February: 1,
+          March: 2,
+          April: 3,
+          May: 4,
+          June: 5,
+          July: 6,
+          August: 7,
+          September: 8,
+          October: 9,
+          November: 10,
+          December: 11,
+        };
+
+        const chartData = result.map((item) => {
+          const statusData = {
+            label: item._id,
+            data: Array(12).fill(0),
+          };
+
+          item.data.forEach((monthCount) => {
+            const monthIndexNumber = monthIndex[monthCount.month];
+            statusData.data[monthIndexNumber] = monthCount.count;
+          });
+
+          return statusData;
+        });
+
+        return chartData;
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
     return res.json({
       success: true,
       data: {
@@ -42,6 +125,7 @@ export default async function handler(req, res) {
         residentsCount,
         adminCount,
         pieData,
+        graphData,
       },
     });
   } catch (e) {

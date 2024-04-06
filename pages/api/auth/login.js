@@ -3,7 +3,7 @@ import Admin from "../../../database/models/admin";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const JWT_PRIVATE_KEY = "okay";
+const JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY ?? "";
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -12,7 +12,9 @@ export default async function handler(req, res) {
   const { email, password } = req.body;
 
   if (method === "POST") {
-    const validUser = await Admin.findOne({ email }).lean();
+    const validUser = await Admin.findOne({
+      $or: [{ email }, { username: email }],
+    }).lean();
 
     if (validUser) {
       const validPassword = await bcrypt.compare(password, validUser.password);

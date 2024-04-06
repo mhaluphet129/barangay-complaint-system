@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
   const { residentId, residentNumber, number, adminId } = req.query;
   let query = {};
-  console.log(req.query);
+
   if (residentId)
     query = {
       $or: [

@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Modal, Form, AutoComplete, Input, Button, Image } from "antd";
+import { Modal, Form, AutoComplete, Input, Button, Image, Select } from "antd";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { PickerDropPane } from "filestack-react";
-
 import { LoadingOutlined } from "@ant-design/icons";
 
-const NewComplain = ({ open, close, appkey, data, handleFinish }) => {
+import jason from "@/assets/json/constant.json";
+
+const NewComplain = ({ open, close, appkey, data, handleFinish, isEdit }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
@@ -45,7 +46,11 @@ const NewComplain = ({ open, close, appkey, data, handleFinish }) => {
   }, [currentUser]);
 
   useEffect(() => {
-    if (data) form.setFieldsValue(data);
+    if (data) {
+      if (typeof data?.residentId == "object")
+        data.residentId = data.residentId._id;
+      form.setFieldsValue(data);
+    }
   }, [data]);
 
   return (
@@ -57,13 +62,18 @@ const NewComplain = ({ open, close, appkey, data, handleFinish }) => {
       }}
       closable={false}
       footer={null}
-      title="New Complain"
+      title={isEdit ? "Edit Complain" : "New Complain"}
       centered
     >
       <Form
         form={form}
         onFinish={(val) => {
-          val.residentId = residentId;
+          if (isEdit) {
+            if (typeof data.residentId == "string")
+              val.residentId = data.residentId;
+            else val.residentId = data.residentId._id;
+          } else val.residentId = residentId;
+
           if (data) val._id = data._id;
           handleFinish(val);
         }}
@@ -166,6 +176,16 @@ const NewComplain = ({ open, close, appkey, data, handleFinish }) => {
               maxRows: 15,
             }}
             placeholder="This is optional"
+          />
+        </Form.Item>
+        <Form.Item name="northBarangay" label="Barangay North">
+          <Select
+            options={jason.barangay.map((e) => {
+              return {
+                label: e,
+                value: e,
+              };
+            })}
           />
         </Form.Item>
         {appkey && (

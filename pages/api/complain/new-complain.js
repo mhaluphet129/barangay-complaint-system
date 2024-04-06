@@ -59,7 +59,12 @@ export default async function handler(req, res) {
 
   return await newComplain
     .save()
-    .then(() => {
+    .then(async () => {
+      // update all sms related to this number isComplained to true
+      await SMS.updateMany(
+        { number: req.body.complainerNumber },
+        { $set: { toComplain: true } }
+      );
       res.json({
         success: true,
         message: "Created Successfully",

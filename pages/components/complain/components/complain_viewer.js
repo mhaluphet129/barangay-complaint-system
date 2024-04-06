@@ -215,6 +215,17 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
                 </Typography.Text>
               )}
             </span>
+            <Divider>
+              <Typography.Title
+                level={3}
+                style={{
+                  padding: 0,
+                  margin: 0,
+                }}
+              >
+                Others
+              </Typography.Title>
+            </Divider>
           </Col>
           <Col
             span={6}
@@ -350,6 +361,7 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
       />
       <NewComplain
         {...complainOpt}
+        isEdit
         close={() => setComplainOpt({ open: false, data: null })}
         Respondent={true}
         handleFinish={(val) => {

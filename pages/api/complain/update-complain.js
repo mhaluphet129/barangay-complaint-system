@@ -22,7 +22,12 @@ export default async function handler(req, res) {
         let resident = await Resident.findOne({ _id: req.body.residentId });
         await SMS.updateMany(
           { number: numberToBeReplaced },
-          { $set: { number: `63${resident.phoneNumber}` } }
+          {
+            $set: {
+              number: `63${resident.phoneNumber}`,
+              residentId: req.body.residentId,
+            },
+          }
         );
       }
 

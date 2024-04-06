@@ -116,10 +116,18 @@ const Login = ({ app_key }) => {
           </Typography.Title>
 
           <Form.Item name="email">
-            <Input prefix={<UserOutlined />} size="large" />
+            <Input
+              prefix={<UserOutlined />}
+              size="large"
+              placeholder="Email/Username"
+            />
           </Form.Item>
           <Form.Item name="password">
-            <Input.Password prefix={<LockFilled />} size="large" />
+            <Input.Password
+              prefix={<LockFilled />}
+              size="large"
+              placeholder="Password"
+            />
           </Form.Item>
 
           <Form.Item noStyle>

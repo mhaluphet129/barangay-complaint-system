@@ -23,6 +23,7 @@ const Complain = ({ appkey }) => {
   const [photos, setPhotos] = useState([]);
   const [pin, setPin] = useState();
   const [pinConfirmed, setPinConfirmed] = useState(false);
+  const [number, setNumber] = useState("");
 
   const searchName = async (keyword) => {
     if (keyword != "" && keyword != null) {

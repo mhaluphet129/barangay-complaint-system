@@ -20,7 +20,6 @@ let AdminSchema = new mongoose.Schema(
     },
     middlename: {
       type: String,
-      required: true,
     },
     lastname: {
       type: String,

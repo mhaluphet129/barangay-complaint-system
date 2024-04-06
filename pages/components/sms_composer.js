@@ -75,8 +75,6 @@ const SmsComposer = ({ open, close, onSend }) => {
             originator: currentUser._id,
           });
 
-          console.log(data);
-
           if (data.success) resolve(true);
           else reject(false);
         })(axios);

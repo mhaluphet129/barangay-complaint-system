@@ -98,7 +98,7 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
       closable={false}
       footer={
         <Button onClick={form.submit} loading={loading == "saving"}>
-          Register
+          {mode == "edit" ? "UPDATE" : "Register"}
         </Button>
       }
       centered

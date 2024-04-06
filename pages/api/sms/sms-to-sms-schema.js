@@ -2,22 +2,23 @@ import dbConnect from "../../../database/dbConnect";
 import SMS from "@/database/models/sms";
 import Resident from "@/database/models/resident";
 import Complain from "@/database/models/complaint";
+import { parsedPhoneNumber } from "@/assets/utilities/phonenumber_utils";
 
 export default async function handler(req, res) {
   await dbConnect();
 
   if (req.method != "GET") throw Error("Request Method is not acceptable");
   const { number, message } = req.query;
-  let parsedNum = "",
-    complain = null;
-  if (number.startsWith("+639")) parsedNum = `0${number.slice(3)}`;
+  let complain = null;
+
+  const parsedNum = parsedPhoneNumber(number);
 
   let resident = await Resident.findOne({
     $or: [{ phoneNumber: number }, { phoneNumber: parsedNum }],
   });
 
   if (parsedNum != "") {
-    complain = await Complain.findOne({ respondentNumber: parsedNum });
+    complain = await Complain.findOne({ complainerNumber: parsedNum });
   }
 
   return await SMS.create({
@@ -28,7 +29,7 @@ export default async function handler(req, res) {
         }
       : {}),
     message,
-    number: number.slice(1),
+    number: resident ? resident.phoneNumber : number.slice(1),
     type: "inbound",
   })
     .then((e) => {
