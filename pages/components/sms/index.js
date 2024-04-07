@@ -26,9 +26,6 @@ import { getKeyword } from "@/assets/utilities/keyword_generator";
 import SMSViewer from "./components/sms_viewer";
 import axios from "axios";
 
-// TODO: Add filter
-// Todo: fix registered as complai
-
 const SMS = ({ sms_key }) => {
   const [openNewSms, setOpenNewSms] = useState(false);
   const [trigger, setTrigger] = useState(0);

@@ -23,6 +23,38 @@
   margin-left: 40px;
 }
 
+.loader {
+  border-top-color: #3498db !important;
+  -webkit-animation: spinner 1.5s linear infinite;
+  animation: spinner 1.5s linear infinite;
+}
+
+.loader-body {
+  display: none !important;
+}
+
+.loader-body.show {
+  display: flex !important;
+}
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 thead {
   display: table-row-group;
 }

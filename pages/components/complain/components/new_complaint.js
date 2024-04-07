@@ -69,9 +69,11 @@ const NewComplain = ({ open, close, appkey, data, handleFinish, isEdit }) => {
         form={form}
         onFinish={(val) => {
           if (isEdit) {
-            if (typeof data.residentId == "string")
-              val.residentId = data.residentId;
-            else val.residentId = data.residentId._id;
+            if (data.residentId) {
+              if (typeof data.residentId == "string")
+                val.residentId = data.residentId;
+              else val.residentId = data.residentId._id;
+            } else val.residentId = residentId;
           } else val.residentId = residentId;
 
           if (data) val._id = data._id;

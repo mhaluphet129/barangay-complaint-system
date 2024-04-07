@@ -338,7 +338,7 @@ const Dashboard = ({ setSelectedKey }) => {
                     x: {
                       title: {
                         display: true,
-                        text: "SMS Complaints by Category",
+                        text: "SMS Complaints by Sitio",
                       },
                       grid: {
                         display: false,

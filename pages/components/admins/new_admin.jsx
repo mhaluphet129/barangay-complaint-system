@@ -9,7 +9,13 @@ const NewAdmin = ({ open, close, handleFinish }) => {
     close();
   };
   return (
-    <Modal open={open} close={clearAll} footer={null} destroyOnClose centered>
+    <Modal
+      open={open}
+      onCancel={clearAll}
+      footer={null}
+      destroyOnClose
+      centered
+    >
       <Form
         layout="vertical"
         form={form}

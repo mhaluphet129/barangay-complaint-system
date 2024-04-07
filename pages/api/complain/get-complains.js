@@ -11,13 +11,21 @@ export default async function handler(req, res) {
     const { page, index, type, searchKey } = req.query;
     var re = new RegExp(searchKey?.trim(), "i");
 
-    let complain = await Complain.aggregate([
+    const query = [
       {
         $lookup: {
           from: "residents",
           localField: "residentId",
           foreignField: "_id",
           as: "residentId",
+        },
+      },
+      {
+        $lookup: {
+          from: "admins",
+          localField: "inchargeId",
+          foreignField: "_id",
+          as: "inchargeId",
         },
       },
       {
@@ -30,6 +38,9 @@ export default async function handler(req, res) {
       },
       {
         $unwind: { path: "$residentId", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $unwind: { path: "$inchargeId", preserveNullAndEmptyArrays: true },
       },
       {
         $addFields: {
@@ -67,13 +78,18 @@ export default async function handler(req, res) {
           ],
         },
       },
-      {
+    ];
+
+    if (page) {
+      query.push({
         $skip: Number.parseInt(page * index),
-      },
-      {
+      });
+      query.push({
         $limit: Number.parseInt(page),
-      },
-    ]);
+      });
+    }
+
+    let complain = await Complain.aggregate(query);
 
     const doc2 = await Complain.aggregate([
       {

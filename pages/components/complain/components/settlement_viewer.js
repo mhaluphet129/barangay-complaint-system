@@ -75,7 +75,7 @@ const SettlementViewer = ({ open, close, settlement, id }) => {
           items={_settlement?.map((e) => {
             return {
               color: getColorByStatus(e.type),
-              label: dayjs(e.createdAt).format("MMM DD 'YY"),
+              label: dayjs(e.createdAt).format("MMM DD 'YY hh:mma"),
               children: e.description == "" ? "No Description" : e.description,
             };
           })}

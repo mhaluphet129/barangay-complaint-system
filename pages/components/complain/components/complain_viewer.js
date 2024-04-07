@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   Button,
   Calendar,
   Col,
@@ -9,6 +10,7 @@ import {
   Modal,
   Row,
   Space,
+  Tag,
   Tooltip,
   Typography,
   message,
@@ -33,6 +35,55 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
     id: null,
   });
   let _modal = null;
+
+  const increaseSettlement = () => {
+    (async (_) => {
+      let res = await _.post("/api/complain/increase-amic-settlement", {
+        _id: data?._id,
+      });
+
+      if (res.data.success) {
+        message.success(res.data?.message ?? "Success");
+        refresh();
+        close();
+      }
+    })(axios);
+  };
+
+  const markAsUnsolved = () => {
+    (async (_) => {
+      let res = await _.get("/api/complain/mark-unsolved", {
+        params: {
+          _id: data._id,
+        },
+      });
+      if (res.data.success) {
+        message.success(res.data?.message ?? "Success");
+        refresh();
+        close();
+      }
+    })(axios);
+  };
+
+  const getColorByStatus = (status) => {
+    switch (status) {
+      case "processed": {
+        return "#87CEEB";
+      }
+      case "solved": {
+        return "#28a745";
+      }
+      case "unsolved": {
+        return "#8B8589";
+      }
+      case "disregard": {
+        return "#708090";
+      }
+      case "dismissed": {
+        return "#800000";
+      }
+    }
+  };
 
   return (
     <>
@@ -88,7 +139,7 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
         centered
       >
         <Row gutter={[32, 32]}>
-          <Col span={7}>
+          <Col span={6}>
             <Space direction="vertical">
               <Divider>
                 <Typography.Title level={3} style={{ margin: 0, padding: 0 }}>
@@ -120,7 +171,9 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
               </div>
               <span>
                 Complain date:{" "}
-                <strong>{dayjs(data?.createdAt).format("MMMM DD 'YY")}</strong>
+                <strong>
+                  {dayjs(data?.amicSettlementLastUpdate).format("MMMM DD 'YY")}
+                </strong>
               </span>
               <span>
                 Type of Complain:{" "}
@@ -131,9 +184,9 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
               </span>
               <span>
                 Settlement Status:{" "}
-                <strong>
+                <Tag color={getColorByStatus(data?.settlement.at(-1).type)}>
                   {data?.settlement.at(-1).type.toLocaleUpperCase()}
-                </strong>
+                </Tag>
               </span>
               <span>Description: </span>
               <span style={{ marginLeft: 50 }}>{data?.description}</span>
@@ -162,7 +215,7 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
               </div>
             </Space>
           </Col>
-          <Col span={11}>
+          <Col span={12}>
             <div>
               <Divider>
                 <Typography.Title
@@ -226,6 +279,35 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
                 Others
               </Typography.Title>
             </Divider>
+            {dayjs().diff(dayjs(data?.amicSettlementLastUpdate), "day") >= 15 &&
+              data?.amicSettlement < 3 && (
+                <Alert
+                  type="warning"
+                  message="This complain is created for the past 15 days, update the amic settlement ?"
+                  description={
+                    <>
+                      <strong style={{ marginRight: 10 }}>
+                        Amic Settlement: {data?.amicSettlement} PHASE
+                      </strong>
+                      <Button onClick={increaseSettlement}>Update</Button>
+                    </>
+                  }
+                />
+              )}
+
+            {dayjs().diff(dayjs(data?.amicSettlementLastUpdate), "day") >= 15 &&
+              data?.amicSettlement == 3 &&
+              !["unsolved", "disregard", "dismissed"].includes(
+                data?.settlement.at(-1).type
+              ) && (
+                <Alert
+                  type="error"
+                  message="This complain is reached the last phase of amic settlement. Mark it unsolved ?"
+                  description={
+                    <Button onClick={markAsUnsolved}>Mark as Unsolved</Button>
+                  }
+                />
+              )}
           </Col>
           <Col
             span={6}

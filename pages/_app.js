@@ -11,6 +11,7 @@ export default function App({ Component, pageProps }) {
         <link rel="shortcut icon" href="/favicon.png" />
         <title>Barangay Complaint System</title>
         <meta name="description" content="System for barangay complaints" />
+        <script src="https://cdn.tailwindcss.com"></script>
       </Head>
       <Component {...pageProps} />
     </ConfigProvider>

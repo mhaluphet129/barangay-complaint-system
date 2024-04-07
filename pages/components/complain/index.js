@@ -4,11 +4,8 @@ import {
   Tag,
   message,
   List,
-  Steps,
   Card,
   Space,
-  Tooltip,
-  Badge,
   Typography,
   Input,
   Skeleton,
@@ -24,8 +21,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 import NewComplain from "./components/new_complaint";
 import CompainViewer from "./components/complain_viewer";
-
-// TODO: added automatic sms every 15 days from complains created date for amec settlement
 
 const Complain = ({ appKey }) => {
   const [complains, setComplains] = useState([]);

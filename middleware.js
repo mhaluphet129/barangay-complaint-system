@@ -5,6 +5,11 @@ export async function middleware(req = NextRequest) {
   const validPath = ["/", "/user/login", "/user/home"];
   const validComplainPath = ["/file-complaint", "/file-complain", "/complain"];
 
+  if (url.pathname == "/") {
+    url.pathname = "/";
+    return NextResponse.rewrite(url);
+  }
+
   if (validComplainPath.includes(url.pathname)) {
     url.pathname = "user/complaint";
     return NextResponse.rewrite(url);

@@ -45,9 +45,15 @@ let ComplaintSchema = new mongoose.Schema(
     description: String,
     images: [String],
     northBarangay: String,
+    amicSettlementLastUpdate: Date,
   },
   { timestamps: true }
 );
+
+ComplaintSchema.pre("validate", function (next) {
+  this.amicSettlementLastUpdate = this.createdAt;
+  next();
+});
 
 export default mongoose.models.Complaint ||
   mongoose.model("Complaint", ComplaintSchema);
