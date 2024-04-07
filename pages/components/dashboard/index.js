@@ -165,7 +165,14 @@ const Dashboard = ({ setSelectedKey }) => {
                   onMouseLeave={() => setHovered(false)}
                 >
                   {notLoading ? (
-                    <div onClick={e.onClick}>
+                    <div
+                      onClick={e.onClick}
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
                       <span
                         style={{
                           color: "#fff",
@@ -180,8 +187,7 @@ const Dashboard = ({ setSelectedKey }) => {
                           backgroundColor: "#fff",
                           borderRadius: "100%",
                           display: "inline-block",
-                          paddingLeft: 5,
-                          paddingRight: 5,
+                          padding: 5,
                           marginLeft: 10,
                         }}
                       >
