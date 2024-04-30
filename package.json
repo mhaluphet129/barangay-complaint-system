@@ -11,22 +11,30 @@
   "dependencies": {
     "@ant-design/pro-layout": "^7.17.15",
     "antd": "^5.11.2",
+    "aos": "^2.3.4",
+    "autoprefixer": "^10.4.19",
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
     "chart.js": "^3.9.1",
     "dayjs": "^1.11.10",
+    "draft-js": "^0.10.5",
+    "draftjs-to-html": "^0.9.1",
     "filestack-react": "^4.0.1",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.1",
     "next": "^13.5.6",
+    "postcss": "^8.4.38",
     "process": "^0.11.10",
     "react": "^18",
     "react-chartjs-2": "^4.3.1",
     "react-dom": "^18",
+    "react-draft-wysiwyg": "^1.13.2",
     "react-icons": "^4.12.0",
     "react-infinite-scroll-component": "^6.1.0",
-    "react-to-print": "^2.14.15"
+    "react-to-print": "^2.14.15",
+    "sanitize-html": "^2.13.0",
+    "tailwindcss": "^3.4.3"
   },
   "devDependencies": {
     "dotenv": "^16.3.1"

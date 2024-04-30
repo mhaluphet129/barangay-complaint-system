@@ -20,7 +20,7 @@ import {
   BarElement,
 } from "chart.js";
 
-import jason from "../../../assets/json/constant.json";
+import jason from "@/assets/json/constant.json";
 import axios from "axios";
 
 ChartJS.register(

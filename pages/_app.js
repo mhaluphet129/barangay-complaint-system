@@ -9,9 +9,12 @@ export default function App({ Component, pageProps }) {
     <ConfigProvider>
       <Head>
         <link rel="shortcut icon" href="/favicon.png" />
+        <link
+          href="https://unpkg.com/aos@2.3.1/dist/aos.css"
+          rel="stylesheet"
+        ></link>
         <title>Barangay Complaint System</title>
         <meta name="description" content="System for barangay complaints" />
-        <script src="https://cdn.tailwindcss.com"></script>
       </Head>
       <Component {...pageProps} />
     </ConfigProvider>

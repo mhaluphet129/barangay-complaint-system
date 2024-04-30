@@ -8,14 +8,16 @@ import { CiSearch } from "react-icons/ci";
 import { BsPersonFillLock, BsFillPrinterFill } from "react-icons/bs";
 import { LiaSmsSolid } from "react-icons/lia";
 import { BiMessageRoundedError } from "react-icons/bi";
+import { PiNewspaperThin } from "react-icons/pi";
 
-import Residents from "../components/residents";
-import Dashboard from "../components/dashboard";
-import Admin from "../components/admins";
-import Complain from "../components/complain";
-import PrintForms from "../components/print_forms";
-import SMS from "../components/sms";
+import Residents from "../../components/residents";
+import Dashboard from "../../components/dashboard";
+import Admin from "../../components/admins";
+import Complain from "../../components/complain";
+import PrintForms from "../../components/print_forms";
+import SMS from "../../components/sms";
 import Cookies from "js-cookie";
+import News from "@/components/news";
 
 const MyApp = ({ app_key, sms_key }) => {
   const [selectedKey, setSelectedKey] = useState("dashboard");
@@ -100,6 +102,13 @@ const MyApp = ({ app_key, sms_key }) => {
                 selectedKey == "sms" ? selectedItemsStyle : { color: "#aaa" },
             },
             {
+              label: "News and Announcement",
+              key: "news",
+              icon: <PiNewspaperThin />,
+              style:
+                selectedKey == "news" ? selectedItemsStyle : { color: "#aaa" },
+            },
+            {
               label: "Print Form",
               key: "print_form",
               icon: <BsFillPrinterFill />,
@@ -157,6 +166,7 @@ const MyApp = ({ app_key, sms_key }) => {
             {selectedKey == "admin" ? <Admin /> : null}
             {selectedKey == "complain" ? <Complain appKey={app_key} /> : null}
             {selectedKey == "sms" ? <SMS sms_key={sms_key} /> : null}
+            {selectedKey == "news" && <News appKey={app_key} />}
           </Content>
         </Layout>
       </Layout>

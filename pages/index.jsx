@@ -1,10 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Image, Input, Tag, Typography, message } from "antd";
+import { CiFileOn } from "react-icons/ci";
+import { LiaSmsSolid } from "react-icons/lia";
+import { MdGroups2 } from "react-icons/md";
 import axios from "axios";
 import dayjs from "dayjs";
+import AOS from "aos";
+
+import "tailwindcss/tailwind.css";
+
+import News from "./news";
 
 const Home = () => {
   const [loader, setLoader] = useState([]);
+  const [active, setActive] = useState("home");
   const [complains, setComplains] = useState([]);
   const [selectedComplain, setSelectedComplain] = useState();
   const timerRef = useRef(null);
@@ -78,7 +87,7 @@ const Home = () => {
             <Tag>{c.type.toLocaleUpperCase()}</Tag>
           </Typography.Title>
           <Typography.Text type="secondary" italic>
-            {c._id}
+            complete id: {c._id}
           </Typography.Text>
           <Typography.Text className="mt-2">
             Incharge Admin: {c.inchargeId?.name} {c.inchargeId?.lastname}
@@ -156,78 +165,225 @@ const Home = () => {
     })(axios);
   }, []);
 
+  useEffect(() => {
+    AOS.init({
+      once: true,
+      duration: 1000,
+      easing: "ease-out-cubic",
+    });
+  }, []);
+
   return (
-    <div className="relative min-h-screen bg-white flex flex-col">
-      <nav className="bg-[#0885ff33]">
-        <div className="max-w-7xl px-1 min-w-full">
-          <div className="flex items-center justify-between h-14 min-w-full">
-            <a href="#" className={"text-black py-2 text-lg font-medium ml-4"}>
-              Complaints Center
-            </a>
-            <a
-              href="/user/login"
-              className={
-                "text-black hover:underline text-center font-medium mr-4"
-              }
-              onClick={() =>
-                message.open({
-                  duration: 0,
-                  type: "loading",
-                  content: "Redirecting...",
-                })
-              }
-            >
-              Login
-            </a>
+    <div className="relative min-h-screen">
+      <div className="w-full flex justify-center bg-white">
+        File a complaint?{" "}
+        <a
+          className="ml-2 hover:underline hover:text-[#31a107]"
+          href="/complain"
+        >
+          click here
+        </a>
+      </div>
+      <nav className="bg-[#2d2d2d] pl-4 text-[#31a107]">
+        <div className="max-w-7xl px-1 sm:px-6 lg:px-1">
+          <div className="flex justify-between h-12">
+            <div className="flex">
+              <a
+                href="#"
+                onClick={() => {
+                  setActive("home");
+                  setSelectedComplain(null);
+                }}
+                className={`px-3 py-2 text-lg font-medium w-28 text-center hover:underline ${
+                  active == "home" ? "bg-[#31a107] text-white" : ""
+                }`}
+              >
+                Home
+              </a>
+              <a
+                href="#"
+                onClick={() => {
+                  setActive("news");
+                  setSelectedComplain(null);
+                }}
+                className={`px-3 py-2 text-lg font-medium nav-link w-76 text-center hover:underline ${
+                  active == "news" ? "bg-[#31a107] text-white" : ""
+                }`}
+              >
+                News and Announcement
+              </a>
+              <a
+                href="#"
+                onClick={() => {
+                  setActive("complain");
+                  setSelectedComplain(null);
+                }}
+                className={`px-3 py-2 text-lg font-medium nav-link w-76 text-center hover:underline ${
+                  active == "complain" ? "bg-[#31a107] text-white" : ""
+                }`}
+              >
+                Complains
+              </a>
+            </div>
           </div>
         </div>
       </nav>
 
-      {/* CONTENT */}
-      <div className="min-h-full flex flex-row text-base flex-grow">
-        <div className="min-h-full min-w-24 px-2 flex spin relative">
-          <div className="px-2 border-r border-slate-300">
-            <Input.Search
-              placeholder="Search..."
-              className="my-2 min-w-40"
-              onChange={(_) => runTimer(_.target.value)}
-              loading={hasLoader("searching")}
-            />
-            <div className="flex flex-col">
-              {complains.map((e, i) => (
-                <span
-                  className={`text-sm px-2 cursor-pointer hover:underline rounded ${
-                    e._id == selectedComplain?._id
-                      ? "bg-slate-700 text-white "
-                      : ""
-                  }`}
-                  key={`case-{i}`}
-                  onClick={() => setSelectedComplain(e)}
-                >
-                  Case id: {e._id.slice(-6)}
-                </span>
-              ))}
+      {active == "home" && (
+        <div className="w-full flex flex-col items-center justify-center mt-10">
+          <div
+            data-aos="fade-up"
+            className="text-center text-4xl font-black h-40"
+          >
+            BARANGAY COMPLAIN SYSTEM <br />
+            North Maramag
+          </div>
+          <div data-aos="fade-up" className="w-3/4">
+            <span className="ml-10">Lorem</span> ipsum dolor sit amet,
+            consectetur adipiscing elit. Vestibulum convallis velit viverra,
+            semper eros at, rhoncus nisi. Maecenas id libero ultrices, dictum
+            orci fringilla, finibus risus. Proin at pulvinar elit. Lorem ipsum
+            dolor sit amet, consectetur adipiscing elit. Praesent pretium,
+            tortor at finibus accumsan, massa elit placerat lectus, ut bibendum
+            lorem lacus non ante. In sed lorem porttitor, pretium nibh non,
+            ultricies nisl. Ut malesuada vestibulum felis ullamcorper
+            sollicitudin. Pellentesque eget ultricies elit, consectetur eleifend
+            ligula. Fusce non quam vitae nunc bibendum auctor. Suspendisse quis
+            ligula a magna suscipit maximus. Nulla finibus faucibus nibh at
+            porta. Nunc nec urna in augue malesuada ullamcorper. Mauris eros
+            elit, elementum non mi quis, fringilla rhoncus libero. Interdum et
+            malesuada fames ac ante ipsum primis in faucibus. Donec varius
+            placerat urna, quis fringilla quam. Maecenas commodo dolor id libero
+            eleifend pretium. <br />
+            <span className="ml-10">Praesent</span> auctor id orci sed pharetra.
+            Vestibulum eleifend, erat vitae pharetra ultricies, libero magna
+            vehicula felis, sed porttitor nibh nulla ultricies risus. Duis nisl
+            neque, bibendum vel felis vel, pellentesque pulvinar lectus. Sed
+            sodales vel velit at vehicula. Morbi vestibulum tincidunt lorem eget
+            egestas. Phasellus eu aliquet eros. Cras luctus mauris vitae tortor
+            pharetra tincidunt. Vivamus tincidunt ligula purus, sit amet
+            volutpat justo vehicula vitae. Nullam nunc leo, vestibulum ut
+            euismod vel, porta in lacus. Nunc mollis accumsan diam, eget
+            porttitor enim dignissim eu.
+            <br />
+            <span className="ml-10">In</span> tellus arcu, pretium id diam at,
+            sagittis tempus dolor. Nulla semper tincidunt eros, non convallis
+            nunc sollicitudin id. Vestibulum aliquet imperdiet rhoncus.
+            Curabitur sollicitudin, eros ut luctus tincidunt, ante dolor viverra
+            turpis, eu rhoncus massa diam finibus est. Etiam sit amet eleifend
+            ipsum. Cras tincidunt scelerisque mattis. Aenean euismod, libero a
+            cursus porttitor, urna nulla dapibus neque, nec porttitor nisi ex
+            vitae ipsum. Pellentesque eu odio nunc. Pellentesque luctus risus
+            purus, eu ullamcorper metus efficitur vestibulum. Donec vel dolor
+            sit amet lectus pretium rhoncus ut eu lectus. Donec faucibus dui at
+            neque pellentesque, sit amet consectetur magna ornare. Curabitur in
+            sem ac leo laoreet consequat non sed lacus. Aenean sed mi non elit
+            tempor pulvinar. Fusce vitae sapien nunc. Phasellus laoreet sed nisi
+            non varius. Curabitur aliquet augue a condimentum fermentum.
+          </div>
+
+          <div className="mt-8 w-10/12 flex items-center justify-around">
+            <div
+              className="sukarap flex bg-[#31a107] p-6 rounded gap-1"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <CiFileOn
+                style={{
+                  fontSize: "4.5em",
+                  color: "#fff",
+                }}
+              />
+              <div className="flex flex-col justify-center ml-2">
+                <span className="text-3xl text-white mt-2">30,000+</span>
+                <span className="text-lg text-white">COMPLAINS RECEIVED</span>
+              </div>
+            </div>
+            <div
+              className="flex bg-[#31a107] p-6 rounded gap-1"
+              data-aos="fade-up"
+              data-aos-delay="600"
+            >
+              <MdGroups2
+                style={{
+                  fontSize: "4.5em",
+                  color: "#fff",
+                }}
+              />
+              <div className="flex flex-col ml-2">
+                <span className="text-3xl text-white mt-2">30,000+</span>
+                <span className="text-lg text-white">RESIDENT REGISTERED</span>
+              </div>
+            </div>
+            <div
+              className="flex bg-[#31a107] p-6 rounded gap-1"
+              data-aos="fade-up"
+              data-aos-delay="900"
+            >
+              <LiaSmsSolid
+                style={{
+                  fontSize: "4.5em",
+                  color: "#fff",
+                }}
+              />
+              <div className="flex flex-col ml-2">
+                <span className="text-3xl text-white mt-2">30,000+</span>
+                <span className="text-lg text-white">SMS RECEIVED</span>
+              </div>
             </div>
           </div>
-          {/* loader */}
-          <div
-            className={`loader-body absolute inset-0 flex items-center justify-center bg-gray-200 opacity-75 z-50 ${
-              hasLoader("fetch-case") ? "show" : ""
-            }`}
-          >
-            <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-400 h-12 w-12"></div>
-          </div>
         </div>
-        {complainDetails(selectedComplain)}
-      </div>
-      {/* END OF CONTENT */}
+      )}
 
-      <div className="absolute bottom-0 h-16 min-w-full bg-[#0885ff33] flex items-center justify-center z-50 relative">
-        <div className="flex flex-col">
-          <span className="tracking-wide text-black mr-1">
-            Created using NextJS, @2024 All Rights Reserved
-          </span>
-        </div>
+      {active == "complain" && (
+        <>
+          {/* CONTENT */}
+          <div className="h-[85vh] flex flex-row text-base flex-grow">
+            <div className="min-h-full min-w-24 px-2 flex spin relative">
+              <div className="px-2 border-r border-slate-300 h-full">
+                <Input.Search
+                  placeholder="Search..."
+                  className="my-2 min-w-40"
+                  onChange={(_) => runTimer(_.target.value)}
+                  loading={hasLoader("searching")}
+                />
+                <div className="flex flex-col h-full">
+                  {complains.map((e, i) => (
+                    <span
+                      className={`text-sm p-2 cursor-pointer rounded ${
+                        e._id == selectedComplain?._id
+                          ? "bg-[#31a107] text-white "
+                          : ""
+                      }`}
+                      key={`case-${i}`}
+                      onClick={() => setSelectedComplain(e)}
+                    >
+                      Case : {e._id.slice(-6)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              {/* loader */}
+              <div
+                className={`loader-body absolute inset-0 flex items-center justify-center bg-gray-200 opacity-75 z-50 ${
+                  hasLoader("fetch-case") ? "show" : ""
+                }`}
+              >
+                <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-400 h-12 w-12"></div>
+              </div>
+            </div>
+            {complainDetails(selectedComplain)}
+          </div>
+        </>
+      )}
+
+      {active == "news" && <News />}
+
+      <div className="bg-[#2d2d2d] text-white absolute bottom-0 w-full h-16 flex items-center justify-end">
+        <span className="text-center mr-10">
+          Copyright &#169; {new Date().getFullYear()}. Barangay Complain System.
+          All Right Reserved.
+        </span>
       </div>
     </div>
   );
