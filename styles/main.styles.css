@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Abel&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600&display=swap");
+
 .label-under {
   position: relative;
   display: inline;
@@ -50,7 +53,7 @@ div.class-container * div.img-container::before {
   bottom: 0;
   display: block;
   background: linear-gradient(transparent, black);
-  height: 120px;
+  height: 100px;
   width: 100%;
   border-radius: 10px;
   z-index: 1;
@@ -70,14 +73,18 @@ div.img-container:hover img {
   transform: scale(1.01);
 }
 
-div.news-container div.news-title {
-  font-size: 3em;
-  font-weight: 700;
-}
-
 div.img-container {
   position: relative;
   overflow: hidden;
+}
+
+a.remove-focus {
+  outline: none;
+  color: inherit;
+}
+
+.more-news:hover .img-label {
+  text-decoration: underline;
 }
 
 @-webkit-keyframes spinner {

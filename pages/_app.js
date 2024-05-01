@@ -8,11 +8,7 @@ export default function App({ Component, pageProps }) {
   return (
     <ConfigProvider>
       <Head>
-        <link rel="shortcut icon" href="/favicon.png" />
-        <link
-          href="https://unpkg.com/aos@2.3.1/dist/aos.css"
-          rel="stylesheet"
-        ></link>
+        <link rel="shortcut icon" href="/web-logo.png" />
         <title>Barangay Complaint System</title>
         <meta name="description" content="System for barangay complaints" />
       </Head>

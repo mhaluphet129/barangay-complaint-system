@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   await dbConnect();
 
   if (req.method == "GET") {
-    let { page, pageSize, searchKeyword } = req.query;
+    let { page, pageSize, searchKeyword, slug_name } = req.query;
 
     if (!page) page = 1;
     if (!pageSize) pageSize = 10;
@@ -19,8 +19,7 @@ export default async function handler(req, res) {
         $or: [{ title: { $regex: re } }, { description: { $regex: re } }],
       });
     }
-
-    console.log(page, pageSize);
+    if (slug_name) query.push({ slug_name });
 
     return await News.find(query.length > 0 ? { $and: query } : {})
       .skip((parseInt(page) - 1) * parseInt(pageSize))

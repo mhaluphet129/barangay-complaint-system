@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Col, Divider, Row, Spin } from "antd";
+import { Col, Row, Spin, Typography } from "antd";
+import Link from "next/link";
 import axios from "axios";
 import dayjs from "dayjs";
 
@@ -24,59 +25,157 @@ const News = () => {
   return (
     <Spin spinning={loading == "fetch"}>
       <div className="class-container">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 25,
-          }}
-        >
-          <div className="news-container">
-            <div className="img-container">
-              <img
-                src={news[0]?.imgs[0]}
-                style={{
-                  width: "80vw",
-                  borderRadius: 10,
-                  maxHeight: "25em",
-                  objectFit: "cover",
-                  objectPosition: "center",
-                }}
-                alt="image"
-              />
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: 25,
-                  left: 25,
-                  color: "#fff",
-                  zIndex: 2,
-                }}
-              >
-                <strong>Barangay Admin</strong> <br />
-                {dayjs(news[0]?.createdAt).format("MMMM DD, YYYY")}
+        {news.length > 0 && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 25,
+            }}
+          >
+            <div className="news-container">
+              <div className="img-container">
+                <img
+                  src={news[0]?.imgs[0]}
+                  style={{
+                    width: "80vw",
+                    borderRadius: 10,
+                    maxHeight: "25em",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                  }}
+                  alt="image"
+                />
+                <div
+                  className="img-label"
+                  style={{
+                    position: "absolute",
+                    bottom: 25,
+                    left: 25,
+                    color: "#fff",
+                    zIndex: 2,
+                  }}
+                >
+                  <Typography.Paragraph
+                    style={{
+                      maxWidth: "25vw",
+                      color: "#fff",
+                      fontSize: "1.5em",
+                      margin: 0,
+                    }}
+                    ellipsis
+                  >
+                    {news[0]?.title}
+                  </Typography.Paragraph>{" "}
+                  <span>
+                    Barangay Admin -{" "}
+                    <span className="italic">
+                      {dayjs(news[0]?.createdAt).format("MMMM DD, YYYY")}
+                    </span>
+                  </span>
+                </div>
               </div>
             </div>
-            <div className="news-title">{news[0]?.title}</div>
           </div>
-        </div>
-        <div style={{ width: "80vw", marginTop: 25 }}>
+        )}
+
+        <div style={{ width: "80vw", marginTop: 25, marginBottom: 25 }}>
           <Row gutter={[16, 16]}>
             <Col span={18}>
-              <span style={{ fontSize: "1.4em", textAlign: "start" }}>
-                Recent News &#9734;
-              </span>
-            </Col>
-            <Col
-              span={6}
-              style={{
-                borderLeft: "1px solid #aaa",
-              }}
-            >
-              2
+              <span className="text-2xl font-bold">Recent News &#9734;</span>
+              {news.length > 0 ? (
+                <Row gutter={[32, 32]}>
+                  <div
+                    style={{
+                      display: "flex",
+                      marginTop: 10,
+                    }}
+                  >
+                    {news.map((e, i) => (
+                      <Col span={12}>
+                        <Link
+                          className="text-xl cursor-pointer text-black hover:underline remove-focus"
+                          style={{ fontFamily: "abel" }}
+                          href="/news/[slug]"
+                          as={`/news/${e.slug_name}`}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: 25,
+                            }}
+                          >
+                            <div className="news-container">
+                              <div className="img-container more-news">
+                                <img
+                                  src={
+                                    e?.imgs?.length > 0
+                                      ? e?.imgs[0]
+                                      : "https://placehold.co/600x400"
+                                  }
+                                  style={{
+                                    width: "28vw",
+                                    borderRadius: 10,
+                                    height: "15em",
+                                    objectFit: "cover",
+                                    objectPosition: "center",
+                                  }}
+                                  alt="image"
+                                />
+                                <div
+                                  className="img-label"
+                                  style={{
+                                    position: "absolute",
+                                    bottom: 25,
+                                    left: 25,
+                                    color: "#fff",
+                                    zIndex: 2,
+                                  }}
+                                >
+                                  <Typography.Paragraph
+                                    style={{
+                                      maxWidth: "25vw",
+                                      color: "#fff",
+                                      fontSize: "1em",
+                                      margin: 0,
+                                    }}
+                                    ellipsis
+                                  >
+                                    {e?.title}
+                                  </Typography.Paragraph>{" "}
+                                  <span>
+                                    Barangay Admin -{" "}
+                                    <span className="italic">
+                                      {dayjs(e?.createdAt).format(
+                                        "MMMM DD, YYYY"
+                                      )}
+                                    </span>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      </Col>
+                    ))}
+                  </div>
+                </Row>
+              ) : (
+                <Typography.Text type="secondary" style={{ display: "block" }}>
+                  No News Posted
+                </Typography.Text>
+              )}
             </Col>
           </Row>
+        </div>
+        <div style={{ width: "80vw", marginTop: 25, marginBottom: 25 }}>
+          <span className="text-2xl font-bold">Announcement &#128227;</span>
+          <br />
+          <Typography.Text type="secondary">
+            No Announcement Posted
+          </Typography.Text>
         </div>
       </div>
     </Spin>
