@@ -4,6 +4,8 @@ import Link from "next/link";
 import axios from "axios";
 import dayjs from "dayjs";
 
+import "tailwindcss/tailwind.css";
+
 const News = () => {
   const [loading, setLoading] = useState("");
   const [news, setNews] = useState([]);
@@ -23,77 +25,117 @@ const News = () => {
   }, []);
 
   return (
-    <Spin spinning={loading == "fetch"}>
-      <div className="class-container">
-        {news.length > 0 && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 25,
-            }}
+    <>
+      <div className="flex-1">
+        <div className="w-full flex justify-center bg-[#eee]">
+          File a complaint?{" "}
+          <a
+            className="ml-2 hover:underline hover:text-[#31a107]"
+            href="/complain"
           >
-            <div className="news-container">
-              <div className="img-container">
-                <img
-                  src={news[0]?.imgs[0]}
-                  style={{
-                    width: "80vw",
-                    borderRadius: 10,
-                    maxHeight: "25em",
-                    objectFit: "cover",
-                    objectPosition: "center",
-                  }}
-                  alt="image"
-                />
-                <div
-                  className="img-label"
-                  style={{
-                    position: "absolute",
-                    bottom: 25,
-                    left: 25,
-                    color: "#fff",
-                    zIndex: 2,
-                  }}
+            click here
+          </a>
+        </div>
+        <nav className="bg-[#2d2d2d] pl-4 text-[#31a107]">
+          <div className="max-w-7xl px-1 sm:px-6 lg:px-1">
+            <div className="flex justify-between h-12">
+              <div className="flex">
+                <Link
+                  href="/"
+                  className="px-3 py-2 text-lg font-medium w-28 text-center hover:underline"
                 >
-                  <Typography.Paragraph
-                    style={{
-                      maxWidth: "25vw",
-                      color: "#fff",
-                      fontSize: "1.5em",
-                      margin: 0,
-                    }}
-                    ellipsis
-                  >
-                    {news[0]?.title}
-                  </Typography.Paragraph>{" "}
-                  <span>
-                    Barangay Admin -{" "}
-                    <span className="italic">
-                      {dayjs(news[0]?.createdAt).format("MMMM DD, YYYY")}
-                    </span>
-                  </span>
-                </div>
+                  Home
+                </Link>
+                <Link
+                  href="/news"
+                  className="px-3 py-2 text-lg font-medium nav-link w-76 text-center bg-[#31a107] text-white hover:underline"
+                >
+                  News and Announcement
+                </Link>
+                <a
+                  href="/complains"
+                  className="px-3 py-2 text-lg font-medium nav-link w-76 text-center hover:underline"
+                >
+                  Complains
+                </a>
               </div>
             </div>
           </div>
-        )}
+        </nav>
 
-        <div style={{ width: "80vw", marginTop: 25, marginBottom: 25 }}>
-          <Row gutter={[16, 16]}>
-            <Col span={18}>
-              <span className="text-2xl font-bold">Recent News &#9734;</span>
-              {news.length > 0 ? (
-                <Row gutter={[32, 32]}>
-                  <div
+        <div className="class-container">
+          {news.length > 0 && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 25,
+              }}
+            >
+              <Link href="/news/[slug]" as={`/news/${news[0]?.slug_name}`}>
+                <div className="news-container">
+                  <div className="img-container">
+                    <img
+                      src={news[0]?.imgs[0]}
+                      style={{
+                        width: "80vw",
+                        borderRadius: 10,
+                        maxHeight: "25em",
+                        objectFit: "cover",
+                        objectPosition: "center",
+                      }}
+                      alt="image"
+                    />
+                    <div
+                      className="img-label"
+                      style={{
+                        position: "absolute",
+                        bottom: 25,
+                        left: 25,
+                        color: "#fff",
+                        zIndex: 2,
+                      }}
+                    >
+                      <Typography.Paragraph
+                        style={{
+                          maxWidth: "25vw",
+                          color: "#fff",
+                          fontSize: "1.5em",
+                          margin: 0,
+                        }}
+                        ellipsis
+                      >
+                        {news[0]?.title}
+                      </Typography.Paragraph>{" "}
+                      <span>
+                        Barangay Admin -{" "}
+                        <span className="italic">
+                          {dayjs(news[0]?.createdAt).format("MMMM DD, YYYY")}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          )}
+
+          <div style={{ width: "80vw", marginTop: 25, marginBottom: 25 }}>
+            <Row gutter={[16, 16]}>
+              <Col span={18}>
+                <span className="text-2xl font-bold">Recent News &#9734;</span>
+                {news.length > 0 ? (
+                  <Row
+                    gutter={[32, 32]}
                     style={{
                       display: "flex",
                       marginTop: 10,
+                      width: "80vw",
                     }}
                   >
                     {news.map((e, i) => (
-                      <Col span={12}>
+                      <Col span={8}>
                         <Link
                           className="text-xl cursor-pointer text-black hover:underline remove-focus"
                           style={{ fontFamily: "abel" }}
@@ -160,25 +202,35 @@ const News = () => {
                         </Link>
                       </Col>
                     ))}
-                  </div>
-                </Row>
-              ) : (
-                <Typography.Text type="secondary" style={{ display: "block" }}>
-                  No News Posted
-                </Typography.Text>
-              )}
-            </Col>
-          </Row>
-        </div>
-        <div style={{ width: "80vw", marginTop: 25, marginBottom: 25 }}>
-          <span className="text-2xl font-bold">Announcement &#128227;</span>
-          <br />
-          <Typography.Text type="secondary">
-            No Announcement Posted
-          </Typography.Text>
+                  </Row>
+                ) : (
+                  <Typography.Text
+                    type="secondary"
+                    style={{ display: "block" }}
+                  >
+                    No News Posted
+                  </Typography.Text>
+                )}
+              </Col>
+            </Row>
+          </div>
+          <div style={{ width: "80vw", marginTop: 25, marginBottom: 25 }}>
+            <span className="text-2xl font-bold">Announcement &#128227;</span>
+            <br />
+            <Typography.Text type="secondary">
+              No Announcement Posted
+            </Typography.Text>
+          </div>
         </div>
       </div>
-    </Spin>
+
+      <footer className="bg-[#2d2d2d] text-white w-full h-16 flex items-center justify-end">
+        <span className="text-center mr-10">
+          Copyright &#169; {new Date().getFullYear()}. Barangay Complain System.
+          All Right Reserved.
+        </span>
+      </footer>
+    </>
   );
 };
 

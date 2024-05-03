@@ -52,13 +52,13 @@ export default function Page() {
                     Home
                   </a>
                   <a
-                    href="#"
+                    href="/news"
                     className="px-3 py-2 text-lg font-medium nav-link w-76 text-center hover:underline bg-[#31a107] text-white"
                   >
                     News and Announcement
                   </a>
                   <a
-                    href="/"
+                    href="/complains"
                     className="px-3 py-2 text-lg font-medium nav-link w-76 text-center hover:underline"
                   >
                     Complains

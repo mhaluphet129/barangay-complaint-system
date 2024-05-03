@@ -87,6 +87,16 @@ a.remove-focus {
   text-decoration: underline;
 }
 
+.logo-inside-main {
+  position: absolute;
+  z-index: -1;
+  width: 30%;
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+  filter: opacity(0.2) grayscale(0.5) brightness(1.2);
+}
+
 @-webkit-keyframes spinner {
   0% {
     -webkit-transform: rotate(0deg);
