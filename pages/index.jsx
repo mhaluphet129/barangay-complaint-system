@@ -2,6 +2,10 @@ import React, { useEffect, useRef } from "react";
 
 import { LuMoveRight } from "react-icons/lu";
 import { HiOutlineChevronDoubleDown } from "react-icons/hi2";
+import { CiFileOn } from "react-icons/ci";
+import { MdGroups2 } from "react-icons/md";
+import { LiaSmsSolid } from "react-icons/lia";
+import { TfiWrite } from "react-icons/tfi";
 
 import "tailwindcss/tailwind.css";
 import Link from "next/link";
@@ -65,7 +69,7 @@ const Home = () => {
             </div>
           </div>
         </nav>
-        <div className="h-full flex flex-col overflow-scroll bg-[#d9f2fe]">
+        <div className="h-full flex flex-col overflow-scroll bg-[#d9f2fe] mx-20">
           <img className="landingpage-background-img" src="bg-pic1.jpg" />
           <div className="landingpage-main-info flex flex-col justify-center items-center bg-[#d9f2fe] w-1/2">
             <span
@@ -84,7 +88,7 @@ const Home = () => {
             </div>
             <div className="flex gap-x-2 mt-10">
               <div
-                className="view-more-btn border-solid border-slate-500 border-2 rounded-lg px-10 py-3 text-2xl text-slate-600 cursor-pointer flex items-center"
+                className="view-more-btn border-solid border-slate-500 border rounded-lg px-10 py-3 text-2xl text-slate-600 cursor-pointer flex items-center"
                 onClick={() =>
                   ref.current.scrollIntoView({
                     behavior: "smooth",
@@ -96,16 +100,32 @@ const Home = () => {
                 View More{" "}
                 <HiOutlineChevronDoubleDown className="view-more-icon ml-2" />
               </div>
+              <Link
+                href="/complain"
+                className="view-more-btn border-solid border-slate-900 border rounded-lg bg-[#0275d8] px-10 py-3 text-2xl text-slate-600 cursor-pointer flex items-center text-white"
+              >
+                File a Complain <TfiWrite className="view-more-icon ml-2" />
+              </Link>
             </div>
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex flex-col justify-center items-center mt-16 overflow-hidden">
+            <span
+              className="text-center text-5xl font-black"
+              ref={ref}
+              data-aos="fade-down"
+              data-aos-offset="200"
+              style={{
+                fontFamily: "abel",
+              }}
+            >
+              Barangay Complaint System Offers:
+            </span>
             <div className="flex flex-col my-20 gap-10 w-3/5">
               <div
                 data-aos="fade-right"
                 data-aos-offset="200"
                 className="flex flex-col"
-                ref={ref}
               >
                 <span
                   className="font-bold text-4xl"
@@ -143,7 +163,7 @@ const Home = () => {
                   Empowering Community Engagement
                 </span>
                 <span
-                  className="text-1xl w-1/3"
+                  className="text-1xl w-1/2 my-2"
                   style={{
                     fontFamily: "abel",
                   }}
@@ -171,7 +191,7 @@ const Home = () => {
                   Comprehensive Case Management
                 </span>
                 <span
-                  className="text-1xl w-1/3"
+                  className="text-1xl w-1/2"
                   style={{
                     fontFamily: "abel",
                   }}
@@ -198,7 +218,7 @@ const Home = () => {
                   Conflict Resolution Expertise
                 </span>
                 <span
-                  className="text-1xl w-1/3"
+                  className="text-1xl w-1/2"
                   style={{
                     fontFamily: "abel",
                   }}
@@ -225,7 +245,7 @@ const Home = () => {
                   Empowering Local Governance
                 </span>
                 <span
-                  className="text-1xl w-1/3"
+                  className="text-1xl w-1/2"
                   style={{
                     fontFamily: "abel",
                   }}
@@ -238,6 +258,69 @@ const Home = () => {
                   of targeted solutions to improve the overall quality of life
                   in the community.
                 </span>
+              </div>
+            </div>
+
+            <span
+              className="text-center text-4xl font-black mb-10"
+              data-aos="fade-up"
+              data-aos-offset="200"
+              style={{
+                fontFamily: "abel",
+              }}
+            >
+              As of {new Date().getFullYear()}, we already assist and gathered
+            </span>
+            <div className="flex justify-between  w-3/4 p-2 mb-20">
+              <div
+                className="sukarap flex bg-[#31a107] p-6 rounded gap-1"
+                data-aos="fade-up"
+                data-aos-offset="200"
+              >
+                <CiFileOn
+                  style={{
+                    fontSize: "4.5em",
+                    color: "#fff",
+                  }}
+                />
+                <div className="flex flex-col justify-center ml-2">
+                  <span className="text-3xl text-white mt-2">30,000+</span>
+                  <span className="text-lg text-white">COMPLAINS RECEIVED</span>
+                </div>
+              </div>
+              <div
+                className="flex bg-[#31a107] p-6 rounded gap-1"
+                data-aos="fade-up"
+                data-aos-offset="200"
+              >
+                <MdGroups2
+                  style={{
+                    fontSize: "4.5em",
+                    color: "#fff",
+                  }}
+                />
+                <div className="flex flex-col ml-2">
+                  <span className="text-3xl text-white mt-2">30,000+</span>
+                  <span className="text-lg text-white">
+                    RESIDENT REGISTERED
+                  </span>
+                </div>
+              </div>
+              <div
+                className="flex bg-[#31a107] p-6 rounded gap-1"
+                data-aos="fade-up"
+                data-aos-offset="200"
+              >
+                <LiaSmsSolid
+                  style={{
+                    fontSize: "4.5em",
+                    color: "#fff",
+                  }}
+                />
+                <div className="flex flex-col ml-2">
+                  <span className="text-3xl text-white mt-2">30,000+</span>
+                  <span className="text-lg text-white">SMS RECEIVED</span>
+                </div>
               </div>
             </div>
           </div>

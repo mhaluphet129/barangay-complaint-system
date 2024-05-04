@@ -19,14 +19,22 @@ const Footer = () => {
         {/*  */}
         <div className="flex flex-col gap-2">
           <span className="text-2xl">Social Links</span>
-          <div className="mt-5 flex gap-2">
-            <a href="https://www.facebook.com" className="social-links">
+          <div className="mt-4 flex gap-2">
+            <a
+              href="https://www.facebook.com"
+              target="_blank"
+              className="social-links"
+            >
               <TiSocialFacebook style={{ fontSize: "2em" }} />
             </a>
-            <a href="https://x.com" className="social-links">
+            <a href="https://x.com" target="_blank" className="social-links">
               <TiSocialTwitter style={{ fontSize: "2em" }} />
             </a>
-            <a href="https://instagram.com" className="social-links">
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              className="social-links"
+            >
               <TiSocialInstagram style={{ fontSize: "2em" }} />
             </a>
           </div>
@@ -34,13 +42,13 @@ const Footer = () => {
         {/*  */}
         <div className="flex flex-col gap-2">
           <span className="text-2xl">Site Links</span>
-          <a href="/complain" className="mt-5 hover:underline">
+          <a href="/complain" className="mt-4 hover:underline">
             File Complaint
           </a>
           <a href="/user/login" className="hover:underline">
             Administrative Area
           </a>
-          <Tooltip title="Way kamo">
+          <Tooltip title="WAY KAMO">
             <a href="#">About Us</a>
           </Tooltip>
         </div>
@@ -51,7 +59,7 @@ const Footer = () => {
             target="_blank"
             className="flex flex-col hover:underline"
           >
-            <span className="mt-5">Barangay Hall of North Poblacion</span>
+            <span className="mt-4">Barangay Hall of North Poblacion</span>
             <span>Maramag, Bukidnon</span>
           </a>
           <a href="mailto: email@gmail.com" className="hover:underline">

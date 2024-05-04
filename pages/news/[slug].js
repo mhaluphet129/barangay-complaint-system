@@ -4,6 +4,7 @@ import { Carousel, Image, Spin } from "antd";
 import "tailwindcss/tailwind.css";
 import dayjs from "dayjs";
 import { LuMoveRight } from "react-icons/lu";
+import Link from "next/link";
 
 import axios from "axios";
 
@@ -34,7 +35,7 @@ export default function Page() {
     <Spin spinning={loading}>
       <div className="flex flex-col min-h-screen">
         <div className="flex-1">
-          <div className="w-full flex justify-between items-center bg-[#eee] h-12">
+          <div className="header w-full flex justify-between items-center bg-[#eee] h-12 relative">
             <div>{/* Intended to be empty */}</div>
             <div className="font-black flex items-center text-2xl">
               <span className="logo-small">
@@ -44,40 +45,45 @@ export default function Page() {
             </div>
             <div>
               <a
-                className="mr-5 hover:underline hover:text-[#31a107] flex items-center text-1xl"
+                className="mr-5 hover:underline hover:text-[#31a107] flex items-center text-2xl"
                 href="/complain"
               >
                 File a complaint <LuMoveRight className="ml-2" />
               </a>
             </div>
           </div>
-          <nav className="bg-[#2d2d2d] pl-4 text-[#31a107]">
-            <div className="max-w-7xl px-1 sm:px-6 lg:px-1">
+          <nav className="main-nav bg-[#2d2d2d] pl-20 text-[#c4dbeb] relative">
+            <div className="max-w-7xl">
               <div className="flex justify-between h-16">
                 <div className="flex">
-                  <a
+                  <Link
                     href="/"
-                    className="px-3 flex items-center justify-center text-2xl font-medium w-28 text-center hover:underline"
+                    className="px-2 flex items-center justify-center text-2xl font-medium w-28 text-center hover:underline"
                   >
                     Home
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/news"
-                    className="px-3 flex items-center justify-center text-2xl font-medium nav-link w-76 text-center hover:underline bg-[#31a107] text-white"
+                    className="px-3 flex items-center justify-center text-2xl font-medium nav-link w-76 text-center bg-[#c4dbeb] text-white  hover:underline"
                   >
                     News and Announcement
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/complains"
                     className="px-3 flex items-center justify-center text-2xl font-medium nav-link w-76 text-center hover:underline"
                   >
                     Complains
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
           </nav>
-          <div className="flex justify-center">
+          <div
+            className="flex justify-center overflow-scroll bg-[#d9f2fe] mx-20"
+            style={{
+              minHeight: "100vh",
+            }}
+          >
             <div className="w-9/12">
               <p className="text-4xl font-black mt-10">{news?.title}</p>
               <p className="text-xl font-black mt-4">Barangay Admin</p>

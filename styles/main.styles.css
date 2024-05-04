@@ -119,7 +119,7 @@ a.remove-focus {
 }
 
 .social-links:hover {
-  transform: translateY(-0.2em) scale(1.05);
+  transform: translateY(0.1em, -0.2em) scale(1.05);
 }
 
 @-webkit-keyframes bounce {
