@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
 import { Carousel, Image, Spin } from "antd";
 import "tailwindcss/tailwind.css";
 import dayjs from "dayjs";
+import { LuMoveRight } from "react-icons/lu";
+
+import axios from "axios";
 
 export default function Page() {
   const router = useRouter();
