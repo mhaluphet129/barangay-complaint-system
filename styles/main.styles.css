@@ -114,6 +114,14 @@ a.remove-focus {
   animation: bounce 0.6s linear infinite;
 }
 
+.social-links {
+  transition: 0.3s all;
+}
+
+.social-links:hover {
+  transform: translateY(-0.2em) scale(1.05);
+}
+
 @-webkit-keyframes bounce {
   50% {
     margin-top: -15px;

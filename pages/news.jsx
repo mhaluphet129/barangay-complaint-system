@@ -7,6 +7,8 @@ import { LuMoveRight } from "react-icons/lu";
 
 import "tailwindcss/tailwind.css";
 
+import Footer from "@/components/landingpage/footer";
+
 const News = () => {
   const [loading, setLoading] = useState("");
   const [news, setNews] = useState([]);
@@ -28,7 +30,7 @@ const News = () => {
   return (
     <>
       <div className="flex-1">
-        <div className="w-full flex justify-between items-center bg-[#eee] h-12">
+        <div className="header w-full flex justify-between items-center bg-[#eee] h-12 relative">
           <div>{/* Intended to be empty */}</div>
           <div className="font-black flex items-center text-2xl">
             <span className="logo-small">
@@ -38,41 +40,41 @@ const News = () => {
           </div>
           <div>
             <a
-              className="mr-5 hover:underline hover:text-[#31a107] flex items-center text-1xl"
+              className="mr-5 hover:underline hover:text-[#31a107] flex items-center text-2xl"
               href="/complain"
             >
               File a complaint <LuMoveRight className="ml-2" />
             </a>
           </div>
         </div>
-        <nav className="bg-[#2d2d2d] pl-4 text-[#31a107]">
-          <div className="max-w-7xl px-1 sm:px-6 lg:px-1">
+        <nav className="main-nav bg-[#2d2d2d] pl-20 text-[#c4dbeb] relative">
+          <div className="max-w-7xl">
             <div className="flex justify-between h-16">
               <div className="flex">
                 <Link
                   href="/"
-                  className="px-3 flex items-center justify-center text-2xl font-medium w-28 text-center hover:underline"
+                  className="px-2 flex items-center justify-center text-2xl font-medium w-28 text-center text-white hover:underline"
                 >
                   Home
                 </Link>
                 <Link
                   href="/news"
-                  className="px-3 flex items-center justify-center text-2xl font-medium nav-link w-76 text-center bg-[#31a107] text-white hover:underline"
+                  className="px-3 flex items-center justify-center text-2xl font-medium text-center bg-[#c4dbeb] text-white hover:underline"
                 >
                   News and Announcement
                 </Link>
-                <a
+                <Link
                   href="/complains"
-                  className="px-3 flex items-center justify-center text-2xl font-medium nav-link w-76 text-center hover:underline"
+                  className="px-3 flex items-center justify-center text-2xl font-medium text-center hover:underline"
                 >
                   Complains
-                </a>
+                </Link>
               </div>
             </div>
           </div>
         </nav>
 
-        <div className="class-container">
+        <div className="class-container h-full flex flex-col overflow-scroll mx-20 bg-[#d9f2fe]">
           {news.length > 0 && (
             <div
               style={{
@@ -82,11 +84,18 @@ const News = () => {
                 marginTop: 25,
               }}
             >
-              <Link href="/news/[slug]" as={`/news/${news[0]?.slug_name}`}>
+              <Link
+                href="/news/[slug]"
+                as={`/news/${news[news.length - 1]?.slug_name}`}
+              >
                 <div className="news-container">
                   <div className="img-container">
                     <img
-                      src={news[0]?.imgs[0]}
+                      src={
+                        news[news.length - 1]?.imgs?.length > 0
+                          ? news[news.length - 1]?.imgs[0]
+                          : "https://placehold.co/600x400"
+                      }
                       style={{
                         width: "80vw",
                         borderRadius: 10,
@@ -115,12 +124,14 @@ const News = () => {
                         }}
                         ellipsis
                       >
-                        {news[0]?.title}
+                        {news[news.length - 1]?.title}
                       </Typography.Paragraph>{" "}
                       <span>
                         Barangay Admin -{" "}
                         <span className="italic">
-                          {dayjs(news[0]?.createdAt).format("MMMM DD, YYYY")}
+                          {dayjs(news[news.length - 1]?.createdAt).format(
+                            "MMMM DD, YYYY"
+                          )}
                         </span>
                       </span>
                     </div>
@@ -233,12 +244,7 @@ const News = () => {
         </div>
       </div>
 
-      <footer className="bg-[#2d2d2d] text-white w-full h-16 flex items-center justify-end">
-        <span className="text-center mr-10">
-          Copyright &#169; {new Date().getFullYear()}. Barangay Complain System.
-          All Right Reserved.
-        </span>
-      </footer>
+      <Footer />
     </>
   );
 };

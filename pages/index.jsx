@@ -6,7 +6,8 @@ import { HiOutlineChevronDoubleDown } from "react-icons/hi2";
 import "tailwindcss/tailwind.css";
 import Link from "next/link";
 import AOS from "aos";
-import { Tooltip } from "antd";
+
+import Footer from "@/components/landingpage/footer";
 
 const Home = () => {
   const ref = useRef();
@@ -64,7 +65,7 @@ const Home = () => {
             </div>
           </div>
         </nav>
-        <div className="h-full flex flex-col overflow-scroll mx-20  bg-[#d9f2fe]">
+        <div className="h-full flex flex-col overflow-scroll bg-[#d9f2fe]">
           <img className="landingpage-background-img" src="bg-pic1.jpg" />
           <div className="landingpage-main-info flex flex-col justify-center items-center bg-[#d9f2fe] w-1/2">
             <span
@@ -243,41 +244,7 @@ const Home = () => {
         </div>
       </div>
 
-      <footer className="bg-[#2d2d2d] text-white px-10">
-        <div className="w-full h-34 flex items-start justify-end my-10 gap-24">
-          <div className="flex flex-col gap-2">
-            <span className="text-2xl">Site Links</span>
-            <a href="/complain" className="mt-5 hover:underline">
-              File Complaint
-            </a>
-            <a href="/user/login" className="hover:underline">
-              Administrative Area
-            </a>
-            <Tooltip title="Way kamo">
-              <a href="#">About Us</a>
-            </Tooltip>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-2xl">Contact Us</span>
-            <div className="flex flex-col">
-              <span className="mt-5">Barangay Hall of North Poblacion</span>
-              <span>Maramag, Bukidnon</span>
-            </div>
-            <span>email@gmail.com</span>
-            <span>+(63) 912 345 6789</span>
-          </div>
-        </div>
-        <div
-          style={{
-            borderTop: "1px solid #eee",
-          }}
-        />
-        <div className="w-full h-16 flex items-center justify-end">
-          <span className="text-center mr-10">
-            All Right Reserved &#169; {new Date().getFullYear()}
-          </span>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
