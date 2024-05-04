@@ -9,10 +9,11 @@ const Footer = () => {
   return (
     <footer className="bg-[#2d2d2d] text-white px-10">
       <div
-        className="w-full flex items-start justify-end gap-24"
+        className="w-full flex items-start justify-end"
         style={{
           paddingTop: "2.5em",
           paddingBottom: "2.5em",
+          gap: "6rem",
         }}
       >
         {/*  */}
