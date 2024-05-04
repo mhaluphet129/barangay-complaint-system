@@ -1,52 +1,62 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
-import { CiFileOn } from "react-icons/ci";
-import { LiaSmsSolid } from "react-icons/lia";
-import { MdGroups2 } from "react-icons/md";
+import { LuMoveRight } from "react-icons/lu";
+import { HiOutlineChevronDoubleDown } from "react-icons/hi2";
 
 import "tailwindcss/tailwind.css";
 import Link from "next/link";
+import AOS from "aos";
+import { Tooltip } from "antd";
 
 const Home = () => {
-  // useEffect(() => {
-  //   AOS.init({
-  //     once: true,
-  //     duration: 1000,
-  //     easing: "ease-out-cubic",
-  //   });
-  // }, []);
+  const ref = useRef();
+  useEffect(() => {
+    AOS.init({
+      once: true,
+      duration: 1000,
+      easing: "ease-out-cubic",
+    });
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-1">
-        <div className="w-full flex justify-center bg-[#eee]">
-          File a complaint?{" "}
-          <a
-            className="ml-2 hover:underline hover:text-[#31a107]"
-            href="/complain"
-          >
-            click here
-          </a>
+      <div className="flex-1 ">
+        <div className="header w-full flex justify-between items-center bg-[#eee] h-12 relative">
+          <div>{/* Intended to be empty */}</div>
+          <div className="font-black flex items-center text-2xl">
+            <span className="logo-small">
+              <img src="/web-logo.png" width={50} className="mr-2" />
+            </span>
+            North Poblacion Maramag
+          </div>
+          <div>
+            <a
+              className="mr-5 hover:underline hover:text-[#31a107] flex items-center text-2xl"
+              href="/complain"
+            >
+              File a complaint <LuMoveRight className="ml-2" />
+            </a>
+          </div>
         </div>
-        <nav className="bg-[#2d2d2d] pl-4 text-[#31a107]">
-          <div className="max-w-7xl px-1 sm:px-6 lg:px-1">
-            <div className="flex justify-between h-12">
+        <nav className="main-nav bg-[#2d2d2d] pl-20 text-[#c4dbeb] relative">
+          <div className="max-w-7xl">
+            <div className="flex justify-between h-16">
               <div className="flex">
                 <Link
                   href="/"
-                  className="px-3 py-2 text-lg font-medium w-28 text-center bg-[#31a107] text-white hover:underline"
+                  className="px-2 flex items-center justify-center text-2xl font-medium w-28 text-center bg-[#c4dbeb] text-white hover:underline"
                 >
                   Home
                 </Link>
                 <Link
                   href="/news"
-                  className="px-3 py-2 text-lg font-medium nav-link w-76 text-center hover:underline"
+                  className="px-3 flex items-center justify-center text-2xl font-medium nav-link w-76 text-center hover:underline"
                 >
                   News and Announcement
                 </Link>
                 <Link
                   href="/complains"
-                  className="px-3 py-2 text-lg font-medium nav-link w-76 text-center hover:underline"
+                  className="px-3 flex items-center justify-center text-2xl font-medium nav-link w-76 text-center hover:underline"
                 >
                   Complains
                 </Link>
@@ -54,103 +64,219 @@ const Home = () => {
             </div>
           </div>
         </nav>
-
-        <div className="w-full flex flex-col items-center justify-center mt-10">
-          <img className="logo-inside-main" src="/web-logo.png" />
-          <div className="text-center text-4xl font-black h-40">
-            BARANGAY COMPLAIN SYSTEM <br />
-            North Maramag
-          </div>
-          <div className="w-3/4">
-            <span className="ml-10">Lorem</span> ipsum dolor sit amet,
-            consectetur adipiscing elit. Vestibulum convallis velit viverra,
-            semper eros at, rhoncus nisi. Maecenas id libero ultrices, dictum
-            orci fringilla, finibus risus. Proin at pulvinar elit. Lorem ipsum
-            dolor sit amet, consectetur adipiscing elit. Praesent pretium,
-            tortor at finibus accumsan, massa elit placerat lectus, ut bibendum
-            lorem lacus non ante. In sed lorem porttitor, pretium nibh non,
-            ultricies nisl. Ut malesuada vestibulum felis ullamcorper
-            sollicitudin. Pellentesque eget ultricies elit, consectetur eleifend
-            ligula. Fusce non quam vitae nunc bibendum auctor. Suspendisse quis
-            ligula a magna suscipit maximus. Nulla finibus faucibus nibh at
-            porta. Nunc nec urna in augue malesuada ullamcorper. Mauris eros
-            elit, elementum non mi quis, fringilla rhoncus libero. Interdum et
-            malesuada fames ac ante ipsum primis in faucibus. Donec varius
-            placerat urna, quis fringilla quam. Maecenas commodo dolor id libero
-            eleifend pretium. <br />
-            <span className="ml-10">Praesent</span> auctor id orci sed pharetra.
-            Vestibulum eleifend, erat vitae pharetra ultricies, libero magna
-            vehicula felis, sed porttitor nibh nulla ultricies risus. Duis nisl
-            neque, bibendum vel felis vel, pellentesque pulvinar lectus. Sed
-            sodales vel velit at vehicula. Morbi vestibulum tincidunt lorem eget
-            egestas. Phasellus eu aliquet eros. Cras luctus mauris vitae tortor
-            pharetra tincidunt. Vivamus tincidunt ligula purus, sit amet
-            volutpat justo vehicula vitae. Nullam nunc leo, vestibulum ut
-            euismod vel, porta in lacus. Nunc mollis accumsan diam, eget
-            porttitor enim dignissim eu.
-            <br />
-            <span className="ml-10">In</span> tellus arcu, pretium id diam at,
-            sagittis tempus dolor. Nulla semper tincidunt eros, non convallis
-            nunc sollicitudin id. Vestibulum aliquet imperdiet rhoncus.
-            Curabitur sollicitudin, eros ut luctus tincidunt, ante dolor viverra
-            turpis, eu rhoncus massa diam finibus est. Etiam sit amet eleifend
-            ipsum. Cras tincidunt scelerisque mattis. Aenean euismod, libero a
-            cursus porttitor, urna nulla dapibus neque, nec porttitor nisi ex
-            vitae ipsum. Pellentesque eu odio nunc. Pellentesque luctus risus
-            purus, eu ullamcorper metus efficitur vestibulum. Donec vel dolor
-            sit amet lectus pretium rhoncus ut eu lectus. Donec faucibus dui at
-            neque pellentesque, sit amet consectetur magna ornare. Curabitur in
-            sem ac leo laoreet consequat non sed lacus. Aenean sed mi non elit
-            tempor pulvinar. Fusce vitae sapien nunc. Phasellus laoreet sed nisi
-            non varius. Curabitur aliquet augue a condimentum fermentum.
-          </div>
-
-          <div className="mt-8 w-10/12 flex items-center justify-around">
-            <div className="sukarap flex bg-[#31a107] p-6 rounded gap-1">
-              <CiFileOn
-                style={{
-                  fontSize: "4.5em",
-                  color: "#fff",
-                }}
-              />
-              <div className="flex flex-col justify-center ml-2">
-                <span className="text-3xl text-white mt-2">30,000+</span>
-                <span className="text-lg text-white">COMPLAINS RECEIVED</span>
+        <div className="h-full flex flex-col overflow-scroll mx-20  bg-[#d9f2fe]">
+          <img className="landingpage-background-img" src="bg-pic1.jpg" />
+          <div className="landingpage-main-info flex flex-col justify-center items-center bg-[#d9f2fe] w-1/2">
+            <span
+              className="text-5xl font-bold"
+              style={{
+                fontFamily: "abel",
+              }}
+            >
+              Barangay Complaint System
+            </span>
+            <div className="mt-2">
+              <span>
+                Resolving Local Disputes with Efficiency and Fairness in North
+                Poblacion Maramag
+              </span>
+            </div>
+            <div className="flex gap-x-2 mt-10">
+              <div
+                className="view-more-btn border-solid border-slate-500 border-2 rounded-lg px-10 py-3 text-2xl text-slate-600 cursor-pointer flex items-center"
+                onClick={() =>
+                  ref.current.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                    inline: "center",
+                  })
+                }
+              >
+                View More{" "}
+                <HiOutlineChevronDoubleDown className="view-more-icon ml-2" />
               </div>
             </div>
-            <div className="flex bg-[#31a107] p-6 rounded gap-1">
-              <MdGroups2
-                style={{
-                  fontSize: "4.5em",
-                  color: "#fff",
-                }}
-              />
-              <div className="flex flex-col ml-2">
-                <span className="text-3xl text-white mt-2">30,000+</span>
-                <span className="text-lg text-white">RESIDENT REGISTERED</span>
+          </div>
+
+          <div className="flex justify-center">
+            <div className="flex flex-col my-20 gap-10 w-3/5">
+              <div
+                data-aos="fade-right"
+                data-aos-offset="200"
+                className="flex flex-col"
+                ref={ref}
+              >
+                <span
+                  className="font-bold text-4xl"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  Streamlined Local Dispute Resolution
+                </span>
+                <span
+                  className="text-1xl w-1/2"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  Our Barangay Complaint System provides a efficient and
+                  accessible platform for residents to address local disputes
+                  and concerns. Leveraging the expertise of community leaders,
+                  we facilitate the resolution of issues ranging from
+                  neighborhood conflicts to public service complaints.
+                </span>
               </div>
-            </div>
-            <div className="flex bg-[#31a107] p-6 rounded gap-1">
-              <LiaSmsSolid
-                style={{
-                  fontSize: "4.5em",
-                  color: "#fff",
-                }}
-              />
-              <div className="flex flex-col ml-2">
-                <span className="text-3xl text-white mt-2">30,000+</span>
-                <span className="text-lg text-white">SMS RECEIVED</span>
+
+              <div
+                data-aos="fade-left"
+                data-aos-offset="200"
+                className="flex flex-col text-end items-end"
+              >
+                <span
+                  className="font-bold text-4xl"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  Empowering Community Engagement
+                </span>
+                <span
+                  className="text-1xl w-1/3"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  By enabling direct communication between citizens and local
+                  authorities, our system fosters greater transparency and
+                  accountability. Residents can easily submit complaints, track
+                  their progress, and participate in the decision-making
+                  process, strengthening the bond between the community and its
+                  governing bodies.
+                </span>
+              </div>
+
+              <div
+                data-aos="fade-right"
+                data-aos-offset="200"
+                className="flex flex-col"
+              >
+                <span
+                  className="font-bold text-4xl"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  Comprehensive Case Management
+                </span>
+                <span
+                  className="text-1xl w-1/3"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  Our robust case management system ensures that every complaint
+                  is thoroughly investigated and addressed in a timely manner.
+                  From initial intake to final resolution, we maintain detailed
+                  records and provide regular updates to all parties involved,
+                  ensuring a fair and transparent process.
+                </span>
+              </div>
+
+              <div
+                data-aos="fade-left"
+                data-aos-offset="200"
+                className="flex flex-col text-end items-end"
+              >
+                <span
+                  className="font-bold text-4xl"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  Conflict Resolution Expertise
+                </span>
+                <span
+                  className="text-1xl w-1/3"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  Our team of experienced mediators and conflict resolution
+                  specialists are dedicated to finding amicable solutions that
+                  satisfy all stakeholders. By leveraging their expertise in
+                  negotiation, mediation, and community-based problem-solving,
+                  we strive to resolve disputes efficiently and effectively.
+                </span>
+              </div>
+
+              <div
+                data-aos="fade-right"
+                data-aos-offset="200"
+                className="flex flex-col"
+              >
+                <span
+                  className="font-bold text-4xl"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  Empowering Local Governance
+                </span>
+                <span
+                  className="text-1xl w-1/3"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  By providing a centralized platform for citizen engagement,
+                  our Barangay Complaint System for North Poblacion Maramag
+                  empowers local governments to better understand and address
+                  the needs of their constituents. This data-driven approach
+                  enables more informed decision-making and the implementation
+                  of targeted solutions to improve the overall quality of life
+                  in the community.
+                </span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <footer className="bg-[#2d2d2d] text-white w-full h-16 flex items-center justify-end">
-        <span className="text-center mr-10">
-          Copyright &#169; {new Date().getFullYear()}. Barangay Complain System.
-          All Right Reserved.
-        </span>
+      <footer className="bg-[#2d2d2d] text-white px-10">
+        <div className="w-full h-34 flex items-start justify-end my-10 gap-24">
+          <div className="flex flex-col gap-2">
+            <span className="text-2xl">Site Links</span>
+            <a href="/complain" className="mt-5 hover:underline">
+              File Complaint
+            </a>
+            <a href="/user/login" className="hover:underline">
+              Administrative Area
+            </a>
+            <Tooltip title="Way kamo">
+              <a href="#">About Us</a>
+            </Tooltip>
+          </div>
+          <div className="flex flex-col gap-2">
+            <span className="text-2xl">Contact Us</span>
+            <div className="flex flex-col">
+              <span className="mt-5">Barangay Hall of North Poblacion</span>
+              <span>Maramag, Bukidnon</span>
+            </div>
+            <span>email@gmail.com</span>
+            <span>+(63) 912 345 6789</span>
+          </div>
+        </div>
+        <div
+          style={{
+            borderTop: "1px solid #eee",
+          }}
+        />
+        <div className="w-full h-16 flex items-center justify-end">
+          <span className="text-center mr-10">
+            All Right Reserved &#169; {new Date().getFullYear()}
+          </span>
+        </div>
       </footer>
     </div>
   );

@@ -4,6 +4,8 @@ import Link from "next/link";
 import axios from "axios";
 import dayjs from "dayjs";
 
+import { LuMoveRight } from "react-icons/lu";
+
 import "tailwindcss/tailwind.css";
 
 const News = () => {
@@ -162,34 +164,42 @@ const News = () => {
   return (
     <>
       <div className="flex-1">
-        <div className="w-full flex justify-center bg-[#eee]">
-          File a complaint?{" "}
-          <a
-            className="ml-2 hover:underline hover:text-[#31a107]"
-            href="/complain"
-          >
-            click here
-          </a>
+        <div className="w-full flex justify-between items-center bg-[#eee] h-12">
+          <div>{/* Intended to be empty */}</div>
+          <div className="font-black flex items-center text-2xl">
+            <span className="logo-small">
+              <img src="/web-logo.png" width={50} className="mr-2" />
+            </span>
+            North Poblacion Maramag
+          </div>
+          <div>
+            <a
+              className="mr-5 hover:underline hover:text-[#31a107] flex items-center text-1xl"
+              href="/complain"
+            >
+              File a complaint <LuMoveRight className="ml-2" />
+            </a>
+          </div>
         </div>
         <nav className="bg-[#2d2d2d] pl-4 text-[#31a107]">
           <div className="max-w-7xl px-1 sm:px-6 lg:px-1">
-            <div className="flex justify-between h-12">
+            <div className="flex justify-between h-16">
               <div className="flex">
                 <Link
                   href="/"
-                  className="px-3 py-2 text-lg font-medium w-28 text-center hover:underline"
+                  className="px-3 flex items-center justify-center text-2xl font-medium w-28 text-center hover:underline"
                 >
                   Home
                 </Link>
                 <Link
                   href="/news"
-                  className="px-3 py-2 text-lg font-medium nav-link w-76 text-center hover:underline"
+                  className="px-3 flex items-center justify-center text-2xl font-medium nav-link w-76 text-center hover:underline"
                 >
                   News and Announcement
                 </Link>
                 <a
                   href="/complains"
-                  className="px-3 py-2 text-lg font-medium nav-link w-76 text-center bg-[#31a107] text-white hover:underline"
+                  className="px-3 flex items-center justify-center text-2xl font-medium nav-link w-76 text-center bg-[#31a107] text-white hover:underline"
                 >
                   Complains
                 </a>
