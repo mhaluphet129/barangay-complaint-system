@@ -94,7 +94,7 @@ const News = () => {
                       src={
                         news[news.length - 1]?.imgs?.length > 0
                           ? news[news.length - 1]?.imgs[0]
-                          : "https://placehold.co/600x400"
+                          : "/placeholder.jpg"
                       }
                       style={{
                         width: "80vw",
@@ -117,7 +117,7 @@ const News = () => {
                     >
                       <Typography.Paragraph
                         style={{
-                          maxWidth: "25vw",
+                          maxWidth: "80vw",
                           color: "#fff",
                           fontSize: "1.5em",
                           margin: 0,
@@ -175,7 +175,7 @@ const News = () => {
                                   src={
                                     e?.imgs?.length > 0
                                       ? e?.imgs[0]
-                                      : "https://placehold.co/600x400"
+                                      : "/placeholder.jpg"
                                   }
                                   style={{
                                     width: "28vw",

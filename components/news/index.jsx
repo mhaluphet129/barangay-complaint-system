@@ -77,7 +77,7 @@ const News = ({ appKey }) => {
             }}
             onConfirm={() => {
               (async (_) => {
-                let { data } = await _.delete("/api/admin/delete-admin", {
+                let { data } = await _.delete("/api/news", {
                   params: {
                     id: row?._id,
                   },

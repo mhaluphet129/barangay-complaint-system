@@ -3,7 +3,6 @@ import News from "@/database/models/news";
 
 export default async function handler(req, res) {
   await dbConnect();
-
   if (req.method == "GET") {
     let { page, pageSize, searchKeyword, slug_name } = req.query;
 
@@ -39,6 +38,17 @@ export default async function handler(req, res) {
       });
   } else if (req.method == "PATCH") {
   } else if (req.method == "DELETE") {
+    return await News.findOneAndDelete({ _id: req.query.id })
+      .then((e) =>
+        res.json({ success: true, message: "Succesfully Deleted the News" })
+      )
+      .catch((e) => {
+        console.log(e);
+        return res.json({
+          success: false,
+          message: "Error in the Server.",
+        });
+      });
   } else {
     let slug_name = req.body.title
       .split(" ")
