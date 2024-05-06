@@ -107,7 +107,7 @@ const Dashboard = ({ setSelectedKey }) => {
         {dashboardDataValue.map((e, i) => {
           const [hovered, setHovered] = useState(false);
           return (
-            <Col span={6} key={i}>
+            <Col span={6} key={i} onClick={e.onClick}>
               <Card
                 bodyStyle={{ backgroundColor: e.color, padding: 0 }}
                 hoverable
