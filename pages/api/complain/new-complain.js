@@ -3,6 +3,8 @@ import Complaint from "@/database/models/complaint";
 import SMS from "@/database/models/sms";
 import jason from "@/assets/json/constant.json";
 
+// TODO: send an sms when to responder using sms API
+
 export default async function handler(req, res) {
   await dbConnect();
 
@@ -24,8 +26,10 @@ export default async function handler(req, res) {
       respondentNumber,
       images,
       type,
+      template,
     } = req.body;
     // get an SMS template and create an SMS and send to the respondent
+
     let msgTemplate = jason.sms_formats.filter(
       (e) => e.type == template /* "sms_to_respondent_1" */
     )[0].message;
@@ -34,6 +38,7 @@ export default async function handler(req, res) {
       message: msgTemplate.replace(/@RESPONDER_NAME/g, respondentName),
       number: respondentNumber,
       residentId,
+      type: "outbound",
     });
 
     newComplain = Complaint({
@@ -65,7 +70,7 @@ export default async function handler(req, res) {
       );
       res.json({
         success: true,
-        message: "Created Successfully",
+        message: "Complaint Submitted Successfully",
       });
     })
     .catch((e) => {

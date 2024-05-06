@@ -261,7 +261,7 @@ const Header = ({ app_key }) => {
                         Cookies.remove("currentUser");
                         Cookies.remove("loggedIn");
                         Cookies.remove("mode");
-                        window.location.reload();
+                        window.location.href = "/";
                       },
                     },
                   ],

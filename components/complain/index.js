@@ -15,12 +15,14 @@ import {
   Col,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import Cookies from "js-cookie";
 
 import axios from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import NewComplain from "./components/new_complaint";
 import CompainViewer from "./components/complain_viewer";
+import dayjs from "dayjs";
 
 const Complain = ({ appKey }) => {
   const [complains, setComplains] = useState([]);
@@ -29,6 +31,7 @@ const Complain = ({ appKey }) => {
   const [openNewComplain, setOpenNewComplain] = useState(false);
   const [searchWord, setSearchWord] = useState("");
   const [viewerOpts, setViewerOpts] = useState({ open: false, data: null });
+  const [currentUser, setCurrentUser] = useState({});
   const [listOptions, setListOptions] = useState({
     total: 0,
     index: 0,
@@ -89,6 +92,7 @@ const Complain = ({ appKey }) => {
   useEffect(() => {
     setLoading(true);
     loadMoreData();
+    setCurrentUser(JSON.parse(Cookies.get("currentUser")));
   }, []);
 
   return (
@@ -104,17 +108,17 @@ const Complain = ({ appKey }) => {
             message.warning("Please select a resident before adding complain");
             return;
           }
-          val.residentId = residentId;
-          val.inchargeId = currentUser._id;
-          val.images = photos;
 
+          val.inchargeId = currentUser._id;
           (async (_) => {
             let { data } = await _.post("/api/complain/new-complain", {
               ...val,
               template: "sms_to_respondent_1",
+              type: "walk-in",
             });
             if (data?.success) {
               message.success(data?.message ?? "Successfully Created.");
+              setOpenNewComplain(false);
               close();
             } else {
               message.error(data?.message ?? "Error in the Server.");
@@ -236,38 +240,67 @@ const Complain = ({ appKey }) => {
                   style={{
                     marginLeft: 20,
                     cursor: "pointer",
+                    fontFamily: "abel",
                   }}
                   onClick={() => setViewerOpts({ open: true, data: item })}
                 >
                   <List.Item.Meta
-                    title={<span>Complain ID: {item?._id?.substr(-6)}</span>}
+                    title={
+                      <span>
+                        Case #{index + 1}:{" "}
+                        <Typography.Text type="secondary" italic>
+                          ({item?._id?.substr(-6)})
+                        </Typography.Text>
+                      </span>
+                    }
                     description={
                       <Row>
-                        <Col span={8}>
-                          Complain by:{" "}
+                        <Col span={3}>
+                          Complainer: <br />
+                          Respondent:
+                          <br />
+                          Type:
+                          <br />
+                          <br />
+                          Creation Date:
+                        </Col>
+                        <Col span={4}>
                           {item?.residentId ? (
-                            `${item?.residentId?.name} ${item?.residentId?.lastname}`
+                            <Typography.Text
+                              style={{ fontWeight: 700 }}
+                            >{`${item?.residentId?.name[0].toLocaleUpperCase()}${item?.residentId?.name.slice(
+                              1
+                            )} ${item?.residentId?.lastname[0].toLocaleUpperCase()}${item?.residentId?.lastname.slice(
+                              1
+                            )}`}</Typography.Text>
                           ) : (
                             <Typography.Text type="secondary" strong>
                               N/A
                             </Typography.Text>
                           )}
                           <br />
-                          Type:{" "}
+                          <Typography.Text style={{ fontWeight: 700 }}>
+                            {item?.respondentName}
+                          </Typography.Text>
+                          <br />
                           {item?.type && (
-                            <Tag>{item?.type.toLocaleUpperCase()}</Tag>
+                            <Tag
+                              color={
+                                item?.type == "walk-in"
+                                  ? "green"
+                                  : item?.type == "web"
+                                  ? "cyan"
+                                  : "blue"
+                              }
+                            >
+                              {item?.type.toLocaleUpperCase()}
+                            </Tag>
                           )}
                           <br />
-                          Respondent: {item?.respondentName}
                           <br />
-                          Responded:{" "}
-                          {item?.isResponded ? (
-                            <Tag color="green">YES</Tag>
-                          ) : (
-                            <Tag color="red">NO</Tag>
-                          )}
+                          {dayjs(item.createdAt).format("MMMM DD, YYYY HH:mma")}
                         </Col>
-                        <Col span={8}>
+                        <Col span={5}>
                           <strong style={{ color: "#000" }}>
                             Description:
                           </strong>

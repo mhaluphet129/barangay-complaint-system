@@ -166,17 +166,16 @@ const Dashboard = ({ setSelectedKey }) => {
                 >
                   {notLoading ? (
                     <div
-                      onClick={e.onClick}
                       style={{
+                        width: 100,
                         display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
+                        justifyContent: "space-between",
                       }}
                     >
                       <span
                         style={{
                           color: "#fff",
-                          fontSize: 12,
+                          fontSize: 15,
                           textDecoration: hovered ? "underline" : "none",
                         }}
                       >
@@ -186,9 +185,63 @@ const Dashboard = ({ setSelectedKey }) => {
                         style={{
                           backgroundColor: "#fff",
                           borderRadius: "100%",
-                          display: "inline-block",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
                           padding: 5,
-                          marginLeft: 10,
+                        }}
+                      >
+                        <FaArrowRight
+                          style={{
+                            width: 15,
+                            aspectRatio: 1 / 1,
+                            fontSize: 10,
+                          }}
+                        />
+                      </span>
+                    </div>
+                  ) : (
+                    <Skeleton.Input active />
+                  )}
+                </div>
+                {/* <div
+                  style={{
+                    backgroundColor: "rgba(0,0,0,0.2)",
+                    width: "100%",
+                    borderRadius: "0 0 10px 10px",
+                    padding: 5,
+                    display: "flex",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                  }}
+                  onMouseEnter={() => setHovered(true)}
+                  onMouseLeave={() => setHovered(false)}
+                >
+                  {notLoading ? (
+                    <div
+                      onClick={e.onClick}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: "#fff",
+                          fontSize: 15,
+                          textDecoration: hovered ? "underline" : "none",
+                        }}
+                      >
+                        More Info
+                      </span>
+                      <span
+                        style={{
+                          backgroundColor: "#fff",
+                          borderRadius: "100%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
                       >
                         <FaArrowRight
@@ -200,7 +253,7 @@ const Dashboard = ({ setSelectedKey }) => {
                   ) : (
                     <Skeleton.Input active />
                   )}
-                </div>
+                </div> */}
               </Card>
             </Col>
           );

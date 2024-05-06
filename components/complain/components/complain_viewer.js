@@ -136,7 +136,11 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
         width="100%"
         onCancel={close}
         zIndex={999}
-        centered
+        styles={{
+          body: {
+            height: "70vh",
+          },
+        }}
       >
         <Row gutter={[32, 32]}>
           <Col span={6}>

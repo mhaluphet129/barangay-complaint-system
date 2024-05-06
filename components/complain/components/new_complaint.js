@@ -77,6 +77,7 @@ const NewComplain = ({ open, close, appkey, data, handleFinish, isEdit }) => {
           } else val.residentId = residentId;
 
           if (data) val._id = data._id;
+          if (photos.length > 0) val.images = photos;
           handleFinish(val);
         }}
         labelAlign="left"

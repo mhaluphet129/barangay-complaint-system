@@ -7,6 +7,7 @@ import { LuMoveRight } from "react-icons/lu";
 import Link from "next/link";
 
 import axios from "axios";
+import Footer from "@/components/landingpage/footer";
 
 export default function Page() {
   const router = useRouter();
@@ -62,18 +63,6 @@ export default function Page() {
                   >
                     Home
                   </Link>
-                  <Link
-                    href="/news"
-                    className="px-3 flex items-center justify-center text-2xl font-medium nav-link w-76 text-center bg-[#c4dbeb] text-white  hover:underline"
-                  >
-                    News and Announcement
-                  </Link>
-                  <Link
-                    href="/complains"
-                    className="px-3 flex items-center justify-center text-2xl font-medium nav-link w-76 text-center hover:underline"
-                  >
-                    Complains
-                  </Link>
                 </div>
               </div>
             </div>
@@ -118,12 +107,7 @@ export default function Page() {
             </div>
           </div>
         </div>
-        <footer className="bg-[#2d2d2d] text-white w-full h-16 flex items-center justify-end">
-          <span className="text-center mr-10">
-            Copyright &#169; {new Date().getFullYear()}. Barangay Complain
-            System. All Right Reserved.
-          </span>
-        </footer>
+        <Footer />
       </div>
     </Spin>
   );

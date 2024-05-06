@@ -9,15 +9,21 @@ const Footer = () => {
   return (
     <footer className="bg-[#2d2d2d] text-white px-10">
       <div
-        className="w-full flex items-start justify-end"
+        className="w-full flex items-start"
         style={{
           paddingTop: "2.5em",
           paddingBottom: "2.5em",
           gap: "6rem",
+          justifyContent: "end",
         }}
       >
         {/*  */}
-        <div className="flex flex-col gap-2">
+        <div
+          className="flex flex-col gap-2"
+          style={{
+            alignItems: "end",
+          }}
+        >
           <span className="text-2xl">Social Links</span>
           <div className="mt-4 flex gap-2">
             <a
@@ -75,7 +81,12 @@ const Footer = () => {
           borderTop: "1px solid #eee",
         }}
       />
-      <div className="w-full h-16 flex items-center justify-end">
+      <div
+        className="w-full h-16 flex items-center"
+        style={{
+          justifyContent: "flex-end",
+        }}
+      >
         <span className="text-center mr-10">
           All Right Reserved &#169; {new Date().getFullYear()}
         </span>
