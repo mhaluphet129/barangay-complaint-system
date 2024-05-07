@@ -51,9 +51,6 @@ const Footer = () => {
           <a href="/complain" className="mt-4 hover:underline">
             File Complaint
           </a>
-          <a href="/user/login" className="hover:underline">
-            Administrative Area
-          </a>
           <Tooltip title="WAY KAMO">
             <a href="#">About Us</a>
           </Tooltip>

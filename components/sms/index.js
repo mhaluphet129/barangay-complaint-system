@@ -271,6 +271,7 @@ const SMS = ({ sms_key }) => {
         open={openNewSms}
         close={() => setOpenNewSms(false)}
         onSend={() => setTrigger(trigger + 1)}
+        smskey={sms_key}
       />
       <SMSViewer
         open={smsViewerOpt.open}

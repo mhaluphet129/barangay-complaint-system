@@ -21,15 +21,21 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 
+import SMS from "@/assets/utilities/sms";
+
 // TODO: admin username should not be editable on edit profile
 
-const SmsComposer = ({ open, close, onSend }) => {
+const SmsComposer = ({ open, close, onSend, smskey }) => {
   const [mode, setMode] = useState("Residents");
   const [mobilenum, setMobileNumer] = useState([]);
   const [inputMsg, setInputMsg] = useState("");
   const [currentUser, setCurrentUser] = useState({});
   const [residents, setResidents] = useState([]);
+  const [devices, setDevices] = useState([]);
+  const [selectedDevice, setSelectedDevice] = useState(null);
   const timerRef = useRef(null);
+
+  const sms = new SMS(smskey);
 
   //* flags
   const [loader, setLoader] = useState("");
@@ -38,10 +44,12 @@ const SmsComposer = ({ open, close, onSend }) => {
 
   // utils
   function processPhoneNumber(input) {
-    if (input.startsWith("09")) {
-      return "639" + input.substring(2);
+    if (input.startsWith("639")) {
+      return "0" + input.substring(2);
     } else if (input.startsWith("+639")) {
-      return "639" + input.substring(4);
+      return "0" + input.substring(3);
+    } else if (input.startsWith("9")) {
+      return "0" + input;
     } else {
       return input;
     }
@@ -59,7 +67,8 @@ const SmsComposer = ({ open, close, onSend }) => {
         !(
           _number.startsWith("09") ||
           _number.startsWith("+639") ||
-          _number.startsWith("639")
+          _number.startsWith("639") ||
+          _number.startsWith("9")
         )
       ) {
         reject({
@@ -73,16 +82,29 @@ const SmsComposer = ({ open, close, onSend }) => {
             number,
             message: inputMsg,
             originator: currentUser._id,
+            device: selectedDevice.unique,
           });
 
           if (data.success) resolve(true);
-          else reject(false);
+          else reject(data.message);
         })(axios);
       }
     });
   };
 
   const onSubmit = () => {
+    if (!selectedDevice.online) {
+      message.error("Selected device is offline. Please Choose another one.");
+      return;
+    }
+
+    if (mode == "Residents") {
+      if (mobilenum.length == 0) {
+        message.error("You didn't select a resident to sent");
+        return;
+      }
+    }
+
     setMessageFlags(Array(mobilenum.length).fill(null));
 
     return Promise.all(
@@ -91,7 +113,7 @@ const SmsComposer = ({ open, close, onSend }) => {
           await sendSmsRequest(i).catch((e) => {
             return {
               error: true,
-              message: e.message,
+              message: e,
             };
           })
       )
@@ -158,6 +180,12 @@ const SmsComposer = ({ open, close, onSend }) => {
 
   useEffect(() => {
     setCurrentUser(JSON.parse(Cookies.get("currentUser")));
+    (async () => {
+      await sms
+        .getDevices()
+        .then((e) => setDevices(e.data))
+        .catch((e) => console.log(e));
+    })();
   }, []);
 
   return (
@@ -187,6 +215,37 @@ const SmsComposer = ({ open, close, onSend }) => {
         }}
         disabled={loader == "submit"}
       />
+      Select Device <br />
+      <Select
+        style={{
+          width: 300,
+        }}
+        options={devices.map((e) => ({
+          label: (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              {e.name}
+              <span
+                style={{
+                  color: e.online ? "green" : "red",
+                }}
+              >
+                {e.online ? "ONLINE" : "OFFLINE"}
+              </span>
+            </div>
+          ),
+          value: e.name,
+          key: e.id,
+        }))}
+        onSelect={(_, e) =>
+          setSelectedDevice(devices.filter((__) => __.id == e.key)[0])
+        }
+      />
+      <br />
       {mode == "Residents" && (
         <>
           Search{" "}
@@ -312,11 +371,12 @@ const SmsComposer = ({ open, close, onSend }) => {
       <Button
         style={{ marginTop: 5 }}
         type="primary"
-        onClick={
-          mobilenum?.length > 0 && inputMsg != ""
-            ? onSubmit
-            : () => message.warning("No number/message added")
-        }
+        // onClick={
+        //   mobilenum?.length > 0 && inputMsg != ""
+        //     ? onSubmit
+        //     : () => message.warning("No number/message added")
+        // }
+        onClick={onSubmit}
         // loading={loader == "submit"}
       >
         SEND

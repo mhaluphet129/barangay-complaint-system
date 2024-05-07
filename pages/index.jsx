@@ -15,6 +15,7 @@ import Link from "next/link";
 import AOS from "aos";
 
 import Footer from "@/components/landingpage/footer";
+import Header from "@/components/landingpage/header";
 
 const Home = () => {
   const ref = useRef();
@@ -27,7 +28,8 @@ const Home = () => {
     (async (_) => {
       let { data } = await axios.get("/api/news");
       if (data.success) {
-        setNews(data.news);
+        if (data.news.length > 3) setNews(data.news?.slice(0, 3));
+        else setNews(data.news);
         setLoading("");
       } else {
         message.error(data?.message ?? "Error in the server.");
@@ -45,292 +47,70 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="flex-1 ">
-        <div className="header w-full flex justify-between items-center bg-[#eee] h-12 relative">
-          <div>{/* Intended to be empty */}</div>
-          <div className="font-black flex items-center text-2xl">
-            <span className="logo-small">
-              <img src="/web-logo.png" width={50} className="mr-2" />
-            </span>
-            North Poblacion Maramag
-          </div>
-          <div>
-            <a
-              className="mr-5 hover:underline hover:text-[#31a107] flex items-center text-2xl"
-              href="/complain"
-            >
-              File a complaint <LuMoveRight className="ml-2" />
-            </a>
-          </div>
-        </div>
-        <nav className="main-nav bg-[#2d2d2d] pl-20 text-[#c4dbeb] relative">
-          <div className="max-w-7xl">
-            <div className="flex justify-between h-16">
-              <div className="flex">
-                <Link
-                  href="/"
-                  className="px-2 flex items-center justify-center text-2xl font-medium w-28 text-center bg-[#c4dbeb] text-white hover:underline"
-                >
-                  Home
-                </Link>
-              </div>
-            </div>
-          </div>
-        </nav>
-        <div className="h-full flex flex-col overflow-scroll bg-[#d9f2fe] mx-20">
-          <img className="landingpage-background-img" src="bg-pic1.jpg" />
-          <div className="landingpage-main-info flex flex-col justify-center items-center bg-[#d9f2fe] w-1/2">
-            <div className="border rounded border-slate-300 px-10 py-20">
-              <span
-                className="text-5xl font-bold"
-                style={{
-                  fontFamily: "abel",
-                }}
-              >
+    <div className="flex flex-col min-h-screen bg-white">
+      <div className="flex-1 mx-20">
+        <Header />
+
+        <div className="flex mt-6 border rounded-lg border-slate-300 bg-[#6096fe] shadow-lg">
+          <div className="px-10 py-20 w-full flex flex-col justify-between">
+            <div className="flex flex-col">
+              <span className="text-5xl font-bold">
                 Barangay Complaint System
               </span>
-              <div className="mt-2">
-                <span>
-                  Resolving Local Disputes with Efficiency and Fairness in North
-                  Poblacion Maramag
-                </span>
-              </div>
-              <div className="flex gap-x-2 mt-10">
-                <div
-                  className="view-more-btn border-solid border-slate-500 border rounded-lg px-10 py-3 text-2xl text-slate-600 cursor-pointer flex items-center"
-                  onClick={() =>
-                    ref.current.scrollIntoView({
-                      behavior: "smooth",
-                      block: "center",
-                      inline: "center",
-                    })
-                  }
-                >
-                  View More{" "}
-                  <HiOutlineChevronDoubleDown className="view-more-icon ml-2" />
-                </div>
-                <Link
-                  href="/complain"
-                  className="view-more-btn border-solid border-slate-900 border rounded-lg bg-[#0275d8] px-10 py-3 text-2xl text-slate-600 cursor-pointer flex items-center text-white"
-                >
-                  File a Complain <TfiWrite className="view-more-icon ml-2" />
-                </Link>
-              </div>
+              <span className="text-1xl font-bold">
+                Resolving Local Disputes with Efficiency and Fairness in North
+                Poblacion Maramag
+              </span>
+              <span className="text-[#101647] mt-10">
+                The North Poblacion Maramag barangay officials aim to resolve
+                local disputes quickly and amicably through counseling,
+                understanding different perspectives, and sometimes referencing
+                religious texts to help parties reconcile, rather than resorting
+                to formal litigation
+              </span>
             </div>
-          </div>
-
-          <div
-            className="class-container h-full flex flex-col overflow-scroll mx-20 my-20 bg-[#d9f2fe]"
-            data-aos="fade-up"
-            data-aos-offset="200"
-          >
-            <span
-              className="text-5xl font-black"
-              ref={ref}
-              style={{
-                fontFamily: "abel",
-              }}
-            >
-              News and Annoucement
-            </span>
-            {news.length > 0 && (
+            <div className="flex gap-x-2">
               <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 25,
-                }}
+                className="rounded-full text-1xl cursor-pointer bg-white flex items-center px-8 py-2 font-semibold hover:underline"
+                onClick={() =>
+                  ref.current.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                    inline: "center",
+                  })
+                }
               >
-                <Link
-                  href="/news/[slug]"
-                  as={`/news/${news[news.length - 1]?.slug_name}`}
-                >
-                  <div className="news-container">
-                    <div className="img-container">
-                      <img
-                        src={
-                          news[news.length - 1]?.imgs?.length > 0
-                            ? news[news.length - 1]?.imgs[0]
-                            : "/placeholder.jpg"
-                        }
-                        style={{
-                          width: "80vw",
-                          borderRadius: 10,
-                          maxHeight: "25em",
-                          objectFit: "cover",
-                          objectPosition: "center",
-                        }}
-                        alt="image"
-                      />
-                      <div
-                        className="img-label"
-                        style={{
-                          position: "absolute",
-                          bottom: 25,
-                          left: 25,
-                          color: "#fff",
-                          zIndex: 2,
-                        }}
-                      >
-                        <Typography.Paragraph
-                          style={{
-                            maxWidth: "80vw",
-                            color: "#fff",
-                            fontSize: "1.5em",
-                            margin: 0,
-                          }}
-                          ellipsis
-                        >
-                          {news[news.length - 1]?.title}
-                        </Typography.Paragraph>{" "}
-                        <span>
-                          Barangay Admin -{" "}
-                          <span className="italic">
-                            {dayjs(news[news.length - 1]?.createdAt).format(
-                              "MMMM DD, YYYY"
-                            )}
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+                View More
               </div>
-            )}
-
-            <div style={{ width: "80vw", marginTop: 25, marginBottom: 25 }}>
-              <Row gutter={[16, 16]}>
-                <Col span={18}>
-                  {/* <span className="text-2xl font-bold">
-                    Recent News &#9734;
-                  </span> */}
-                  {news.length > 0 ? (
-                    <Row
-                      gutter={[32, 32]}
-                      style={{
-                        display: "flex",
-                        marginTop: 10,
-                        width: "80vw",
-                      }}
-                    >
-                      {news.map((e, i) => (
-                        <Col span={8}>
-                          <Link
-                            className="text-xl cursor-pointer text-black hover:underline remove-focus"
-                            style={{ fontFamily: "abel" }}
-                            href="/news/[slug]"
-                            as={`/news/${e.slug_name}`}
-                          >
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                marginTop: 25,
-                              }}
-                            >
-                              <div className="news-container">
-                                <div className="img-container more-news">
-                                  <img
-                                    src={
-                                      e?.imgs?.length > 0
-                                        ? e?.imgs[0]
-                                        : "/placeholder.jpg"
-                                    }
-                                    style={{
-                                      width: "28vw",
-                                      borderRadius: 10,
-                                      height: "15em",
-                                      objectFit: "cover",
-                                      objectPosition: "center",
-                                    }}
-                                    alt="image"
-                                  />
-                                  <div
-                                    className="img-label"
-                                    style={{
-                                      position: "absolute",
-                                      bottom: 25,
-                                      left: 25,
-                                      color: "#fff",
-                                      zIndex: 2,
-                                    }}
-                                  >
-                                    <Typography.Paragraph
-                                      style={{
-                                        maxWidth: "25vw",
-                                        color: "#fff",
-                                        fontSize: "1em",
-                                        margin: 0,
-                                      }}
-                                      ellipsis
-                                    >
-                                      {e?.title}
-                                    </Typography.Paragraph>{" "}
-                                    <span>
-                                      Barangay Admin -{" "}
-                                      <span className="italic">
-                                        {dayjs(e?.createdAt).format(
-                                          "MMMM DD, YYYY"
-                                        )}
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </Link>
-                        </Col>
-                      ))}
-                    </Row>
-                  ) : (
-                    <Typography.Text
-                      type="secondary"
-                      style={{ display: "block" }}
-                    >
-                      No News Posted
-                    </Typography.Text>
-                  )}
-                </Col>
-              </Row>
+              <Link
+                href="/complain"
+                className="rounded-full text-1xl cursor-pointer flex items-center px-8 py-2 font-light bg-[#6096fe] border border-white text-white hover:underline"
+              >
+                File a Complain
+              </Link>
             </div>
-            {/* <div style={{ width: "80vw", marginTop: 25, marginBottom: 25 }}>
-              <span className="text-2xl font-bold">Announcement &#128227;</span>
-              <br />
-              <Typography.Text type="secondary">
-                No Announcement Posted
-              </Typography.Text>
-            </div> */}
           </div>
-
-          <div className="flex flex-col justify-center items-center mt-16 overflow-hidden">
-            <span
-              className="text-center text-5xl font-black"
-              data-aos="fade-down"
-              data-aos-offset="1500"
-              style={{
-                fontFamily: "abel",
-              }}
-            >
-              Barangay Complaint System Offers:
+          <img
+            className="landingpage-background-img p-4 rounded-3xl"
+            src="bg-pic1.jpg"
+          />
+        </div>
+        <div className="h-full flex flex-col overflow-scroll">
+          <div className="flex flex-col mt-10 overflow-hidden">
+            <span className="text-4xl font-medium mb-4">
+              Barangay Complaint System Offers
             </span>
-            <div className="flex flex-col my-20 gap-10 w-3/5">
+            <div className="flex flex-wrap my-4 gap-10">
               <div
                 data-aos="fade-right"
-                data-aos-offset="1500"
-                className="flex flex-col"
+                data-aos-offset="200"
+                className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
               >
-                <span
-                  className="font-bold text-4xl"
-                  style={{
-                    fontFamily: "abel",
-                  }}
-                >
+                <span className="font-bold text-2xl font-black">
                   Streamlined Local Dispute Resolution
                 </span>
                 <span
-                  className="text-1xl w-1/2"
+                  className="text-base mt-4"
                   style={{
                     fontFamily: "abel",
                   }}
@@ -344,20 +124,15 @@ const Home = () => {
               </div>
 
               <div
-                data-aos="fade-left"
-                data-aos-offset="1500"
-                className="flex flex-col text-end items-end"
+                data-aos="fade-right"
+                data-aos-offset="200"
+                className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
               >
-                <span
-                  className="font-bold text-4xl"
-                  style={{
-                    fontFamily: "abel",
-                  }}
-                >
+                <span className="font-bold text-2xl font-black">
                   Empowering Community Engagement
                 </span>
                 <span
-                  className="text-1xl w-1/2 my-2"
+                  className="text-base mt-4"
                   style={{
                     fontFamily: "abel",
                   }}
@@ -373,19 +148,14 @@ const Home = () => {
 
               <div
                 data-aos="fade-right"
-                data-aos-offset="1500"
-                className="flex flex-col"
+                data-aos-offset="200"
+                className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
               >
-                <span
-                  className="font-bold text-4xl"
-                  style={{
-                    fontFamily: "abel",
-                  }}
-                >
+                <span className="font-bold text-2xl font-black">
                   Comprehensive Case Management
                 </span>
                 <span
-                  className="text-1xl w-1/2"
+                  className="text-base mt-4"
                   style={{
                     fontFamily: "abel",
                   }}
@@ -399,20 +169,15 @@ const Home = () => {
               </div>
 
               <div
-                data-aos="fade-left"
-                data-aos-offset="1500"
-                className="flex flex-col text-end items-end"
+                data-aos="fade-right"
+                data-aos-offset="200"
+                className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
               >
-                <span
-                  className="font-bold text-4xl"
-                  style={{
-                    fontFamily: "abel",
-                  }}
-                >
+                <span className="font-bold text-2xl font-black">
                   Conflict Resolution Expertise
                 </span>
                 <span
-                  className="text-1xl w-1/2"
+                  className="text-base mt-4"
                   style={{
                     fontFamily: "abel",
                   }}
@@ -427,19 +192,14 @@ const Home = () => {
 
               <div
                 data-aos="fade-right"
-                data-aos-offset="1500"
-                className="flex flex-col"
+                data-aos-offset="200"
+                className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
               >
-                <span
-                  className="font-bold text-4xl"
-                  style={{
-                    fontFamily: "abel",
-                  }}
-                >
+                <span className="font-bold text-2xl font-black">
                   Empowering Local Governance
                 </span>
                 <span
-                  className="text-1xl w-1/2"
+                  className="text-base mt-4"
                   style={{
                     fontFamily: "abel",
                   }}
@@ -454,11 +214,119 @@ const Home = () => {
                 </span>
               </div>
             </div>
+            <div className="my-10">
+              <span
+                className="text-4xl font-black"
+                ref={ref}
+                style={{
+                  fontFamily: "abel",
+                }}
+              >
+                News and Annoucement
+              </span>
+              <div className="flex flex-wrap gap-x-4">
+                {news.length > 0 ? (
+                  news.map((e) => (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: 25,
+                      }}
+                    >
+                      <Link
+                        href="/news/[slug]"
+                        as={`/news/${news[news.length - 1]?.slug_name}`}
+                      >
+                        <div className="news-container">
+                          <div className="img-container more-news">
+                            <img
+                              src={
+                                e?.imgs?.length > 0
+                                  ? e?.imgs[0]
+                                  : "/placeholder.jpg"
+                              }
+                              style={{
+                                width: "21vw",
+                                borderRadius: 10,
+                                height: "15em",
+                                objectFit: "cover",
+                                objectPosition: "center",
+                              }}
+                              alt="image"
+                            />
+                            <div
+                              className="img-label"
+                              style={{
+                                position: "absolute",
+                                bottom: 15,
+                                left: 20,
+                                color: "#fff",
+                                zIndex: 2,
+                              }}
+                            >
+                              <Typography.Paragraph
+                                style={{
+                                  maxWidth: "25vw",
+                                  color: "#fff",
+                                  fontSize: "1.5em",
+                                  margin: 0,
+                                  fontWeight: 600,
+                                }}
+                                ellipsis
+                              >
+                                {e?.title}
+                              </Typography.Paragraph>{" "}
+                              <span>
+                                Barangay Admin -{" "}
+                                <span className="italic">
+                                  {dayjs(e?.createdAt).format("MMMM DD, YYYY")}
+                                </span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  ))
+                ) : (
+                  <>No News/Announcement Posted</>
+                )}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: 25,
+                  }}
+                >
+                  <Link href="/news">
+                    <div className="news-container">
+                      <div className="news-more">
+                        <img
+                          src="/placeholder.jpg"
+                          style={{
+                            width: "21vw",
+                            borderRadius: 10,
+                            height: "15em",
+                            objectFit: "cover",
+                            objectPosition: "center",
+                          }}
+                          alt="image"
+                        />
+                        <span className="see-more">See More</span>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            </div>
 
-            <span
+            {/* <span
               className="text-center text-4xl font-black mb-10"
               data-aos="fade-up"
-              data-aos-offset="1500"
+              data-aos-offset={news.length == 0 ? "200" : "1500"}
               style={{
                 fontFamily: "abel",
               }}
@@ -469,7 +337,7 @@ const Home = () => {
               <div
                 className="sukarap flex bg-[#31a107] p-6 rounded gap-1"
                 data-aos="fade-up"
-                data-aos-offset="1500"
+                data-aos-offset={news.length == 0 ? "200" : "1500"}
               >
                 <CiFileOn
                   style={{
@@ -485,7 +353,7 @@ const Home = () => {
               <div
                 className="flex bg-[#31a107] p-6 rounded gap-1"
                 data-aos="fade-up"
-                data-aos-offset="1500"
+                data-aos-offset={news.length == 0 ? "200" : "1500"}
               >
                 <MdGroups2
                   style={{
@@ -503,7 +371,7 @@ const Home = () => {
               <div
                 className="flex bg-[#31a107] p-6 rounded gap-1"
                 data-aos="fade-up"
-                data-aos-offset="1500"
+                data-aos-offset={news.length == 0 ? "200" : "1500"}
               >
                 <LiaSmsSolid
                   style={{
@@ -516,7 +384,7 @@ const Home = () => {
                   <span className="text-lg text-white">SMS RECEIVED</span>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -6,15 +6,41 @@ class SMS {
     this.key = key;
   }
 
-  async sendMessage(phone, message) {
+  async getDevices() {
     return new Promise(async (resolve, reject) => {
-      let response = await axios.get("https://sms.teamssprogram.com/api/send", {
-        params: {
-          key: this.key,
+      let response = await axios.get(
+        "https://sms.teamssprogram.com/api/get/devices",
+        {
+          params: {
+            secret: this.key,
+          },
+        }
+      );
+      console.log(response);
+      if (response.data.status == 200)
+        resolve({ success: true, data: response.data.data });
+      else
+        reject({
+          success: false,
+          message: response.data.message,
+        });
+    });
+  }
+
+  async sendMessage(phone, message, device) {
+    return new Promise(async (resolve, reject) => {
+      let response = await axios.post(
+        "https://sms.teamssprogram.com/api/send/sms",
+        {
+          secret: this.key,
+          mode: "devices",
           phone,
           message,
-        },
-      });
+          device,
+          sim: 1,
+          priority: 1,
+        }
+      );
 
       if (response.data.status == 200) {
         resolve({
@@ -33,10 +59,10 @@ class SMS {
   async getSentSms({ limit = 10, page = 1 }) {
     return new Promise(async (resolve, reject) => {
       let response = await axios.get(
-        "https://sms.teamssprogram.com/api/get/sent",
+        "https://sms.teamssprogram.com/api/get/sms.sent",
         {
           params: {
-            key: this.key,
+            secret: this.key,
             limit,
             page,
           },
@@ -86,10 +112,10 @@ class SMS {
   async getReceivedSms({ limit = 10, page = 1 }) {
     return new Promise(async (resolve, reject) => {
       let response = await axios.get(
-        "https://sms.teamssprogram.com/api/get/received",
+        "https://sms.teamssprogram.com/api/get/sms.received",
         {
           params: {
-            key: this.key,
+            secret: this.key,
             limit,
             page,
           },
