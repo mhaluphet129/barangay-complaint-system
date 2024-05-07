@@ -7,7 +7,12 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-[#2d2d2d] text-white px-10">
+    <footer
+      className="text-white px-10"
+      style={{
+        backgroundColor: "#2d2d2d",
+      }}
+    >
       <div
         className="w-full flex items-start"
         style={{
