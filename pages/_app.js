@@ -10,10 +10,6 @@ export default function App({ Component, pageProps }) {
       <Head>
         <link rel="shortcut icon" href="/web-logo.png" />
         <title>Barangay Complaint System</title>
-        <link
-          href="https://unpkg.com/aos@2.3.1/dist/aos.css"
-          rel="stylesheet"
-        ></link>
         <meta name="description" content="System for barangay complaints" />
       </Head>
       <Component {...pageProps} />

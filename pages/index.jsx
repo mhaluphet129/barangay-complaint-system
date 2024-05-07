@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Row, Col, Typography } from "antd";
+import { Typography } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
 
@@ -97,13 +97,14 @@ const Home = () => {
         </div>
         <div className="h-full flex flex-col overflow-scroll">
           <div className="flex flex-col mt-10 overflow-hidden">
-            <span className="text-4xl font-medium mb-4">
+            <span className="text-4xl font-medium mb-4" data-aos="fade-right">
               Barangay Complaint System Offers
             </span>
             <div className="flex flex-wrap my-4 gap-10">
               <div
                 data-aos="fade-right"
                 data-aos-offset="200"
+                data-aos-delay="200"
                 className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
               >
                 <span className="font-bold text-2xl font-black">
@@ -126,6 +127,7 @@ const Home = () => {
               <div
                 data-aos="fade-right"
                 data-aos-offset="200"
+                data-aos-delay="400"
                 className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
               >
                 <span className="font-bold text-2xl font-black">
@@ -149,6 +151,7 @@ const Home = () => {
               <div
                 data-aos="fade-right"
                 data-aos-offset="200"
+                data-aos-delay="600"
                 className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
               >
                 <span className="font-bold text-2xl font-black">
@@ -170,7 +173,7 @@ const Home = () => {
 
               <div
                 data-aos="fade-right"
-                data-aos-offset="200"
+                data-aos-delay="800"
                 className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
               >
                 <span className="font-bold text-2xl font-black">
@@ -192,7 +195,7 @@ const Home = () => {
 
               <div
                 data-aos="fade-right"
-                data-aos-offset="200"
+                data-aos-delay="1000"
                 className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
               >
                 <span className="font-bold text-2xl font-black">

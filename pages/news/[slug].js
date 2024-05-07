@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { Carousel, Image, Spin } from "antd";
-import "tailwindcss/tailwind.css";
-import dayjs from "dayjs";
+import { useRouter } from "next/router";
 import { LuMoveRight } from "react-icons/lu";
 import Link from "next/link";
 
 import axios from "axios";
+import dayjs from "dayjs";
+
+import "tailwindcss/tailwind.css";
+
 import Footer from "@/components/landingpage/footer";
+import Header from "@/components/landingpage/header";
 
 export default function Page() {
   const router = useRouter();
@@ -35,40 +38,10 @@ export default function Page() {
   return (
     <Spin spinning={loading}>
       <div className="flex flex-col min-h-screen">
-        <div className="flex-1">
-          <div className="header w-full flex justify-between items-center bg-[#eee] h-12 relative">
-            <div>{/* Intended to be empty */}</div>
-            <div className="font-black flex items-center text-2xl">
-              <span className="logo-small">
-                <img src="/web-logo.png" width={50} className="mr-2" />
-              </span>
-              North Poblacion Maramag
-            </div>
-            <div>
-              <a
-                className="mr-5 hover:underline hover:text-[#31a107] flex items-center text-2xl"
-                href="/complain"
-              >
-                File a complaint <LuMoveRight className="ml-2" />
-              </a>
-            </div>
-          </div>
-          <nav className="main-nav bg-[#2d2d2d] pl-20 text-[#c4dbeb] relative">
-            <div className="max-w-7xl">
-              <div className="flex justify-between h-16">
-                <div className="flex">
-                  <Link
-                    href="/"
-                    className="px-2 flex items-center justify-center text-2xl font-medium w-28 text-center hover:underline"
-                  >
-                    Home
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </nav>
+        <div className="flex-1 mx-20">
+          <Header />
           <div
-            className="flex justify-center overflow-scroll bg-[#d9f2fe] mx-20"
+            className="flex justify-center overflow-scroll bg-[#d9f2fe]"
             style={{
               minHeight: "100vh",
             }}

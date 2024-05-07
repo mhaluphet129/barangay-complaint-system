@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Typography } from "antd";
+import { Typography } from "antd";
 import Link from "next/link";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -31,13 +31,11 @@ const News = () => {
         <Header />
         <div className="class-container">
           {news.length > 0 && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: 25,
-              }}
+            <Link
+              className="mt-10 flex justify-center items-center"
+              style={{ fontFamily: "abel" }}
+              href="/news/[slug]"
+              as={`/news/${news[0].slug_name}`}
             >
               <div className="news-container">
                 <div className="img-container">
@@ -86,7 +84,7 @@ const News = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           )}
 
           <div style={{ width: "80vw", marginTop: 25, marginBottom: 25 }}>
