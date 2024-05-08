@@ -11,12 +11,7 @@ const Header = () => {
       <Link className="font-bold flex items-center text-3xl" href="/">
         North Poblacion Maramag
       </Link>
-      <a
-        className="complain-btn flex items-center text-md bg-[#6096fe] text-white py-2 px-4 rounded-full"
-        href="/complain"
-      >
-        File a complaint
-      </a>
+      <div></div>
     </div>
   );
 };

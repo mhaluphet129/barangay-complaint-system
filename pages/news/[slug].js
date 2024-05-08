@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Carousel, Image, Spin } from "antd";
 import { useRouter } from "next/router";
-import { LuMoveRight } from "react-icons/lu";
-import Link from "next/link";
 
 import axios from "axios";
 import dayjs from "dayjs";
-
-import "tailwindcss/tailwind.css";
 
 import Footer from "@/components/landingpage/footer";
 import Header from "@/components/landingpage/header";

@@ -140,7 +140,7 @@ a.remove-focus {
 }
 
 .landingpage-background-img {
-  width: calc(50% - 15rem);
+  width: calc(50% - 5rem);
   background-size: cover;
   background-position: center;
 }

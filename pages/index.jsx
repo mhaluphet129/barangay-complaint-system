@@ -10,7 +10,6 @@ import { MdGroups2 } from "react-icons/md";
 import { LiaSmsSolid } from "react-icons/lia";
 import { TfiWrite } from "react-icons/tfi";
 
-import "tailwindcss/tailwind.css";
 import Link from "next/link";
 import AOS from "aos";
 
@@ -86,7 +85,7 @@ const Home = () => {
                 href="/complain"
                 className="rounded-full text-1xl cursor-pointer flex items-center px-8 py-2 font-light bg-[#6096fe] border border-white text-white hover:underline"
               >
-                File a Complain
+                File a Complaint
               </Link>
             </div>
           </div>
@@ -97,6 +96,114 @@ const Home = () => {
         </div>
         <div className="h-full flex flex-col overflow-scroll">
           <div className="flex flex-col mt-10 overflow-hidden">
+            <div className="my-10">
+              <span
+                className="text-4xl font-black"
+                ref={ref}
+                style={{
+                  fontFamily: "abel",
+                }}
+              >
+                News and Annoucement
+              </span>
+              <div className="flex flex-wrap gap-x-4">
+                {news.length > 0 ? (
+                  news.map((e) => (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: 25,
+                      }}
+                    >
+                      <Link
+                        href="/news/[slug]"
+                        as={`/news/${news[news.length - 1]?.slug_name}`}
+                      >
+                        <div className="news-container">
+                          <div className="img-container more-news">
+                            <img
+                              src={
+                                e?.imgs?.length > 0
+                                  ? e?.imgs[0]
+                                  : "/placeholder.jpg"
+                              }
+                              style={{
+                                width: "21vw",
+                                borderRadius: 10,
+                                height: "15em",
+                                objectFit: "cover",
+                                objectPosition: "center",
+                              }}
+                              alt="image"
+                            />
+                            <div
+                              className="img-label"
+                              style={{
+                                position: "absolute",
+                                bottom: 15,
+                                left: 20,
+                                color: "#fff",
+                                zIndex: 2,
+                              }}
+                            >
+                              <Typography.Paragraph
+                                style={{
+                                  maxWidth: "25vw",
+                                  color: "#fff",
+                                  fontSize: "1.5em",
+                                  margin: 0,
+                                  fontWeight: 600,
+                                }}
+                                ellipsis
+                              >
+                                {e?.title}
+                              </Typography.Paragraph>{" "}
+                              <span>
+                                Barangay Admin -{" "}
+                                <span className="italic">
+                                  {dayjs(e?.createdAt).format("MMMM DD, YYYY")}
+                                </span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  ))
+                ) : (
+                  <>No News/Announcement Posted</>
+                )}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: 25,
+                  }}
+                >
+                  <Link href="/news">
+                    <div className="news-container">
+                      <div className="news-more">
+                        <img
+                          src="/placeholder.jpg"
+                          style={{
+                            width: "21vw",
+                            borderRadius: 10,
+                            height: "15em",
+                            objectFit: "cover",
+                            objectPosition: "center",
+                          }}
+                          alt="image"
+                        />
+                        <span className="see-more">See More</span>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            </div>
             <span className="text-4xl font-medium mb-4" data-aos="fade-right">
               Barangay Complaint System Offers
             </span>
@@ -215,114 +322,6 @@ const Home = () => {
                   of targeted solutions to improve the overall quality of life
                   in the community.
                 </span>
-              </div>
-            </div>
-            <div className="my-10">
-              <span
-                className="text-4xl font-black"
-                ref={ref}
-                style={{
-                  fontFamily: "abel",
-                }}
-              >
-                News and Annoucement
-              </span>
-              <div className="flex flex-wrap gap-x-4">
-                {news.length > 0 ? (
-                  news.map((e) => (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginTop: 25,
-                      }}
-                    >
-                      <Link
-                        href="/news/[slug]"
-                        as={`/news/${news[news.length - 1]?.slug_name}`}
-                      >
-                        <div className="news-container">
-                          <div className="img-container more-news">
-                            <img
-                              src={
-                                e?.imgs?.length > 0
-                                  ? e?.imgs[0]
-                                  : "/placeholder.jpg"
-                              }
-                              style={{
-                                width: "21vw",
-                                borderRadius: 10,
-                                height: "15em",
-                                objectFit: "cover",
-                                objectPosition: "center",
-                              }}
-                              alt="image"
-                            />
-                            <div
-                              className="img-label"
-                              style={{
-                                position: "absolute",
-                                bottom: 15,
-                                left: 20,
-                                color: "#fff",
-                                zIndex: 2,
-                              }}
-                            >
-                              <Typography.Paragraph
-                                style={{
-                                  maxWidth: "25vw",
-                                  color: "#fff",
-                                  fontSize: "1.5em",
-                                  margin: 0,
-                                  fontWeight: 600,
-                                }}
-                                ellipsis
-                              >
-                                {e?.title}
-                              </Typography.Paragraph>{" "}
-                              <span>
-                                Barangay Admin -{" "}
-                                <span className="italic">
-                                  {dayjs(e?.createdAt).format("MMMM DD, YYYY")}
-                                </span>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
-                  ))
-                ) : (
-                  <>No News/Announcement Posted</>
-                )}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: 25,
-                  }}
-                >
-                  <Link href="/news">
-                    <div className="news-container">
-                      <div className="news-more">
-                        <img
-                          src="/placeholder.jpg"
-                          style={{
-                            width: "21vw",
-                            borderRadius: 10,
-                            height: "15em",
-                            objectFit: "cover",
-                            objectPosition: "center",
-                          }}
-                          alt="image"
-                        />
-                        <span className="see-more">See More</span>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
               </div>
             </div>
 
