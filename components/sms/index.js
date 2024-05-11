@@ -18,6 +18,7 @@ import {
   CloseOutlined,
   CheckOutlined,
   AppstoreAddOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 
 import SmsComposer from "../sms_composer";
@@ -36,6 +37,19 @@ const SMS = ({ sms_key }) => {
 
   const _ = new SMSService(sms_key);
   let currentUser = Cookies.get("currentUser");
+
+  const handleDeleteSMS = async (_id) => {
+    let { data } = await axios.get("/api/sms/delete-sms", {
+      params: {
+        _id,
+      },
+    });
+
+    if (data.success) {
+      message.success(data?.message ?? "Success");
+      setTrigger(trigger + 1);
+    }
+  };
 
   const topKeyword = (msg) => {
     if (msg.length > 3) {
@@ -144,6 +158,31 @@ const SMS = ({ sms_key }) => {
       align: "center",
       render: (q, row) => (
         <Space>
+          <Popconfirm
+            title="Are you sure you want to delete this SMS ?"
+            okType="primary"
+            okText="DELETE"
+            okButtonProps={{ danger: true }}
+            onConfirm={(e) => {
+              handleDeleteSMS(q._id);
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+            onCancel={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+          >
+            <Button
+              icon={<DeleteOutlined />}
+              type="primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+              }}
+              danger
+            ></Button>
+          </Popconfirm>
           <Tooltip title="Register as Complain">
             <Popconfirm
               title="Confirmation"

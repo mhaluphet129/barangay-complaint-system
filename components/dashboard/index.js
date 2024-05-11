@@ -43,6 +43,7 @@ const Dashboard = ({ setSelectedKey }) => {
   const [notLoading, setNotLoading] = useState(true);
   const [pieData, setPieData] = useState([]);
   const [graphData, setGraphData] = useState([]);
+  const [graphData2, setGraphData2] = useState([]);
 
   let dashboardDataValue = [
     {
@@ -95,6 +96,7 @@ const Dashboard = ({ setSelectedKey }) => {
         setDashboardData(data.data);
         setPieData(data.data.pieData);
         setGraphData(data.data.graphData);
+        setGraphData2(data.data.graphData2);
       } else {
         setNotLoading(true);
       }
@@ -377,6 +379,130 @@ const Dashboard = ({ setSelectedKey }) => {
                     title: {
                       display: true,
                       text: "SMS Complaints by Sitio",
+                      font: {
+                        size: 20,
+                      },
+                    },
+                  },
+                  scales: {
+                    y: {
+                      min: 0,
+                      stacked: false,
+                      title: {
+                        display: true,
+                        text: "Number of Complaints",
+                      },
+                      ticks: {
+                        stepSize: 2,
+                      },
+                    },
+                    x: {
+                      title: {
+                        display: true,
+                        text: "SMS Complaints by Sitio",
+                      },
+                      grid: {
+                        display: false,
+                      },
+                    },
+                  },
+                  onHover: function (event, chartElement) {},
+                }}
+                plugins={[
+                  {
+                    id: "intersectDataVerticalLine",
+                    beforeDraw: (chart) => {
+                      if (chart.getActiveElements().length) {
+                        const activePoint = chart.getActiveElements()[0];
+                        const chartArea = chart.chartArea;
+                        const ctx = chart.ctx;
+                        ctx.save();
+                        // grey vertical hover line - full chart height
+                        ctx.beginPath();
+                        ctx.moveTo(activePoint.element.x, chartArea.top);
+                        ctx.lineTo(activePoint.element.x, chartArea.bottom);
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = "rgba(0,0,0, 0.1)";
+                        ctx.stroke();
+                        ctx.restore();
+
+                        // colored vertical hover line - ['data point' to chart bottom] - only for charts 1 dataset
+                        if (chart.data.datasets.length === 1) {
+                          ctx.beginPath();
+                          ctx.moveTo(
+                            activePoint.element.x,
+                            activePoint.element.y
+                          );
+                          ctx.lineTo(activePoint.element.x, chartArea.bottom);
+                          ctx.lineWidth = 2;
+                          ctx.strokeStyle = chart.data.datasets[0].borderColor;
+                          ctx.stroke();
+                          ctx.restore();
+                        }
+                      }
+                    },
+                  },
+                ]}
+              />
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {Object.keys(graphData2).length != 0 && (
+        <div style={{ marginTop: 10 }}>
+          <Card
+            bodyStyle={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            hoverable
+          >
+            <div style={{ width: "70vw" }}>
+              <Bar
+                data={{
+                  labels: jason.months,
+                  datasets: graphData2.map((e) => {
+                    return {
+                      label: e.label,
+                      data: e.data,
+                      backgroundColor: `#${Math.floor(
+                        Math.random() * 16777215
+                      ).toString(16)}`,
+                      type: "bar",
+                    };
+                  }),
+                }}
+                options={{
+                  responsive: true,
+                  hover: {
+                    mode: "point",
+                  },
+                  // interaction: {
+                  //   mode: "index",
+                  //   intersect: false,
+                  // },
+                  animations: {
+                    y: {
+                      easing: "easeInOutElastic",
+                      from: (ctx) => {
+                        if (ctx.type === "data") {
+                          if (ctx.mode === "default" && !ctx.dropped) {
+                            ctx.dropped = true;
+                            return 0;
+                          }
+                        }
+                      },
+                    },
+                  },
+                  plugins: {
+                    legend: {
+                      position: "top",
+                    },
+                    title: {
+                      display: true,
+                      text: "Complaints by Type",
                       font: {
                         size: 20,
                       },

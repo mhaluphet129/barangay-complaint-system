@@ -6,12 +6,12 @@ export default async function handler(req, res) {
 
   if (req.method != "GET") throw Error("Request Method is not acceptable");
 
-  return await SMS.find({ type: req.query.type })
+  return await SMS.findOneAndDelete({ _id: req.query._id })
     .sort({ createdAt: -1 })
     .then((e) => {
       return res.json({
         success: true,
-        message: "Sent Successfully",
+        message: "Deleted Successfully",
         sms: e,
       });
     })
