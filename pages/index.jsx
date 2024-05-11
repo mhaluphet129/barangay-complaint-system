@@ -52,7 +52,7 @@ const Home = () => {
         <Header />
         <div className="flex mx-20 rounded-lg">
           <div className="flex flex-col justify-end w-full">
-            <div className="flex flex-col justify-end px-10 mb-56">
+            <div className="flex flex-col justify-end px-10 mb-24">
               {/* <span className="text-5xl font-bold text-white">
                 Barangay Complaint System
               </span> */}
@@ -60,21 +60,23 @@ const Home = () => {
                 Resolving Local Disputes with Efficiency and Fairness in North
                 Poblacion Maramag
               </span> */}
-              <span
-                className="mt-10 text-2xl text-slate-200"
+              <div
+                className="mt-10 text-3xl text-slate-200"
                 style={{
                   fontFamily: "sans-serif",
                 }}
               >
-                <span className="text-4xl text-[#0fff80] font-black block">
+                <div className="text-5xl text-[#0fff80] font-black block">
                   Pag REGISTER na!
-                </span>
-                Anha lang kamo sa North Poblacian Maramag Barangay Hall aron
-                ma-rehistro ug pwede na maka{" "}
-                <span className="font-black cursor-pointer hover:underline">
-                  FILE UG COMPLAIN
-                </span>
-              </span>
+                </div>
+                <div className="mt-4">
+                  Anha lang kamo sa North Poblacian Maramag Barangay Hall aron
+                  ma-rehistro ug pwede na maka{" "}
+                  <span className="font-black cursor-pointer hover:underline">
+                    FILE UG COMPLAIN
+                  </span>
+                </div>
+              </div>
               <Link
                 href="/complain"
                 className="flex justify-center w-56 py-4 mt-10 mb-24 text-2xl font-semibold bg-white rounded-full cursor-pointer hover:bg-[#6a96fe] border-2 border-white hover:text-white"
@@ -84,48 +86,28 @@ const Home = () => {
               >
                 File a Complaint
               </Link>
-            </div>
-          </div>
-          <img
-            className="p-4 landingpage-background-img rounded-3xl"
-            src="bg-pic1.png"
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col items-center justify-center flex-1 px-20 pt-10 overflow-scroll bg-blue-100 main-body-3">
-        <div className="flex flex-col px-20 py-10 rounded-lg">
-          <div className="flex flex-col justify-between">
-            <span className="block mb-10 font-sans text-4xl font-bold text-center">
-              Balita ug Anunsiyo{" "}
-            </span>
-            <div className="flex flex-wrap justify-center gap-x-4">
-              {news.length > 0 ? (
-                news.map((e) => (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: 25,
-                    }}
-                  >
+              {news.length > 0 && (
+                <>
+                  <span className="block mb-4 font-sans text-3xl font-semibold text-white">
+                    Balita ug Anunsiyo &#9733;
+                  </span>
+                  <div className="flex gap-x-2">
                     <Link
                       href="/news/[slug]"
-                      as={`/news/${news[news.length - 1]?.slug_name}`}
+                      as={`/news/${news[0]?.slug_name}`}
                     >
                       <div className="news-container">
                         <div className="img-container more-news">
                           <img
                             src={
-                              e?.imgs?.length > 0
+                              news[0]?.imgs?.length > 0
                                 ? e?.imgs[0]
                                 : "/placeholder.jpg"
                             }
                             style={{
-                              width: "21vw",
+                              width: "15vw",
                               borderRadius: 10,
-                              height: "15em",
+                              height: "12em",
                               objectFit: "cover",
                               objectPosition: "center",
                             }}
@@ -151,54 +133,117 @@ const Home = () => {
                               }}
                               ellipsis
                             >
-                              {e?.title}
+                              {news[0]?.title}
                             </Typography.Paragraph>{" "}
                             <span>
                               Barangay Admin -{" "}
                               <span className="italic">
-                                {dayjs(e?.createdAt).format("MMMM DD, YYYY")}
+                                {dayjs(news[0]?.createdAt).format(
+                                  "MMMM DD, YYYY"
+                                )}
                               </span>
                             </span>
                           </div>
                         </div>
                       </div>
                     </Link>
-                  </div>
-                ))
-              ) : (
-                <>No News/Announcement Posted</>
-              )}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 25,
-                }}
-              >
-                <Link href="/news">
-                  <div className="news-container">
-                    <div className="news-more">
-                      <img
-                        src="/placeholder.jpg"
-                        style={{
-                          width: "21vw",
-                          borderRadius: 10,
-                          height: "15em",
-                          objectFit: "cover",
-                          objectPosition: "center",
-                        }}
-                        alt="image"
-                      />
-                      <span className="see-more">See More</span>
+                    {news.length > 1 && (
+                      <Link
+                        href="/news/[slug]"
+                        as={`/news/${news[1]?.slug_name}`}
+                      >
+                        <div className="news-container">
+                          <div className="img-container more-news">
+                            <img
+                              src={
+                                news[0]?.imgs?.length > 0
+                                  ? e?.imgs[0]
+                                  : "/placeholder.jpg"
+                              }
+                              style={{
+                                width: "15vw",
+                                borderRadius: 10,
+                                height: "12em",
+                                objectFit: "cover",
+                                objectPosition: "center",
+                              }}
+                              alt="image"
+                            />
+                            <div
+                              className="img-label"
+                              style={{
+                                position: "absolute",
+                                bottom: 15,
+                                left: 20,
+                                color: "#fff",
+                                zIndex: 2,
+                              }}
+                            >
+                              <Typography.Paragraph
+                                style={{
+                                  maxWidth: "25vw",
+                                  color: "#fff",
+                                  fontSize: "1.5em",
+                                  margin: 0,
+                                  fontWeight: 600,
+                                }}
+                                ellipsis
+                              >
+                                {news[0]?.title}
+                              </Typography.Paragraph>{" "}
+                              <span>
+                                Barangay Admin -{" "}
+                                <span className="italic">
+                                  {dayjs(news[0]?.createdAt).format(
+                                    "MMMM DD, YYYY"
+                                  )}
+                                </span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    )}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Link href="/news">
+                        <div className="news-container">
+                          <div className="img-container news-more">
+                            <img
+                              src="/placeholder.jpg"
+                              style={{
+                                width: "15vw",
+                                borderRadius: 10,
+                                height: "12em",
+                                objectFit: "cover",
+                                objectPosition: "center",
+                              }}
+                              alt="image"
+                            />
+                            <span className="see-more">See More</span>
+                          </div>
+                        </div>
+                      </Link>
                     </div>
                   </div>
-                </Link>
-              </div>
+                </>
+              )}
             </div>
           </div>
+          <img
+            className="p-4 landingpage-background-img rounded-3xl"
+            src="bg-pic1.png"
+          />
+        </div>
+      </div>
 
-          {/* <span
+      <div>
+        {/* <span
               className="mb-10 text-4xl font-black text-center"
               data-aos="fade-up"
               data-aos-offset={news.length == 0 ? "200" : "1500"}
@@ -260,11 +305,10 @@ const Home = () => {
                 </div>
               </div>
             </div> */}
-        </div>
       </div>
 
       <div
-        className="flex justify-center flex-1 px-10 pt-8 pb-10 main-body-2"
+        className="flex justify-center flex-1 px-10 pb-10 main-body-2"
         style={{
           height: "50rem",
         }}
@@ -273,7 +317,7 @@ const Home = () => {
           <span className="block py-4 text-5xl font-medium text-center">
             Barangay Complaint System Offers
           </span>
-          <div className="flex flex-wrap justify-center gap-10 my-24">
+          <div className="flex flex-wrap justify-center gap-10 my-24 offer-1">
             <div className="flex flex-col w-1/4 p-6 text-center border rounded-lg offer-box border-slate-400 bg-slate-200">
               <span className="text-2xl font-bold">
                 Mas Mapaspas na ang Pagresponde sa usa ka Reklamo

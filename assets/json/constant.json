@@ -98,6 +98,18 @@
     "ating",
     "kanilang"
   ],
+  "bisaya_stop_word": [
+    "nga",
+    "sa",
+    "si",
+    "ang",
+    "ng",
+    "nang",
+    "nganong",
+    "ngano",
+    "ngan",
+    "ngani"
+  ],
   "barangay": [
     "1",
     "1A",

@@ -149,7 +149,6 @@ const News = ({ appKey }) => {
     (async (_) => {
       let { data } = await axios.get("/api/news");
       if (data.success) {
-        console.log(data);
         setNews(data.news);
         setLoading("");
       } else {

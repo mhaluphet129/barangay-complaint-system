@@ -154,7 +154,7 @@ const Complain = ({ appkey }) => {
             Online Complaint Form
           </Typography.Title>
           <Form.Item
-            label="Resident"
+            label="Residente"
             name="resident"
             rules={[
               {
@@ -230,7 +230,7 @@ const Complain = ({ appkey }) => {
           </Form.Item>
           <Form.Item
             name="respondentName"
-            label="Respondent Name"
+            label="Pangalan sa Gireklamo"
             rules={[
               {
                 required: true,
@@ -240,18 +240,9 @@ const Complain = ({ appkey }) => {
           >
             <Input size="large" />
           </Form.Item>
-          <Form.Item
-            name="respondentNumber"
-            label="Respondent Number"
-            rules={[
-              {
-                required: true,
-                message: "This field is blank. Please provide",
-              },
-            ]}
-          >
+          <Form.Item name="respondentNumber" label="Number sa Gireklamo">
             <InputNumber
-              addonBefore="+639"
+              addonBefore="+63"
               maxLength={10}
               size="large"
               controls={false}
@@ -261,16 +252,16 @@ const Complain = ({ appkey }) => {
               }}
             />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label="Isulat imong Reklamo">
             <Input.TextArea
               autoSize={{
                 minRows: 8,
                 maxRows: 15,
               }}
-              placeholder="This is optional"
+              placeholder="Detalye saimong reklamo"
             />
           </Form.Item>
-          <Form.Item label="Images">
+          <Form.Item label="Ebidensya (Picture only)">
             <div
               style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
               id="picker-container"

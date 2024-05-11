@@ -36,6 +36,13 @@ export default async function handler(req, res) {
 
     let graphData = await Complaint.aggregate([
       {
+        $match: {
+          northBarangay: {
+            $ne: null,
+          },
+        },
+      },
+      {
         $group: {
           _id: {
             month: { $month: "$createdAt" },

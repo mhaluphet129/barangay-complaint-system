@@ -1,7 +1,11 @@
 import jason from "@/assets/json/constant.json";
 
 export const getKeyword = (str) => {
-  const stopWords = [...jason.english_stop_word, ...jason.tagalog_stop_word];
+  const stopWords = [
+    ...jason.english_stop_word,
+    ...jason.tagalog_stop_word,
+    ...jason.bisaya_stop_word,
+  ];
   const words = str
     .replace(/[^\w\s]/gi, "")
     .toLowerCase()

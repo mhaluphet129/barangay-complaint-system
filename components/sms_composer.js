@@ -45,11 +45,11 @@ const SmsComposer = ({ open, close, onSend, smskey }) => {
   // utils
   function processPhoneNumber(input) {
     if (input.startsWith("639")) {
-      return "0" + input.substring(2);
+      return "63" + input.substring(2);
     } else if (input.startsWith("+639")) {
-      return "0" + input.substring(3);
+      return "63" + input.substring(3);
     } else if (input.startsWith("9")) {
-      return "0" + input;
+      return "63" + input;
     } else {
       return input;
     }
@@ -93,10 +93,10 @@ const SmsComposer = ({ open, close, onSend, smskey }) => {
   };
 
   const onSubmit = () => {
-    // if (!selectedDevice.online) {
-    //   message.error("Selected device is offline. Please Choose another one.");
-    //   return;
-    // }
+    if (!selectedDevice.online) {
+      message.error("Selected device is offline. Please Choose another one.");
+      return;
+    }
 
     if (mode == "Residents") {
       if (mobilenum.length == 0) {

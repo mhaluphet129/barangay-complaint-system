@@ -16,7 +16,7 @@ class SMS {
           },
         }
       );
-      console.log(response);
+
       if (response.data.status == 200)
         resolve({ success: true, data: response.data.data });
       else
@@ -29,14 +29,16 @@ class SMS {
 
   async sendMessage(phone, message, device) {
     return new Promise(async (resolve, reject) => {
-      let response = await axios.post(
+      let response = await axios.get(
         "https://sms.teamssprogram.com/api/send/sms",
         {
-          secret: this.key,
-          mode: "devices",
-          phone,
-          message,
-          device,
+          params: {
+            secret: this.key,
+            mode: "devices",
+            phone,
+            message,
+            device,
+          },
         }
       );
 

@@ -34,15 +34,15 @@ export default async function handler(req, res) {
       (e) => e.type == template /* "sms_to_respondent_1" */
     )[0].message;
 
-    let newSms = await SMS.create({
-      message: msgTemplate.replace(/@RESPONDER_NAME/g, respondentName),
-      number: respondentNumber,
-      residentId,
-      type: "outbound",
-    });
+    if (respondentNumber)
+      await SMS.create({
+        message: msgTemplate.replace(/@RESPONDER_NAME/g, respondentName),
+        number: respondentNumber,
+        residentId,
+        type: "outbound",
+      });
 
     newComplain = Complaint({
-      smsId: [newSms._id],
       residentId,
       settlement: [newSettlement],
       inchargeId,

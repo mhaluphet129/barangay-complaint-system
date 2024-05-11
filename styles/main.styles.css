@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Abel&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600&display=swap");
 
 .label-under {
   position: relative;
@@ -65,7 +64,7 @@ div.news-container {
 }
 
 div.img-container img {
-  transition: 0.2s;
+  transition: 0.2s all;
   cursor: pointer;
 }
 
@@ -135,12 +134,8 @@ a.remove-focus {
   z-index: 3;
 }
 
-.landingpage-main-info {
-  height: calc(100vh - 11rem);
-}
-
 .landingpage-background-img {
-  width: 55%;
+  width: 50%;
   background-size: cover;
   background-position: center;
 }
@@ -173,8 +168,8 @@ a.remove-focus {
 }
 
 .main-body-2 {
-  /* background: url("/placeholder.jpg"); */
-  /* background-repeat: no-repeat; */
+  background: url("/bg-pic2.png");
+  background-repeat: no-repeat;
 }
 
 .main-body-3 {

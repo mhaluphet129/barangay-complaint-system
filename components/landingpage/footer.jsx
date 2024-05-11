@@ -8,13 +8,13 @@ import {
 const Footer = () => {
   return (
     <footer
-      className="text-white px-10"
+      className="px-10 text-white"
       style={{
         backgroundColor: "#2d2d2d",
       }}
     >
       <div
-        className="w-full flex items-start"
+        className="flex items-start w-full"
         style={{
           paddingTop: "2.5em",
           paddingBottom: "2.5em",
@@ -30,7 +30,7 @@ const Footer = () => {
           }}
         >
           <span className="text-2xl">Social Links</span>
-          <div className="mt-4 flex gap-2">
+          <div className="flex gap-2 mt-4">
             <a
               href="https://www.facebook.com"
               target="_blank"
@@ -55,6 +55,9 @@ const Footer = () => {
           <span className="text-2xl">Site Links</span>
           <a href="/complain" className="mt-4 hover:underline">
             File Complaint
+          </a>
+          <a href="/faq" className="hover:underline">
+            Frequently Asked Questions
           </a>
           <Tooltip title="WAY KAMO">
             <a href="#">About Us</a>
@@ -84,12 +87,12 @@ const Footer = () => {
         }}
       />
       <div
-        className="w-full h-16 flex items-center"
+        className="flex items-center w-full h-16"
         style={{
           justifyContent: "flex-end",
         }}
       >
-        <span className="text-center mr-10">
+        <span className="mr-10 text-center">
           All Right Reserved &#169; {new Date().getFullYear()}
         </span>
       </div>
