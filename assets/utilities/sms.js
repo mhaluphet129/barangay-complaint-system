@@ -37,8 +37,6 @@ class SMS {
           phone,
           message,
           device,
-          sim: 1,
-          priority: 1,
         }
       );
 

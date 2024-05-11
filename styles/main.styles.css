@@ -140,7 +140,7 @@ a.remove-focus {
 }
 
 .landingpage-background-img {
-  width: calc(50% - 5rem);
+  width: 55%;
   background-size: cover;
   background-position: center;
 }
@@ -156,6 +156,32 @@ a.remove-focus {
 
 .complain-btn:hover {
   background-color: #4874dc;
+}
+
+.offer-box {
+  transition: 0.3s all !important;
+  cursor: pointer;
+}
+
+.offer-box:hover {
+  background: #fffef0 !important;
+  transform: scale(1.05) !important;
+}
+
+.main-body {
+  background-color: #6a96fe;
+}
+
+.main-body-2 {
+  /* background: url("/placeholder.jpg"); */
+  /* background-repeat: no-repeat; */
+}
+
+.main-body-3 {
+  background: url("/bg-pic2.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  min-height: 500px;
 }
 
 @-webkit-keyframes spinner {

@@ -26,13 +26,13 @@ const News = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <div className="flex-1 mx-20">
+    <div className="flex flex-col min-h-screen bg-[#d9f2fe]">
+      <div className="flex-1">
         <Header />
         <div className="class-container">
           {news.length > 0 && (
             <Link
-              className="mt-10 flex justify-center items-center"
+              className="flex items-center justify-center mt-10"
               style={{ fontFamily: "abel" }}
               href="/news/[slug]"
               as={`/news/${news[0].slug_name}`}
@@ -46,7 +46,7 @@ const News = () => {
                         : "/placeholder.jpg"
                     }
                     style={{
-                      width: "80vw",
+                      width: "85vw",
                       borderRadius: 10,
                       maxHeight: "25em",
                       objectFit: "cover",
@@ -87,13 +87,18 @@ const News = () => {
             </Link>
           )}
 
-          <div style={{ width: "80vw", marginTop: 25, marginBottom: 25 }}>
+          <div
+            className="mx-32 my-20"
+            style={{
+              width: "85vw",
+            }}
+          >
             <span className="text-2xl font-bold">Recent News &#9734;</span>
             {news.length > 0 ? (
-              <div className="flex mt-4 flex-wrap gap-x-4">
+              <div className="flex flex-wrap mt-4 gap-x-4">
                 {news.map((e, i) => (
                   <Link
-                    className="text-xl cursor-pointer text-black hover:underline remove-focus"
+                    className="text-xl text-black cursor-pointer hover:underline remove-focus"
                     style={{ fontFamily: "abel" }}
                     href="/news/[slug]"
                     as={`/news/${e.slug_name}`}

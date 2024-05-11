@@ -33,18 +33,18 @@ export default function Page() {
 
   return (
     <Spin spinning={loading}>
-      <div className="flex flex-col min-h-screen">
-        <div className="flex-1 mx-20">
+      <div className="flex flex-col min-h-screen bg-[#d9f2fe]">
+        <div className="flex-1">
           <Header />
           <div
-            className="flex justify-center overflow-scroll bg-[#d9f2fe]"
+            className="flex justify-center overflow-scroll "
             style={{
               minHeight: "100vh",
             }}
           >
             <div className="w-9/12">
-              <p className="text-4xl font-black mt-10">{news?.title}</p>
-              <p className="text-xl font-black mt-4">Barangay Admin</p>
+              <p className="mt-10 text-4xl font-black">{news?.title}</p>
+              <p className="mt-4 text-xl font-black">Barangay Admin</p>
               <p className="text-base">
                 {dayjs(news?.createdAt).format("MMMM DD, YYYY")}
               </p>

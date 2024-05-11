@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -9,6 +9,7 @@ import { CiFileOn } from "react-icons/ci";
 import { MdGroups2 } from "react-icons/md";
 import { LiaSmsSolid } from "react-icons/lia";
 import { TfiWrite } from "react-icons/tfi";
+import { FaChevronDown } from "react-icons/fa6";
 
 import Link from "next/link";
 import AOS from "aos";
@@ -17,8 +18,6 @@ import Footer from "@/components/landingpage/footer";
 import Header from "@/components/landingpage/header";
 
 const Home = () => {
-  const ref = useRef();
-
   const [loading, setLoading] = useState("");
   const [news, setNews] = useState([]);
 
@@ -27,7 +26,7 @@ const Home = () => {
     (async (_) => {
       let { data } = await axios.get("/api/news");
       if (data.success) {
-        if (data.news.length > 3) setNews(data.news?.slice(0, 3));
+        if (data.news.length > 2) setNews(data.news?.slice(0, 2));
         else setNews(data.news);
         setLoading("");
       } else {
@@ -45,288 +44,162 @@ const Home = () => {
     });
   }, []);
 
+  // 4874dc primary
+  // 6a96fe
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <div className="flex-1 mx-20">
+    <div className="flex flex-col min-h-screen bg-[#d9f2fe]">
+      <div className="flex-1 main-body">
         <Header />
-
-        <div className="flex mt-6 border rounded-lg border-slate-300 bg-[#6096fe] shadow-lg">
-          <div className="px-10 py-20 w-full flex flex-col justify-between">
-            <div className="flex flex-col">
-              <span className="text-5xl font-bold">
+        <div className="flex mx-20 rounded-lg">
+          <div className="flex flex-col justify-end w-full">
+            <div className="flex flex-col justify-end px-10 mb-56">
+              {/* <span className="text-5xl font-bold text-white">
                 Barangay Complaint System
-              </span>
-              <span className="text-1xl font-bold">
+              </span> */}
+              {/* <span className="text-2xl font-bold">
                 Resolving Local Disputes with Efficiency and Fairness in North
                 Poblacion Maramag
-              </span>
-              <span className="text-[#101647] mt-10">
-                The North Poblacion Maramag barangay officials aim to resolve
-                local disputes quickly and amicably through counseling,
-                understanding different perspectives, and sometimes referencing
-                religious texts to help parties reconcile, rather than resorting
-                to formal litigation
-              </span>
-            </div>
-            <div className="flex gap-x-2">
-              <div
-                className="rounded-full text-1xl cursor-pointer bg-white flex items-center px-8 py-2 font-semibold hover:underline"
-                onClick={() =>
-                  ref.current.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                    inline: "center",
-                  })
-                }
+              </span> */}
+              <span
+                className="mt-10 text-2xl text-slate-200"
+                style={{
+                  fontFamily: "sans-serif",
+                }}
               >
-                View More
-              </div>
+                <span className="text-4xl text-[#0fff80] font-black block">
+                  Pag REGISTER na!
+                </span>
+                Anha lang kamo sa North Poblacian Maramag Barangay Hall aron
+                ma-rehistro ug pwede na maka{" "}
+                <span className="font-black cursor-pointer hover:underline">
+                  FILE UG COMPLAIN
+                </span>
+              </span>
               <Link
                 href="/complain"
-                className="rounded-full text-1xl cursor-pointer flex items-center px-8 py-2 font-light bg-[#6096fe] border border-white text-white hover:underline"
+                className="flex justify-center w-56 py-4 mt-10 mb-24 text-2xl font-semibold bg-white rounded-full cursor-pointer hover:bg-[#6a96fe] border-2 border-white hover:text-white"
+                style={{
+                  fontFamily: "abel",
+                }}
               >
                 File a Complaint
               </Link>
             </div>
           </div>
           <img
-            className="landingpage-background-img p-4 rounded-3xl"
-            src="bg-pic1.jpg"
+            className="p-4 landingpage-background-img rounded-3xl"
+            src="bg-pic1.png"
           />
         </div>
-        <div className="h-full flex flex-col overflow-scroll">
-          <div className="flex flex-col mt-10 overflow-hidden">
-            <div className="my-10">
-              <span
-                className="text-4xl font-black"
-                ref={ref}
-                style={{
-                  fontFamily: "abel",
-                }}
-              >
-                News and Annoucement
-              </span>
-              <div className="flex flex-wrap gap-x-4">
-                {news.length > 0 ? (
-                  news.map((e) => (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginTop: 25,
-                      }}
+      </div>
+
+      <div className="flex flex-col items-center justify-center flex-1 px-20 pt-10 overflow-scroll bg-blue-100 main-body-3">
+        <div className="flex flex-col px-20 py-10 rounded-lg">
+          <div className="flex flex-col justify-between">
+            <span className="block mb-10 font-sans text-4xl font-bold text-center">
+              Balita ug Anunsiyo{" "}
+            </span>
+            <div className="flex flex-wrap justify-center gap-x-4">
+              {news.length > 0 ? (
+                news.map((e) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: 25,
+                    }}
+                  >
+                    <Link
+                      href="/news/[slug]"
+                      as={`/news/${news[news.length - 1]?.slug_name}`}
                     >
-                      <Link
-                        href="/news/[slug]"
-                        as={`/news/${news[news.length - 1]?.slug_name}`}
-                      >
-                        <div className="news-container">
-                          <div className="img-container more-news">
-                            <img
-                              src={
-                                e?.imgs?.length > 0
-                                  ? e?.imgs[0]
-                                  : "/placeholder.jpg"
-                              }
+                      <div className="news-container">
+                        <div className="img-container more-news">
+                          <img
+                            src={
+                              e?.imgs?.length > 0
+                                ? e?.imgs[0]
+                                : "/placeholder.jpg"
+                            }
+                            style={{
+                              width: "21vw",
+                              borderRadius: 10,
+                              height: "15em",
+                              objectFit: "cover",
+                              objectPosition: "center",
+                            }}
+                            alt="image"
+                          />
+                          <div
+                            className="img-label"
+                            style={{
+                              position: "absolute",
+                              bottom: 15,
+                              left: 20,
+                              color: "#fff",
+                              zIndex: 2,
+                            }}
+                          >
+                            <Typography.Paragraph
                               style={{
-                                width: "21vw",
-                                borderRadius: 10,
-                                height: "15em",
-                                objectFit: "cover",
-                                objectPosition: "center",
-                              }}
-                              alt="image"
-                            />
-                            <div
-                              className="img-label"
-                              style={{
-                                position: "absolute",
-                                bottom: 15,
-                                left: 20,
+                                maxWidth: "25vw",
                                 color: "#fff",
-                                zIndex: 2,
+                                fontSize: "1.5em",
+                                margin: 0,
+                                fontWeight: 600,
                               }}
+                              ellipsis
                             >
-                              <Typography.Paragraph
-                                style={{
-                                  maxWidth: "25vw",
-                                  color: "#fff",
-                                  fontSize: "1.5em",
-                                  margin: 0,
-                                  fontWeight: 600,
-                                }}
-                                ellipsis
-                              >
-                                {e?.title}
-                              </Typography.Paragraph>{" "}
-                              <span>
-                                Barangay Admin -{" "}
-                                <span className="italic">
-                                  {dayjs(e?.createdAt).format("MMMM DD, YYYY")}
-                                </span>
+                              {e?.title}
+                            </Typography.Paragraph>{" "}
+                            <span>
+                              Barangay Admin -{" "}
+                              <span className="italic">
+                                {dayjs(e?.createdAt).format("MMMM DD, YYYY")}
                               </span>
-                            </div>
+                            </span>
                           </div>
                         </div>
-                      </Link>
-                    </div>
-                  ))
-                ) : (
-                  <>No News/Announcement Posted</>
-                )}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: 25,
-                  }}
-                >
-                  <Link href="/news">
-                    <div className="news-container">
-                      <div className="news-more">
-                        <img
-                          src="/placeholder.jpg"
-                          style={{
-                            width: "21vw",
-                            borderRadius: 10,
-                            height: "15em",
-                            objectFit: "cover",
-                            objectPosition: "center",
-                          }}
-                          alt="image"
-                        />
-                        <span className="see-more">See More</span>
                       </div>
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                <>No News/Announcement Posted</>
+              )}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginTop: 25,
+                }}
+              >
+                <Link href="/news">
+                  <div className="news-container">
+                    <div className="news-more">
+                      <img
+                        src="/placeholder.jpg"
+                        style={{
+                          width: "21vw",
+                          borderRadius: 10,
+                          height: "15em",
+                          objectFit: "cover",
+                          objectPosition: "center",
+                        }}
+                        alt="image"
+                      />
+                      <span className="see-more">See More</span>
                     </div>
-                  </Link>
-                </div>
+                  </div>
+                </Link>
               </div>
             </div>
-            <span className="text-4xl font-medium mb-4" data-aos="fade-right">
-              Barangay Complaint System Offers
-            </span>
-            <div className="flex flex-wrap my-4 gap-10">
-              <div
-                data-aos="fade-right"
-                data-aos-offset="200"
-                data-aos-delay="200"
-                className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
-              >
-                <span className="font-bold text-2xl font-black">
-                  Streamlined Local Dispute Resolution
-                </span>
-                <span
-                  className="text-base mt-4"
-                  style={{
-                    fontFamily: "abel",
-                  }}
-                >
-                  Our Barangay Complaint System provides a efficient and
-                  accessible platform for residents to address local disputes
-                  and concerns. Leveraging the expertise of community leaders,
-                  we facilitate the resolution of issues ranging from
-                  neighborhood conflicts to public service complaints.
-                </span>
-              </div>
+          </div>
 
-              <div
-                data-aos="fade-right"
-                data-aos-offset="200"
-                data-aos-delay="400"
-                className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
-              >
-                <span className="font-bold text-2xl font-black">
-                  Empowering Community Engagement
-                </span>
-                <span
-                  className="text-base mt-4"
-                  style={{
-                    fontFamily: "abel",
-                  }}
-                >
-                  By enabling direct communication between citizens and local
-                  authorities, our system fosters greater transparency and
-                  accountability. Residents can easily submit complaints, track
-                  their progress, and participate in the decision-making
-                  process, strengthening the bond between the community and its
-                  governing bodies.
-                </span>
-              </div>
-
-              <div
-                data-aos="fade-right"
-                data-aos-offset="200"
-                data-aos-delay="600"
-                className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
-              >
-                <span className="font-bold text-2xl font-black">
-                  Comprehensive Case Management
-                </span>
-                <span
-                  className="text-base mt-4"
-                  style={{
-                    fontFamily: "abel",
-                  }}
-                >
-                  Our robust case management system ensures that every complaint
-                  is thoroughly investigated and addressed in a timely manner.
-                  From initial intake to final resolution, we maintain detailed
-                  records and provide regular updates to all parties involved,
-                  ensuring a fair and transparent process.
-                </span>
-              </div>
-
-              <div
-                data-aos="fade-right"
-                data-aos-delay="800"
-                className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
-              >
-                <span className="font-bold text-2xl font-black">
-                  Conflict Resolution Expertise
-                </span>
-                <span
-                  className="text-base mt-4"
-                  style={{
-                    fontFamily: "abel",
-                  }}
-                >
-                  Our team of experienced mediators and conflict resolution
-                  specialists are dedicated to finding amicable solutions that
-                  satisfy all stakeholders. By leveraging their expertise in
-                  negotiation, mediation, and community-based problem-solving,
-                  we strive to resolve disputes efficiently and effectively.
-                </span>
-              </div>
-
-              <div
-                data-aos="fade-right"
-                data-aos-delay="1000"
-                className="flex flex-col w-1/4 p-6 border border-slate-400 rounded-lg"
-              >
-                <span className="font-bold text-2xl font-black">
-                  Empowering Local Governance
-                </span>
-                <span
-                  className="text-base mt-4"
-                  style={{
-                    fontFamily: "abel",
-                  }}
-                >
-                  By providing a centralized platform for citizen engagement,
-                  our Barangay Complaint System for North Poblacion Maramag
-                  empowers local governments to better understand and address
-                  the needs of their constituents. This data-driven approach
-                  enables more informed decision-making and the implementation
-                  of targeted solutions to improve the overall quality of life
-                  in the community.
-                </span>
-              </div>
-            </div>
-
-            {/* <span
-              className="text-center text-4xl font-black mb-10"
+          {/* <span
+              className="mb-10 text-4xl font-black text-center"
               data-aos="fade-up"
               data-aos-offset={news.length == 0 ? "200" : "1500"}
               style={{
@@ -335,7 +208,7 @@ const Home = () => {
             >
               As of {new Date().getFullYear()}, we already assist and gathered
             </span>
-            <div className="flex justify-between  w-3/4 p-2 mb-20">
+            <div className="flex justify-between w-3/4 p-2 mb-20">
               <div
                 className="sukarap flex bg-[#31a107] p-6 rounded gap-1"
                 data-aos="fade-up"
@@ -348,7 +221,7 @@ const Home = () => {
                   }}
                 />
                 <div className="flex flex-col justify-center ml-2">
-                  <span className="text-3xl text-white mt-2">30,000+</span>
+                  <span className="mt-2 text-3xl text-white">30,000+</span>
                   <span className="text-lg text-white">COMPLAINS RECEIVED</span>
                 </div>
               </div>
@@ -364,7 +237,7 @@ const Home = () => {
                   }}
                 />
                 <div className="flex flex-col ml-2">
-                  <span className="text-3xl text-white mt-2">30,000+</span>
+                  <span className="mt-2 text-3xl text-white">30,000+</span>
                   <span className="text-lg text-white">
                     RESIDENT REGISTERED
                   </span>
@@ -382,11 +255,73 @@ const Home = () => {
                   }}
                 />
                 <div className="flex flex-col ml-2">
-                  <span className="text-3xl text-white mt-2">30,000+</span>
+                  <span className="mt-2 text-3xl text-white">30,000+</span>
                   <span className="text-lg text-white">SMS RECEIVED</span>
                 </div>
               </div>
             </div> */}
+        </div>
+      </div>
+
+      <div
+        className="flex justify-center flex-1 px-10 pt-8 pb-10 main-body-2"
+        style={{
+          height: "50rem",
+        }}
+      >
+        <div className="mt-24 mb-10 rounded-lg">
+          <span className="block py-4 text-5xl font-medium text-center">
+            Barangay Complaint System Offers
+          </span>
+          <div className="flex flex-wrap justify-center gap-10 my-24">
+            <div className="flex flex-col w-1/4 p-6 text-center border rounded-lg offer-box border-slate-400 bg-slate-200">
+              <span className="text-2xl font-bold">
+                Mas Mapaspas na ang Pagresponde sa usa ka Reklamo
+              </span>
+              <span
+                className="mt-4 text-lg"
+                style={{
+                  fontFamily: "abel",
+                }}
+              >
+                Mas pinapaspas na ang pag responde kay aduna nay bag-ong sistema
+                na pwede na ma hatag ug dugang serbisyo para sa mga mag reklamo
+                pinaagi sa atong Website, Text or mga Walk-In complaint.
+              </span>
+            </div>
+            <div className="flex flex-col w-1/4 p-6 text-center border rounded-lg offer-box border-slate-400 bg-slate-200">
+              <span className="text-2xl font-bold">
+                Dalian na Reklamo gamit lang imong Cellphone, Computer og
+                Internet
+              </span>
+              <span
+                className="mt-4 text-lg"
+                style={{
+                  fontFamily: "abel",
+                }}
+              >
+                Ang amoa systema kay motabang mapasayon ang atoang pag file og
+                reklamo sa barangay gamit lang ang inyong gadgets og internet.
+                Pwede pud maka text kung walay internet, kini para ma atiman
+                tanan gusto naay reklamo sa barangay
+              </span>
+            </div>
+            <div className="flex flex-col w-1/4 p-6 text-center border rounded-lg offer-box border-slate-400 bg-slate-200">
+              <span className="text-2xl font-bold">
+                Mga Bag-ong Balita ug Anunsiyo sa lokal
+              </span>
+              <span
+                className="mt-4 text-lg"
+                style={{
+                  fontFamily: "abel",
+                }}
+              >
+                Ang mga Barangay Opisyal kanunay na mag post ug mga bag-ong
+                balita ug Anunsiyo nahitungod sa mga nangahitabo sa na nasayrang
+                lugar. Tungod niini, makabalo ang tanang lokal sa mga balita ug
+                mga paabutong panghitabo.
+              </span>
+            </div>
           </div>
         </div>
       </div>

@@ -4,14 +4,19 @@ import "tailwindcss/tailwind.css";
 
 const Header = () => {
   return (
-    <div className="flex justify-between items-center mt-4">
-      <Link className="font-bold flex items-center text-3xl" href="/">
+    <div className="flex items-center justify-between px-24 mx-4 mt-4 ">
+      <Link className="flex items-center mr-2 text-2xl font-bold " href="/">
         <img src="/web-logo.png" width={100} className="mr-2" />
       </Link>
-      <Link className="font-bold flex items-center text-3xl" href="/">
-        North Poblacion Maramag
-      </Link>
-      <div></div>
+
+      <div className="flex flex-col items-end">
+        <Link className="text-4xl font-bold" href="/">
+          Barangay Complaint System
+        </Link>
+        <Link className="flex items-center text-2xl font-bold" href="/">
+          North Poblacion Maramag
+        </Link>
+      </div>
     </div>
   );
 };
