@@ -265,7 +265,7 @@ const Complain = ({ appKey }) => {
                           Creation Date:
                         </Col>
                         <Col span={4}>
-                          {item?.residentId ? (
+                          {item?.residentId && item?.residentId?.name ? (
                             <Typography.Text
                               style={{ fontWeight: 700 }}
                             >{`${item?.residentId?.name[0].toLocaleUpperCase()}${item?.residentId?.name.slice(

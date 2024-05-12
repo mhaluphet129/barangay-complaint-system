@@ -1,5 +1,6 @@
 import { message } from "antd";
 import axios from "axios";
+import dayjs from "dayjs";
 
 class SMS {
   constructor(key) {
@@ -158,6 +159,61 @@ class SMS {
           success: true,
         };
       });
+  }
+
+  async sendBulk(device, numbers, message) {
+    return new Promise(async (resolve, reject) => {
+      numbers = numbers.map((e) => `+63${e}`).join(",");
+      let response = await axios.get(
+        "https://sms.teamssprogram.com/api/send/sms.bulk",
+        {
+          params: {
+            secret: this.key,
+            mode: "devices",
+            campaign: dayjs().format("MMM DD, YYYY - hh:mma"),
+            numbers,
+            device,
+            message,
+          },
+        }
+      );
+
+      if (response.data.status == 200) {
+        resolve({
+          success: true,
+          data: response.data.data,
+        });
+      } else {
+        reject({
+          success: false,
+        });
+      }
+    });
+  }
+
+  async deleteSentSms(id) {
+    return new Promise(async (resolve, reject) => {
+      let response = await axios.get(
+        "https://sms.teamssprogram.com/api/delete/sms.sent",
+        {
+          params: {
+            secret: this.key,
+            id,
+          },
+        }
+      );
+
+      if (response.data.status == 200) {
+        resolve({
+          success: true,
+          data: response.data.data,
+        });
+      } else {
+        reject({
+          success: false,
+        });
+      }
+    });
   }
 }
 

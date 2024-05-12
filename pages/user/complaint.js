@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Form,
   AutoComplete,
@@ -13,17 +13,22 @@ import {
 } from "antd";
 import axios from "axios";
 import { PickerDropPane } from "filestack-react";
+import SMS from "@/assets/utilities/sms";
 
-const Complain = ({ appkey }) => {
+const Complain = ({ appkey, smskey }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
   const [residentId, setResidentId] = useState();
+  const [residentName, setResidentName] = useState("");
   const timerRef = useRef(null);
   const [photos, setPhotos] = useState([]);
   const [pin, setPin] = useState();
   const [pinConfirmed, setPinConfirmed] = useState(false);
   const [number, setNumber] = useState("");
+  const [deviceId, setDeviceId] = useState("");
+
+  const sms = new SMS(smskey);
 
   const searchName = async (keyword) => {
     if (keyword != "" && keyword != null) {
@@ -87,10 +92,15 @@ const Complain = ({ appkey }) => {
         id,
       }).then(({ data }) => {
         if (data?.success) {
-          alert(
-            "for dev purposes, the pin is can be seen in console, please check."
-          );
           console.log(data.pin);
+          (async (_) => {
+            _.sendMessage(
+              `+63${number}`,
+              `Hello Ma'am/Sir ${residentName}, Your OTP Number is ${data.pin}. This is from Barangay Complain System`,
+              deviceId
+            );
+          })(sms);
+
           message.success(
             data?.message ?? "Code is sent to resident phone number."
           );
@@ -118,6 +128,15 @@ const Complain = ({ appkey }) => {
       });
     })(axios);
   };
+
+  useEffect(() => {
+    (async (_) => {
+      await _.getDevices().then((e) => {
+        const device = e.data.filter((e) => e.online)[0];
+        setDeviceId(device.unique);
+      });
+    })(sms);
+  }, []);
 
   return (
     <div
@@ -183,8 +202,11 @@ const Complain = ({ appkey }) => {
                     else setSearchResult([]);
                   }}
                   onSelect={(e, _) => {
-                    setResidentId(_.key);
-                    sendPin(_.key);
+                    let [id, phone, name] = _.key.split("%%");
+                    setResidentId(id);
+                    setNumber(phone);
+                    setResidentName(name);
+                    sendPin(id);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Backspace") {
@@ -203,7 +225,7 @@ const Complain = ({ appkey }) => {
                           ? `${e?.middlename[0].toLocaleUpperCase()}.`
                           : ""
                       } ${e?.lastname}`,
-                      key: e?._id,
+                      key: `${e?._id}%%${e.phoneNumber}%%${e.name} ${e.lastname}`,
                     };
                   })}
                 />
@@ -314,7 +336,9 @@ const Complain = ({ appkey }) => {
 };
 
 export async function getServerSideProps() {
-  return { props: { appkey: process.env.FILESTACK_KEY } };
+  return {
+    props: { appkey: process.env.FILESTACK_KEY, smskey: process.env.SMS_KEY },
+  };
 }
 
 export default Complain;

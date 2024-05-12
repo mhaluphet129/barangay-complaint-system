@@ -21,6 +21,20 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
   const [inputDate, setInputData] = useState({});
 
   const handleFinish = () => {
+    if (mode == "new") {
+      const phone = inputDate.phoneNumber;
+      if (!phone.startsWith("9")) {
+        message.error(
+          "Phone number is invalid. Phone Number should start with 9."
+        );
+        return;
+      }
+
+      if (phone.length < 10) {
+        message.error("Phone number length is invalid. Minimum of 10 digit.");
+        return;
+      }
+    }
     (async (_) => {
       setLoader("saving");
       let res =
@@ -97,8 +111,14 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
       }}
       closable={false}
       footer={
-        <Button onClick={form.submit} loading={loading == "saving"}>
-          {mode == "edit" ? "UPDATE" : "Register"}
+        <Button
+          onClick={form.submit}
+          loading={loading == "saving"}
+          block
+          size="large"
+          type="primary"
+        >
+          {mode == "edit" ? "UPDATE" : "REGISTER"}
         </Button>
       }
       centered
@@ -141,10 +161,10 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
                   },
                 ]}
               >
-                <Input />
+                <Input size="large" />
               </Form.Item>
               <Form.Item label="Middle Name" name="middlename">
-                <Input placeholder="Optional" />
+                <Input placeholder="Optional" size="large" />
               </Form.Item>
               <Form.Item
                 label="Last Name"
@@ -156,7 +176,7 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
                   },
                 ]}
               >
-                <Input />
+                <Input size="large" />
               </Form.Item>
               <Form.Item
                 label="Email"
@@ -168,7 +188,7 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
                   },
                 ]}
               >
-                <Input />
+                <Input size="large" />
               </Form.Item>
               <Form.Item
                 label="Date of Birth"
@@ -182,6 +202,7 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
               >
                 <DatePicker
                   format="YYYY-MM-DD"
+                  size="large"
                   onChange={(_) =>
                     setInputData((e) => {
                       return { ...e, dateOfBirth: _ };
@@ -200,6 +221,7 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
                 ]}
               >
                 <Select
+                  size="large"
                   onChange={(_) =>
                     setInputData((e) => {
                       return { ...e, gender: _ };
@@ -223,6 +245,8 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
                   maxLength={10}
                   min={0}
                   style={{ width: 200 }}
+                  controls={false}
+                  size="large"
                 />
               </Form.Item>
               <Form.Item
@@ -235,7 +259,7 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
                   },
                 ]}
               >
-                <Input />
+                <Input size="large" />
               </Form.Item>
               <Form.Item
                 label="Civil Status"
@@ -249,6 +273,7 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
               >
                 <Select
                   style={{ width: 100, display: "flex" }}
+                  size="large"
                   onChange={(_) =>
                     setInputData((e) => {
                       return { ...e, civilStatus: _ };

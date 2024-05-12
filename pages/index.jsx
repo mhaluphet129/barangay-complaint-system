@@ -135,13 +135,10 @@ const Home = () => {
                             >
                               {news[0]?.title}
                             </Typography.Paragraph>{" "}
-                            <span>
-                              Barangay Admin -{" "}
-                              <span className="italic">
-                                {dayjs(news[0]?.createdAt).format(
-                                  "MMMM DD, YYYY"
-                                )}
-                              </span>
+                            <span className="italic">
+                              {dayjs(news[0]?.createdAt).format(
+                                "MMMM DD, YYYY"
+                              )}
                             </span>
                           </div>
                         </div>
@@ -191,13 +188,10 @@ const Home = () => {
                               >
                                 {news[0]?.title}
                               </Typography.Paragraph>{" "}
-                              <span>
-                                Barangay Admin -{" "}
-                                <span className="italic">
-                                  {dayjs(news[0]?.createdAt).format(
-                                    "MMMM DD, YYYY"
-                                  )}
-                                </span>
+                              <span className="italic">
+                                {dayjs(news[0]?.createdAt).format(
+                                  "MMMM DD, YYYY"
+                                )}
                               </span>
                             </div>
                           </div>

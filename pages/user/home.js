@@ -9,6 +9,7 @@ import { BsPersonFillLock, BsFillPrinterFill } from "react-icons/bs";
 import { LiaSmsSolid } from "react-icons/lia";
 import { BiMessageRoundedError } from "react-icons/bi";
 import { PiNewspaperThin } from "react-icons/pi";
+import { MdOutlineTextsms } from "react-icons/md";
 
 import Residents from "../../components/residents";
 import Dashboard from "../../components/dashboard";
@@ -18,10 +19,12 @@ import PrintForms from "../../components/print_forms";
 import SMS from "../../components/sms";
 import Cookies from "js-cookie";
 import News from "@/components/news";
+import SMSBulk from "@/components/sms_bulk";
 
 const MyApp = ({ app_key, sms_key }) => {
   const [selectedKey, setSelectedKey] = useState("dashboard");
   const [openForms, setOpenForms] = useState(false);
+  const [openBulkSMS, setOpenBulkSMS] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
   const selectedItemsStyle = {
     color: "#aaa",
@@ -45,6 +48,10 @@ const MyApp = ({ app_key, sms_key }) => {
             switch (e.key) {
               case "print_form": {
                 setOpenForms(true);
+                break;
+              }
+              case "bulk_sms": {
+                setOpenBulkSMS(true);
                 break;
               }
               default: {
@@ -114,6 +121,12 @@ const MyApp = ({ app_key, sms_key }) => {
               icon: <BsFillPrinterFill />,
               style: { color: "#aaa" },
             },
+            {
+              label: "Bulk SMS",
+              key: "bulk_sms",
+              icon: <MdOutlineTextsms />,
+              style: { color: "#aaa" },
+            },
           ]}
         >
           <Typography.Text
@@ -172,11 +185,15 @@ const MyApp = ({ app_key, sms_key }) => {
       </Layout>
 
       {/* ETC */}
-
       <PrintForms
         open={openForms}
         close={() => setOpenForms(false)}
         funcOpen={() => setOpenForms(true)}
+      />
+      <SMSBulk
+        open={openBulkSMS}
+        close={() => setOpenBulkSMS(false)}
+        smskey={sms_key}
       />
     </>
   );

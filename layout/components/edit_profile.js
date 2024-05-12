@@ -153,14 +153,14 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
             name="firstName"
             initialValue={openEditModal?.data?.firstName}
           >
-            <Input />
+            <Input size="large" />
           </Form.Item>
           <Form.Item
             label="Last Name"
             name="lastName"
             initialValue={openEditModal?.data?.lastName}
           >
-            <Input />
+            <Input size="large" />
           </Form.Item>
           {user?.role == "student" && (
             <Form.Item
@@ -202,7 +202,7 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
               name="idNumber"
               initialValue={openEditModal?.data?.idNumber}
             >
-              <Input />
+              <Input size="large" />
             </Form.Item>
           )}
 
@@ -241,14 +241,14 @@ const EditProfile = ({ app_key, openEditModal, setOpenEditModal }) => {
             name="email"
             initialValue={openEditModal?.data?.email}
           >
-            <Input />
+            <Input size="large" />
           </Form.Item>
           <Form.Item
             label="Phone Number"
             name="phoneNumber"
             initialValue={openEditModal?.data?.phoneNumber}
           >
-            <Input prefix="+63" />
+            <Input prefix="+63" size="large" />
           </Form.Item>
           <Button
             style={{ width: "100%", fontWeight: 700 }}

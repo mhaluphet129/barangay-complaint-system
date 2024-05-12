@@ -21,8 +21,7 @@ const EditProfile = ({ openEditModal, setOpenEditModal }) => {
       _id: openEditModal?.data?._id,
       ...val,
     });
-
-    if (data?.status != 200) message.error(data?.message);
+    if (data?.code != 200) message.error(data?.message);
     else {
       message.success(data?.message);
       Cookies.set("currentUser", JSON.stringify(data?.user));
@@ -69,38 +68,39 @@ const EditProfile = ({ openEditModal, setOpenEditModal }) => {
             name="name"
             initialValue={openEditModal?.data?.name}
           >
-            <Input />
+            <Input size="large" />
           </Form.Item>
           <Form.Item
             label="Middle Name"
             name="middlename"
             initialValue={openEditModal?.data?.middlename}
           >
-            <Input />
+            <Input size="large" />
           </Form.Item>
           <Form.Item
             label="Last Name"
             name="lastname"
             initialValue={openEditModal?.data?.lastname}
           >
-            <Input />
+            <Input size="large" />
           </Form.Item>
           <Form.Item
             label="User Name"
             name="username"
             initialValue={openEditModal?.data?.username}
           >
-            <Input />
+            <Input size="large" />
           </Form.Item>
           <Form.Item
             label="Email"
             name="email"
             initialValue={openEditModal?.data?.email}
           >
-            <Input />
+            <Input size="large" />
           </Form.Item>
           <Button
             style={{ width: "100%", fontWeight: 700 }}
+            size="large"
             onClick={() => {
               setOpenEditModal({ open: false, data: openEditModal?.data });
               setOpenChangedPassword(true);

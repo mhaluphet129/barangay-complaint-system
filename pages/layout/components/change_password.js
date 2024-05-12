@@ -19,17 +19,18 @@ const ChangePassword = ({ open, close, openEditModal }) => {
       message.error("New Password and Confirm Password didn't match");
       return;
     }
-    let { data } = await axios.post("/api/auth/password-reset", {
-      id: openEditModal.data._id,
+    let { data } = await axios.put("/api/user/update-info", {
+      _id: openEditModal.data._id,
       oldPassword,
       newPassword,
     });
 
-    if (data.status != 200) {
+    if (data.code != 200) {
       message.error(data.message);
     } else {
       message.success(data.message);
       setUpdated(false);
+      close();
     }
   };
 
@@ -39,7 +40,13 @@ const ChangePassword = ({ open, close, openEditModal }) => {
       onCancel={close}
       closable={false}
       footer={
-        <Button disabled={!updated} onClick={() => form.submit()}>
+        <Button
+          disabled={!updated}
+          onClick={() => form.submit()}
+          size="large"
+          block
+          type="primary"
+        >
           SAVE
         </Button>
       }
@@ -51,7 +58,7 @@ const ChangePassword = ({ open, close, openEditModal }) => {
         onFinish={handleFinish}
       >
         <Form.Item label="Old Password" name="oldPassword">
-          <Input.Password />
+          <Input.Password size="large" />
         </Form.Item>
         <Form.Item label="New Password" name="newPassword">
           <Input.Password
@@ -61,10 +68,12 @@ const ChangePassword = ({ open, close, openEditModal }) => {
                 confirmPass: passwords.confirmPass,
               })
             }
+            size="large"
           />
         </Form.Item>
         <Form.Item label="Confirm Password" name="confirmPassword">
           <Input.Password
+            size="large"
             onChange={(e) =>
               setPasswords({
                 newPass: passwords.newPass,

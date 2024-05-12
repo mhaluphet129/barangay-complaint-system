@@ -93,17 +93,33 @@ const SMS = ({ sms_key }) => {
       dataIndex: "createdAt",
       render: (_) => dayjs(_).format("MMM DD, YYYY hh:mma"),
     },
-    // {
-    //   title: "Functions",
-    //   align: "center",
-    //   render: (_, row) => (
-    //     <Space>
-    //       <Tooltip title="view full">
-    //         <Button icon={<EyeOutlined />} />
-    //       </Tooltip>
-    //     </Space>
-    //   ),
-    // },
+    {
+      title: "Functions",
+      align: "center",
+      render: (_, row) => (
+        <Popconfirm
+          title="Are you sure you want to delete this sms ?"
+          okButtonProps={{ danger: true }}
+          okText="DELETE"
+          onConfirm={() =>
+            (async (_) => {
+              let { data } = await _.get("/api/sms/delete-sms", {
+                params: {
+                  _id: row?._id,
+                },
+              });
+
+              if (data?.success ?? false) {
+                message.success("Successfully Delete SMS");
+                setTrigger(trigger + 1);
+              }
+            })(axios)
+          }
+        >
+          <Button icon={<DeleteOutlined />} type="primary" danger />
+        </Popconfirm>
+      ),
+    },
   ];
 
   const columns2 = [

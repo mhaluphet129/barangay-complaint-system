@@ -100,6 +100,7 @@ const NewComplain = ({ open, close, appkey, data, handleFinish, isEdit }) => {
             <AutoComplete
               popupClassName="certain-category-search-dropdown"
               popupMatchSelectWidth={350}
+              size="large"
               onChange={(e) => {
                 if (e != "") runTimer(e);
                 else setSearchResult([]);
@@ -135,42 +136,28 @@ const NewComplain = ({ open, close, appkey, data, handleFinish, isEdit }) => {
 
         <Form.Item
           name="respondentName"
-          label="Respondent Name"
+          label="Complainee Name"
           rules={[
             { required: true, message: "This field is blank. Please provide" },
           ]}
         >
-          <Input />
+          <Input size="large" />
         </Form.Item>
-        <Form.Item
-          name="respondentNumber"
-          label="Respondent Number"
-          rules={[
-            { required: true, message: "This field is blank. Please provide" },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                const reg = /^(09\d{9})|(\d{12})$/;
-                const number = getFieldValue("respondentNumber");
-                if (/^09/.test(number) && number.length > 11) {
-                  return Promise.reject(
-                    "Number should have a maximum length of 11"
-                  );
-                } else if (/^639/.test(number) && number.length > 13) {
-                  return Promise.reject(
-                    "Number should have a maximum length of 12"
-                  );
-                } else if (reg.test(number)) {
-                  return Promise.resolve();
-                } else {
-                  return Promise.reject(
-                    "Invalid number. It should be start in 09 or 639, no alpha character, maximum of 11 digits."
-                  );
+        <Form.Item name="respondentNumber" label="Complainee Number">
+          <Input
+            onKeyDown={(e) => {
+              const charCode = e.which || e.keyCode;
+              if (charCode != 8 && charCode != 37 && charCode != 39) {
+                if (charCode < 48 || charCode > 57) {
+                  e.preventDefault();
                 }
-              },
-            }),
-          ]}
-        >
-          <Input />
+              }
+            }}
+            size="large"
+            placeholder="This is optional"
+            addonBefore="+63"
+            maxLength={10}
+          />
         </Form.Item>
         <Form.Item name="description" label="Description">
           <Input.TextArea
@@ -183,6 +170,7 @@ const NewComplain = ({ open, close, appkey, data, handleFinish, isEdit }) => {
         </Form.Item>
         <Form.Item name="northBarangay" label="Barangay North">
           <Select
+            size="large"
             options={jason.barangay.map((e) => {
               return {
                 label: e,

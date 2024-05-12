@@ -136,11 +136,11 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
         width="100%"
         onCancel={close}
         zIndex={999}
-        styles={{
-          body: {
-            height: "70vh",
-          },
-        }}
+        // styles={{
+        //   body: {
+        //     height: "70vh",
+        //   },
+        // }}
       >
         <Row gutter={[32, 32]}>
           <Col span={6}>
@@ -239,7 +239,7 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
                   margin: 0,
                 }}
               >
-                Respondent Name:{" "}
+                Complainee Name:{" "}
                 {data?.respondentName ?? (
                   <Typography.Text type="secondary" italic>
                     Not Yet
@@ -254,7 +254,7 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
                   margin: 0,
                 }}
               >
-                Respondent Number:{" "}
+                Complainee Number:{" "}
                 {data?.respondentNumber ?? (
                   <Typography.Text type="secondary" italic>
                     Not Yet
