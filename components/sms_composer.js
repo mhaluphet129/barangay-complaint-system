@@ -8,6 +8,7 @@ import {
   Segmented,
   Select,
   Spin,
+  Tag,
   Tooltip,
   Typography,
   message,
@@ -43,17 +44,6 @@ const SmsComposer = ({ open, close, onSend, smskey }) => {
   const [loading, setLoading] = useState(false);
 
   // utils
-  function processPhoneNumber(input) {
-    if (input.startsWith("639")) {
-      return "63" + input.substring(2);
-    } else if (input.startsWith("+639")) {
-      return "63" + input.substring(3);
-    } else if (input.startsWith("9")) {
-      return "63" + input;
-    } else {
-      return input;
-    }
-  }
 
   const sendSmsRequest = async (index) => {
     const _number = mobilenum[index];
@@ -75,14 +65,14 @@ const SmsComposer = ({ open, close, onSend, smskey }) => {
           message: "Resident Number is invalid",
         });
       } else {
-        const number = processPhoneNumber(_number);
+        const number = `+63${_number.slice(1)}`;
 
         (async (_) => {
           let { data } = await axios.post("/api/sms/send-sms", {
             number,
             message: inputMsg,
             originator: currentUser._id,
-            device: selectedDevice.unique,
+            deviceId: selectedDevice.unique,
           });
 
           if (data.success) resolve(true);
@@ -218,7 +208,7 @@ const SmsComposer = ({ open, close, onSend, smskey }) => {
       Select Device <br />
       <Select
         style={{
-          width: 300,
+          width: "100%",
         }}
         options={devices.map((e) => ({
           label: (
@@ -302,28 +292,34 @@ const SmsComposer = ({ open, close, onSend, smskey }) => {
           <br />
           <Select
             disabled={loader == "submit"}
-            style={{ width: 350 }}
+            style={{ display: "block" }}
             maxLength={10}
             min={0}
             value={mobilenum}
             mode="tags"
-            onChange={(e) => {
-              const reg = /^(09\d{9})|\+(\d{12})$/;
-              const number = e[e.length - 1];
-              if (
-                mobilenum
-                  .map((e) => e.replace(/^0|(\+63)/, ""))
-                  .includes(number.replace(/^0|(\+63)/, ""))
-              ) {
-                message.warning("Number already added");
-              } else if (reg.test(number)) {
-                setMobileNumer(e);
-              } else {
+            onSelect={(e) => {
+              if (!e.startsWith("09")) {
+                message.error("Phone Number should start with 09");
+                return;
+              } else if (e.length != 11) {
                 message.error(
-                  "Invalid number. It should be start in 09 or +639, no alpha character, maximum of 11 digits."
+                  "Phone Number length must be at least 11 in length"
                 );
+                return;
+              } else {
+                setMobileNumer([...mobilenum, e]);
               }
             }}
+            tagRender={(e) => (
+              <Tag
+                style={{ cursor: "pointer", padding: 5, fontSize: "1.1em" }}
+                onClick={(qq) =>
+                  setMobileNumer(mobilenum.filter((_) => _ != e.value))
+                }
+              >
+                {e.value}
+              </Tag>
+            )}
           />
           <br />
           Message

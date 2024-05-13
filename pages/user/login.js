@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { Form, Input, Button, message, Typography, Spin, Card } from "antd";
+import { FaLocationPin } from "react-icons/fa6";
 import Cookies from "js-cookie";
-import { Form, Input, Button, message, Typography, Spin } from "antd";
 import axios from "axios";
 
 import { UserOutlined, LockFilled } from "@ant-design/icons";
@@ -63,7 +64,23 @@ const Login = ({ app_key }) => {
   return (
     <Spin spinning={loading}>
       {contextholder}
+      <a
+        className="login-loc"
+        target="_blank"
+        href="https://www.google.com/maps/place/Barangay+Hall+of+North+Poblacion/@7.7651134,125.0080075,17z/data=!3m1!4b1!4m6!3m5!1s0x32ff3b63041728cf:0xbecc7f5a714647b3!8m2!3d7.7651134!4d125.0080075!16s%2Fg%2F1tgldvs8?entry=ttu"
+      >
+        <FaLocationPin
+          style={{
+            fontSize: "1.1em",
+            marginBottom: -2,
+            color: "#fff",
+            marginRight: 7,
+          }}
+        />{" "}
+        Barangay Hall of North Poblacion Maramag, Bukidnon
+      </a>
       <div
+        className="main-body-complain"
         style={{
           display: "flex",
           alignItems: "center",
@@ -73,74 +90,88 @@ const Login = ({ app_key }) => {
           flexDirection: "column",
         }}
       >
-        <Typography.Title level={2} style={{ fontWeight: 500 }}>
-          BARANGAY COMPLAINT SYSTEM
-        </Typography.Title>
-
-        <Form
-          labelAlign="right"
-          style={{
-            width: 400,
-            padding: 30,
-            background: "#eee",
-            borderRadius: 20,
-            border: "1px solid #fff",
+        <Card
+          bodyStyle={{
+            padding: 0,
           }}
-          onFinish={(val) => {
-            (async (_) => {
-              let { data } = await _.post("/api/auth/login", {
-                ...val,
-              });
-              if ([451, 452].includes(data.status)) {
-                message.error(data.message);
-                return;
-              }
-              if (data.status == 200) {
-                Cookies.set("loggedIn", "true");
-                Cookies.set("currentUser", JSON.stringify(data.userData));
-                message.success(data.message);
-                location?.reload();
-              }
-            })(axios);
-          }}
+          hoverable
         >
-          <Typography.Title
-            level={4}
+          <Form
+            labelAlign="right"
             style={{
-              textAlign: "center",
-              fontFamily: "sans-serif",
-              fontWeight: 300,
+              padding: 20,
+            }}
+            onFinish={(val) => {
+              (async (_) => {
+                let { data } = await _.post("/api/auth/login", {
+                  ...val,
+                });
+                if ([451, 452].includes(data.status)) {
+                  message.error(data.message);
+                  return;
+                }
+                if (data.status == 200) {
+                  Cookies.set("loggedIn", "true");
+                  Cookies.set("currentUser", JSON.stringify(data.userData));
+                  message.success(data.message);
+                  location?.reload();
+                }
+              })(axios);
             }}
           >
-            Admin Login
-          </Typography.Title>
-
-          <Form.Item name="email">
-            <Input
-              prefix={<UserOutlined />}
-              size="large"
-              placeholder="Email/Username"
-            />
-          </Form.Item>
-          <Form.Item name="password">
-            <Input.Password
-              prefix={<LockFilled />}
-              size="large"
-              placeholder="Password"
-            />
-          </Form.Item>
-
-          <Form.Item noStyle>
-            <Button
-              type="primary"
-              style={{ width: "100%" }}
-              htmlType="submit"
-              size="large"
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
             >
-              Login
-            </Button>
-          </Form.Item>
-        </Form>
+              <img
+                src="/web-logo.png"
+                width={120}
+                style={{ marginTop: 10, marginBottom: 10 }}
+              />
+              <Typography.Title
+                level={4}
+                style={{ fontWeight: 500, margin: 0, marginBottom: 25 }}
+              >
+                BARANGAY COMPLAINT SYSTEM
+              </Typography.Title>
+            </div>
+
+            <Form.Item name="email">
+              <Input
+                prefix={<UserOutlined />}
+                size="large"
+                placeholder="Email/Username"
+              />
+            </Form.Item>
+            <Form.Item name="password">
+              <Input.Password
+                prefix={<LockFilled />}
+                size="large"
+                placeholder="Password"
+              />
+            </Form.Item>
+
+            <Form.Item noStyle>
+              <Button
+                type="primary"
+                style={{
+                  width: "100%",
+                  fontSize: "1.5em",
+                  height: 50,
+                  fontWeight: 500,
+                }}
+                htmlType="submit"
+                size="large"
+              >
+                Login
+              </Button>
+            </Form.Item>
+          </Form>
+        </Card>
       </div>
     </Spin>
   );

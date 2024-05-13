@@ -1,5 +1,3 @@
-import { parse } from "dotenv";
-
 export const isSamePhoneNumber = (num1, num2) => {
   let number1 = parsedPhoneNumber(num1);
   let number2 = parsedPhoneNumber(num2);

@@ -10,6 +10,7 @@ import {
   InputNumber,
   Tooltip,
   Card,
+  Spin,
 } from "antd";
 import axios from "axios";
 import { PickerDropPane } from "filestack-react";
@@ -133,7 +134,12 @@ const Complain = ({ appkey, smskey }) => {
       await _.getDevices().then((e) => {
         const device = e.data.filter((e) => e.online)[0];
         console.log(device);
-        setDeviceId(device.unique);
+
+        if (device) setDeviceId(device.unique);
+        else
+          message.warning(
+            "Complain may not working as SMS Provider is inactive."
+          );
       });
     })(sms);
   }, []);
@@ -148,188 +154,193 @@ const Complain = ({ appkey, smskey }) => {
         flexDirection: "column",
       }}
     >
-      <Card
-        bodyStyle={{
-          padding: 0,
-        }}
-        hoverable
-      >
-        <Form
-          form={form}
-          onFinish={handleFinish}
-          labelAlign="left"
-          labelCol={{
-            span: 8,
+      <Spin spinning={deviceId == ""}>
+        <Card
+          bodyStyle={{
+            padding: 0,
           }}
-          colon={false}
-          style={{
-            padding: 25,
-            width: 700,
-            background: "#eee",
-            borderRadius: 10,
-          }}
+          hoverable
         >
-          <Typography.Title style={{ textAlign: "center" }}>
-            Online Complaint Form
-          </Typography.Title>
-          <Form.Item
-            label="Residente"
-            name="resident"
-            rules={[
-              {
-                required: true,
-                message: "Name or Pin is blank. Please provide.",
-              },
-            ]}
+          <Form
+            form={form}
+            onFinish={handleFinish}
+            labelAlign="left"
+            labelCol={{
+              span: 8,
+            }}
+            colon={false}
+            style={{
+              padding: 25,
+              width: 700,
+              background: "#eee",
+              borderRadius: 10,
+            }}
           >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
+            <Typography.Title style={{ textAlign: "center" }}>
+              Online Complaint Form
+            </Typography.Title>
+            <Form.Item
+              label="Residente"
+              name="resident"
+              rules={[
+                {
+                  required: true,
+                  message: "Name or Pin is blank. Please provide.",
+                },
+              ]}
             >
-              <Tooltip title="PIN code is send after selecting resident for confirmation.">
-                <AutoComplete
-                  popupClassName="certain-category-search-dropdown"
-                  popupMatchSelectWidth={false}
-                  size="large"
-                  style={{
-                    marginRight: 10,
-                    width: 200,
-                  }}
-                  onChange={(e) => {
-                    if (e != "") runTimer(e);
-                    else setSearchResult([]);
-                  }}
-                  onSelect={(e, _) => {
-                    let [id, phone, name] = _.key.split("%%");
-                    setResidentId(id);
-                    setResidentName(name);
-                    sendPin(id, phone);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Backspace") {
-                      form.resetFields(["resident"]);
-                    }
-                  }}
-                  options={searchResult.map((e) => {
-                    return {
-                      label: `${e?.name} ${
-                        e?.middlename
-                          ? `${e?.middlename[0].toLocaleUpperCase()}.`
-                          : ""
-                      } ${e?.lastname}`,
-                      value: `${e?.name} ${
-                        e?.middlename
-                          ? `${e?.middlename[0].toLocaleUpperCase()}.`
-                          : ""
-                      } ${e?.lastname}`,
-                      key: `${e?._id}%%${e.phoneNumber}%%${e.name} ${e.lastname}`,
-                    };
-                  })}
-                />
-              </Tooltip>
-              <span style={{ marginRight: 10 }}> Code:</span>{" "}
-              <InputNumber
-                placeholder="Input 6 digit code sent from sms"
-                maxLength={6}
-                style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
-                controls={false}
-                onChange={setPin}
-                disabled={pinConfirmed}
-                size="large"
-              />
-              <Button
-                style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
-                onClick={confirmPin}
-                disabled={pinConfirmed}
-                size="large"
-              >
-                SUBMIT
-              </Button>
-            </div>
-          </Form.Item>
-          <Form.Item
-            name="respondentName"
-            label="Pangalan sa Gireklamo"
-            rules={[
-              {
-                required: true,
-                message: "This field is blank. Please provide",
-              },
-            ]}
-          >
-            <Input size="large" />
-          </Form.Item>
-          <Form.Item name="respondentNumber" label="Number sa Gireklamo">
-            <InputNumber
-              addonBefore="+63"
-              maxLength={10}
-              size="large"
-              controls={false}
-              min={0}
-              style={{
-                width: "100%",
-              }}
-            />
-          </Form.Item>
-          <Form.Item name="description" label="Isulat imong Reklamo">
-            <Input.TextArea
-              autoSize={{
-                minRows: 8,
-                maxRows: 15,
-              }}
-              placeholder="Detalye saimong reklamo"
-            />
-          </Form.Item>
-          <Form.Item label="Ebidensya (Picture only)">
-            <div
-              style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
-              id="picker-container"
-            >
-              <PickerDropPane
-                apikey={appkey}
-                onUploadDone={(res) => {
-                  setPhotos(res?.filesUploaded.map((_) => _.url));
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
                 }}
-                pickerOptions={{ container: "picker-container", maxFiles: 3 }}
-              />
-            </div>
-            {photos.map((_, i) => (
-              <>
-                <div
+              >
+                <Tooltip title="PIN code is send after selecting resident for confirmation.">
+                  <AutoComplete
+                    popupClassName="certain-category-search-dropdown"
+                    popupMatchSelectWidth={false}
+                    size="large"
+                    style={{
+                      marginRight: 10,
+                      width: 200,
+                    }}
+                    onChange={(e) => {
+                      if (e != "") runTimer(e);
+                      else setSearchResult([]);
+                    }}
+                    onSelect={(e, _) => {
+                      let [id, phone, name] = _.key.split("%%");
+                      setResidentId(id);
+                      setResidentName(name);
+                      sendPin(id, phone);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Backspace") {
+                        form.resetFields(["resident"]);
+                      }
+                    }}
+                    options={searchResult.map((e) => {
+                      return {
+                        label: `${e?.name} ${
+                          e?.middlename
+                            ? `${e?.middlename[0].toLocaleUpperCase()}.`
+                            : ""
+                        } ${e?.lastname}`,
+                        value: `${e?.name} ${
+                          e?.middlename
+                            ? `${e?.middlename[0].toLocaleUpperCase()}.`
+                            : ""
+                        } ${e?.lastname}`,
+                        key: `${e?._id}%%${e.phoneNumber}%%${e.name} ${e.lastname}`,
+                      };
+                    })}
+                  />
+                </Tooltip>
+                <span style={{ marginRight: 10 }}> Code:</span>{" "}
+                <InputNumber
+                  placeholder="Input 6 digit code sent from sms"
+                  maxLength={6}
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-start",
-                    position: "relative",
-                    width: 300,
-                    marginBottom: 10,
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
                   }}
+                  controls={false}
+                  onChange={setPin}
+                  disabled={pinConfirmed}
+                  size="large"
+                />
+                <Button
+                  style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+                  onClick={confirmPin}
+                  disabled={pinConfirmed}
+                  size="large"
                 >
-                  <Image src={_} alt="random_photo" width="100%" />
-                </div>
-              </>
-            ))}
-          </Form.Item>
-          <Form.Item noStyle>
-            <Button
-              onClick={() => form.validateFields().then(() => form.submit())}
-              size="large"
-              type="primary"
-              block
+                  SUBMIT
+                </Button>
+              </div>
+            </Form.Item>
+            <Form.Item
+              name="respondentName"
+              label="Pangalan sa Gireklamo"
+              rules={[
+                {
+                  required: true,
+                  message: "This field is blank. Please provide",
+                },
+              ]}
             >
-              CONFIRM
-            </Button>
-          </Form.Item>
-          <Typography.Link
-            style={{ textAlign: "center", display: "block", marginTop: 10 }}
-            onClick={() => (window.location.href = "/")}
-          >
-            HOME
-          </Typography.Link>
-        </Form>
-      </Card>
+              <Input size="large" />
+            </Form.Item>
+            <Form.Item name="respondentNumber" label="Number sa Gireklamo">
+              <InputNumber
+                addonBefore="+63"
+                maxLength={10}
+                size="large"
+                controls={false}
+                min={0}
+                style={{
+                  width: "100%",
+                }}
+              />
+            </Form.Item>
+            <Form.Item name="description" label="Isulat imong Reklamo">
+              <Input.TextArea
+                autoSize={{
+                  minRows: 8,
+                  maxRows: 15,
+                }}
+                placeholder="Detalye saimong reklamo"
+              />
+            </Form.Item>
+            <Form.Item label="Ebidensya (Picture only)">
+              <div
+                style={{ width: 255, cursor: "pointer", marginBottom: 10 }}
+                id="picker-container"
+              >
+                <PickerDropPane
+                  apikey={appkey}
+                  onUploadDone={(res) => {
+                    setPhotos(res?.filesUploaded.map((_) => _.url));
+                  }}
+                  pickerOptions={{ container: "picker-container", maxFiles: 3 }}
+                />
+              </div>
+              {photos.map((_, i) => (
+                <>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      position: "relative",
+                      width: 300,
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Image src={_} alt="random_photo" width="100%" />
+                  </div>
+                </>
+              ))}
+            </Form.Item>
+            <Form.Item noStyle>
+              <Button
+                onClick={() => form.validateFields().then(() => form.submit())}
+                size="large"
+                type="primary"
+                block
+              >
+                CONFIRM
+              </Button>
+            </Form.Item>
+            <Typography.Link
+              style={{ textAlign: "center", display: "block", marginTop: 10 }}
+              onClick={() => (window.location.href = "/")}
+            >
+              HOME
+            </Typography.Link>
+          </Form>
+        </Card>
+      </Spin>
     </div>
   );
 };

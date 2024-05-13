@@ -187,7 +187,9 @@ const Conversation = ({
       await _.getDevices().then((e) => {
         const device = e.data.filter((e) => e.online)[0];
         console.log(device);
-        setDeviceId(device.unique);
+
+        if (device) setDeviceId(device.unique);
+        else message.warning("Device not detected");
       });
     })(sms);
   }, []);
