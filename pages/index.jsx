@@ -48,7 +48,7 @@ const Home = () => {
   // 6a96fe
   return (
     <div className="flex flex-col min-h-screen bg-[#d9f2fe]">
-      <div className="flex-1 main-body">
+      <div className="flex-1 min-h-screen main-body">
         <Header />
         <div className="flex mx-20 rounded-lg">
           <div className="flex flex-col justify-end w-full">
@@ -77,15 +77,27 @@ const Home = () => {
                   </span>
                 </div>
               </div>
-              <Link
-                href="/complain"
-                className="flex justify-center w-56 py-4 mt-10 mb-24 text-2xl font-semibold bg-white rounded-full cursor-pointer hover:bg-[#6a96fe] border-2 border-white hover:text-white"
-                style={{
-                  fontFamily: "abel",
-                }}
-              >
-                File a Complaint
-              </Link>
+              <div className="flex gap-x-4">
+                <Link
+                  href="/complain"
+                  className="flex justify-center w-56 py-4 mt-10 mb-24 text-2xl font-semibold bg-white rounded-full cursor-pointer hover:bg-[#6a96fe] border-2 border-white hover:text-white"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  File a Complaint
+                </Link>
+                <Link
+                  href="/faq"
+                  className="flex justify-center w-72 py-4 mt-10 mb-24 text-2xl font-semibold  rounded-full cursor-pointer hover:bg-[#6a96fe] border-2 border-white text-white"
+                  style={{
+                    fontFamily: "abel",
+                  }}
+                >
+                  Mga Kumon na Pangutana
+                </Link>
+              </div>
+
               {news.length > 0 && (
                 <>
                   <span className="block mb-4 font-sans text-3xl font-semibold text-white">
