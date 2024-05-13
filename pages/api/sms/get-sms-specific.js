@@ -15,6 +15,9 @@ export default async function handler(req, res) {
         {
           $and: [{ originator: adminId }, { number: residentNumber }],
         },
+        {
+          number: `63${residentNumber}`,
+        },
         { residentId },
       ],
     };
@@ -26,6 +29,9 @@ export default async function handler(req, res) {
         },
         {
           number,
+        },
+        {
+          number: `63${number}`,
         },
       ],
     };
