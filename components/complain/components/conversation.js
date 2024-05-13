@@ -52,7 +52,7 @@ const Conversation = ({
   };
 
   const handleEmptyChat = () => {
-    if (selectedTab == "Complainant") {
+    if (selectedTab == "Complainee") {
       return !["", "Not Set"].includes(_complainantNumber) ? (
         <Typography.Title
           type="secondary"
@@ -60,7 +60,7 @@ const Conversation = ({
           italic
           style={{ textAlign: "center" }}
         >
-          You can now message the Complainer
+          You can now message the Complainee
         </Typography.Title>
       ) : complainantOpt ? (
         <div
@@ -86,12 +86,12 @@ const Conversation = ({
         <Empty
           description={
             <Typography.Text type="secondary" italic>
-              Complainant Number is not set
+              Complainee Number is not set
             </Typography.Text>
           }
         >
           <Button type="primary" onClick={() => setComplainantOpt(true)}>
-            Set Complainant Number to Begin Conversation
+            Set Complainee Number to Begin Conversation
           </Button>
         </Empty>
       );
@@ -202,7 +202,7 @@ const Conversation = ({
       title={getTitle()}
       extra={
         <Segmented
-          options={["Complainer", "Complainant"]}
+          options={["Complainer", "Complainee"]}
           onChange={(e) => setSelectedTab(e)}
           style={{ padding: 5 }}
         />
@@ -250,7 +250,7 @@ const Conversation = ({
             onChange={(e) => setText(e.target.value)}
             disabled={
               (chat.length == 0 &&
-                selectedTab == "Complainant" &&
+                selectedTab == "Complainee" &&
                 [null, undefined, "Not Set"].includes(_complainantNumber)) ||
               false
             }
@@ -265,7 +265,7 @@ const Conversation = ({
             onClick={handleSend}
             disabled={
               ((text == "" || chat.length == 0) &&
-                selectedTab == "Complainant" &&
+                selectedTab == "Complainee" &&
                 [null, undefined, "Not Set"].includes(_complainantNumber)) ||
               false
             }

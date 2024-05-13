@@ -93,11 +93,11 @@ const MyApp = ({ app_key, sms_key }) => {
                 }
               : null,
             {
-              label: "Complains",
-              key: "complain",
+              label: "Complaints",
+              key: "complaints",
               icon: <BiMessageRoundedError />,
               style:
-                selectedKey == "complain"
+                selectedKey == "complaints"
                   ? selectedItemsStyle
                   : { color: "#aaa" },
             },
@@ -177,7 +177,7 @@ const MyApp = ({ app_key, sms_key }) => {
             ) : null}
             {selectedKey == "residents" ? <Residents /> : null}
             {selectedKey == "admin" ? <Admin /> : null}
-            {selectedKey == "complain" ? (
+            {selectedKey == "complaints" ? (
               <Complain appKey={app_key} smskey={sms_key} />
             ) : null}
             {selectedKey == "sms" ? <SMS sms_key={sms_key} /> : null}

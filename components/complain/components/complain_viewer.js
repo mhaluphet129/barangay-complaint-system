@@ -408,16 +408,14 @@ const ComplainViewer = ({ open, close, data, setData, refresh, smskey }) => {
             >
               Conversation
             </Button>
-            {data?.type && data?.type == "sms" && (
-              <Button
-                style={{ marginTop: 10 }}
-                size="large"
-                onClick={() => setComplainOpt({ open: true, data })}
-                block
-              >
-                UPDATE
-              </Button>
-            )}
+            <Button
+              style={{ marginTop: 10 }}
+              size="large"
+              onClick={() => setComplainOpt({ open: true, data })}
+              block
+            >
+              UPDATE
+            </Button>
             {/* <Button
               style={{ marginTop: 10 }}
               size="large"
