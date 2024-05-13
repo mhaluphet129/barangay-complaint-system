@@ -24,7 +24,7 @@ import SettlementViewer from "./settlement_viewer";
 
 // ! complain form outside should send a pin and starter sms based on format given
 
-const ComplainViewer = ({ open, close, data, setData, refresh }) => {
+const ComplainViewer = ({ open, close, data, setData, refresh, smskey }) => {
   const [openCalendar, setOpenCalendar] = useState(false);
   const [modal, contextHolder] = Modal.useModal();
   const [chatOpt, setChatOpt] = useState({ open: false });
@@ -444,6 +444,7 @@ const ComplainViewer = ({ open, close, data, setData, refresh }) => {
         complainantName={data?.respondentName}
         complainantNumber={data?.respondentNumber}
         complainId={data?._id}
+        smskey={smskey}
       />
       <NewComplain
         {...complainOpt}

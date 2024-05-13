@@ -24,7 +24,7 @@ import NewComplain from "./components/new_complaint";
 import CompainViewer from "./components/complain_viewer";
 import dayjs from "dayjs";
 
-const Complain = ({ appKey }) => {
+const Complain = ({ appKey, smskey }) => {
   const [complains, setComplains] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
@@ -32,6 +32,7 @@ const Complain = ({ appKey }) => {
   const [searchWord, setSearchWord] = useState("");
   const [viewerOpts, setViewerOpts] = useState({ open: false, data: null });
   const [currentUser, setCurrentUser] = useState({});
+  const [trigger, setTrigger] = useState(0);
   const [listOptions, setListOptions] = useState({
     total: 0,
     index: 0,
@@ -93,7 +94,7 @@ const Complain = ({ appKey }) => {
     setLoading(true);
     loadMoreData();
     setCurrentUser(JSON.parse(Cookies.get("currentUser")));
-  }, []);
+  }, [trigger]);
 
   return (
     <>
@@ -119,6 +120,7 @@ const Complain = ({ appKey }) => {
             if (data?.success) {
               message.success(data?.message ?? "Successfully Created.");
               setOpenNewComplain(false);
+              setTrigger(trigger + 1);
               close();
             } else {
               message.error(data?.message ?? "Error in the Server.");
@@ -131,6 +133,7 @@ const Complain = ({ appKey }) => {
         close={() => setViewerOpts({ open: false, data: null })}
         refresh={() => loadMoreData("", true)}
         setData={(data) => setViewerOpts({ ...viewerOpts, data })}
+        smskey={smskey}
       />
       {/* end of context */}
       {/* utility function above List */}

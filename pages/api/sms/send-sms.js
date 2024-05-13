@@ -10,10 +10,9 @@ export default async function handler(req, res) {
   const sms = new SMSService(process.env.SMS_KEY);
 
   if (req.method != "POST") throw Error("Request Method is not acceptable");
-  const { number, message, device } = req.body;
-
+  const { number, message, deviceId } = req.body;
   return await sms
-    .sendMessage(parsedPhoneNumber(number), message, device)
+    .sendMessage(parsedPhoneNumber(number), message, deviceId)
     .then(async (e) => {
       return await Sms({ ...req.body, type: "outbound" })
         .save()

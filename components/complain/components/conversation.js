@@ -6,6 +6,7 @@ import {
   Input,
   Segmented,
   Spin,
+  Tooltip,
   Typography,
   message,
 } from "antd";
@@ -13,6 +14,7 @@ import { SendOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import axios from "axios";
 import Cookies from "js-cookie";
+import SMS from "@/assets/utilities/sms";
 
 const Conversation = ({
   open,
@@ -22,6 +24,7 @@ const Conversation = ({
   complainantName,
   complainantNumber,
   complainId,
+  smskey,
 }) => {
   const [chat, setChat] = useState([]);
   const [fetching, setFetching] = useState(false);
@@ -33,6 +36,9 @@ const Conversation = ({
   const [_complainantNumber, setComplainantNumber] = useState("");
   const [complainantOpt, setComplainantOpt] = useState(false);
   const [inputComplainantNumber, setInputComplainantNumber] = useState("");
+  const [deviceId, setDeviceId] = useState("");
+
+  const sms = new SMS(smskey);
 
   const getTitle = () => {
     if (selectedTab == "Complainer") {
@@ -123,6 +129,7 @@ const Conversation = ({
         ...(residentId ? { residentId } : {}),
         toComplain: true,
         type: "outbound",
+        deviceId,
       });
 
       if (res.data.success) {
@@ -176,6 +183,13 @@ const Conversation = ({
 
   useEffect(() => {
     setCurrentUser(JSON.parse(Cookies.get("currentUser")));
+    (async (_) => {
+      await _.getDevices().then((e) => {
+        const device = e.data.filter((e) => e.online)[0];
+        console.log(device);
+        setDeviceId(device.unique);
+      });
+    })(sms);
   }, []);
 
   return (
@@ -226,31 +240,37 @@ const Conversation = ({
           display: "flex",
         }}
       >
-        <Input
-          size="large"
-          placeholder="Write something...."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          disabled={
-            chat.length == 0 &&
-            selectedTab == "Complainant" &&
-            [null, undefined, "Not Set"].includes(_complainantNumber)
-          }
-        />
-        <Button
-          size="large"
-          style={{ marginLeft: 5, width: 70 }}
-          icon={<SendOutlined />}
-          type="primary"
-          onClick={handleSend}
-          disabled={
-            (text == "" || chat.length == 0) &&
-            selectedTab == "Complainant" &&
-            [null, undefined, "Not Set"].includes(_complainantNumber)
-          }
-          loading={isSending}
-          ghost
-        />
+        <Tooltip title={deviceId == "" ? "No current device detected" : ""}>
+          <Input
+            size="large"
+            placeholder="Write something...."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            disabled={
+              (chat.length == 0 &&
+                selectedTab == "Complainant" &&
+                [null, undefined, "Not Set"].includes(_complainantNumber)) ||
+              false
+            }
+          />
+        </Tooltip>
+        <Tooltip title={deviceId == "" ? "No current device detected" : ""}>
+          <Button
+            size="large"
+            style={{ marginLeft: 5, width: 70 }}
+            icon={<SendOutlined />}
+            type="primary"
+            onClick={handleSend}
+            disabled={
+              ((text == "" || chat.length == 0) &&
+                selectedTab == "Complainant" &&
+                [null, undefined, "Not Set"].includes(_complainantNumber)) ||
+              false
+            }
+            loading={isSending}
+            ghost
+          />
+        </Tooltip>
       </div>
     </Drawer>
   );

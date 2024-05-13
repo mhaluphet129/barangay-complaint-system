@@ -25,7 +25,6 @@ const Complain = ({ appkey, smskey }) => {
   const [photos, setPhotos] = useState([]);
   const [pin, setPin] = useState();
   const [pinConfirmed, setPinConfirmed] = useState(false);
-  const [number, setNumber] = useState("");
   const [deviceId, setDeviceId] = useState("");
 
   const sms = new SMS(smskey);
@@ -86,7 +85,7 @@ const Complain = ({ appkey, smskey }) => {
     })(axios);
   };
 
-  const sendPin = (id) => {
+  const sendPin = (id, number) => {
     (async (_) => {
       await _.post("/api/complain/send-a-pin", {
         id,
@@ -133,6 +132,7 @@ const Complain = ({ appkey, smskey }) => {
     (async (_) => {
       await _.getDevices().then((e) => {
         const device = e.data.filter((e) => e.online)[0];
+        console.log(device);
         setDeviceId(device.unique);
       });
     })(sms);
@@ -204,9 +204,8 @@ const Complain = ({ appkey, smskey }) => {
                   onSelect={(e, _) => {
                     let [id, phone, name] = _.key.split("%%");
                     setResidentId(id);
-                    setNumber(phone);
                     setResidentName(name);
-                    sendPin(id);
+                    sendPin(id, phone);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Backspace") {

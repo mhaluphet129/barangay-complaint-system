@@ -177,7 +177,9 @@ const MyApp = ({ app_key, sms_key }) => {
             ) : null}
             {selectedKey == "residents" ? <Residents /> : null}
             {selectedKey == "admin" ? <Admin /> : null}
-            {selectedKey == "complain" ? <Complain appKey={app_key} /> : null}
+            {selectedKey == "complain" ? (
+              <Complain appKey={app_key} smskey={sms_key} />
+            ) : null}
             {selectedKey == "sms" ? <SMS sms_key={sms_key} /> : null}
             {selectedKey == "news" && <News appKey={app_key} />}
           </Content>

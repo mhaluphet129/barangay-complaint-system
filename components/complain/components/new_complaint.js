@@ -1,5 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Modal, Form, AutoComplete, Input, Button, Image, Select } from "antd";
+import {
+  Modal,
+  Form,
+  AutoComplete,
+  Input,
+  Button,
+  Image,
+  Select,
+  message,
+} from "antd";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { PickerDropPane } from "filestack-react";
@@ -78,6 +87,11 @@ const NewComplain = ({ open, close, appkey, data, handleFinish, isEdit }) => {
 
           if (data) val._id = data._id;
           if (photos.length > 0) val.images = photos;
+
+          if (!val.respondentNumber.startsWith("9")) {
+            message.error("Mobile Number should start with 9");
+            return;
+          }
           handleFinish(val);
         }}
         labelAlign="left"
