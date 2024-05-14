@@ -38,7 +38,7 @@ const Residents = () => {
       dataIndex: "phoneNumber",
     },
     {
-      title: "Added Date",
+      title: "Birthdate",
       render: (_, row) => dayjs(row?.dateOfBirth).format("MMM DD, YYYY"),
     },
     {

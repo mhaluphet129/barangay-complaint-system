@@ -33,6 +33,10 @@ const FAQ = () => (
               q: "Maka file ba kami og reklamo sa text biskan walay load ?",
               a: "Dli, kailangan og load para maka text. Promo nga load pwede ra, mo sulod gyapon inyo reklamo ana.",
             },
+            {
+              q: "Pwede ba mi maka tawag dri sa system?",
+              a: "Dli pwede mo tawag kay alang lang kini sa text Website ug Walk-In nga reklamo.Ug gusto kamo mo tawag, tawag lng sa Lupon nga number para sa inyung pangutana kabahin sa inyung kaso.",
+            },
           ].map((e, i) => ({
             key: i,
             showArrow: false,
