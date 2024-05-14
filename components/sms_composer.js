@@ -54,18 +54,15 @@ const SmsComposer = ({ open, close, onSend, smskey }) => {
     return new Promise((resolve, reject) => {
       if (
         mode == "Residents" &&
-        !(
-          _number.startsWith("09") ||
-          _number.startsWith("+639") ||
-          _number.startsWith("639") ||
-          _number.startsWith("9")
-        )
+        !(_number.startsWith("09") || _number.startsWith("9"))
       ) {
         reject({
           message: "Resident Number is invalid",
         });
       } else {
-        const number = `+63${_number.slice(1)}`;
+        const number = _number.startsWith("9")
+          ? `+63${_number}`
+          : `+63${_number.slice(1)}`;
 
         (async (_) => {
           let { data } = await axios.post("/api/sms/send-sms", {

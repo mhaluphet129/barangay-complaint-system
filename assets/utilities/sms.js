@@ -39,6 +39,7 @@ class SMS {
             phone,
             message,
             device,
+            priority: 1,
           },
         }
       );

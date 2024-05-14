@@ -58,7 +58,7 @@ const Dashboard = ({ setSelectedKey }) => {
       count: dashboardData.complainCount,
       color: "#05a55a",
       icon: <FaFile style={{ fontSize: 60, opacity: 0.4 }} />,
-      onClick: () => setSelectedKey("complain"),
+      onClick: () => setSelectedKey("complaints"),
     },
     {
       title: "Residents",
