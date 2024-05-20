@@ -8,8 +8,6 @@ import {
   Space,
   Typography,
   Input,
-  Skeleton,
-  Divider,
   Select,
   Row,
   Col,
@@ -18,7 +16,6 @@ import { PlusOutlined } from "@ant-design/icons";
 import Cookies from "js-cookie";
 
 import axios from "axios";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 import NewComplain from "./components/new_complaint";
 import CompainViewer from "./components/complain_viewer";
@@ -33,6 +30,7 @@ const Complain = ({ appKey, smskey }) => {
   const [viewerOpts, setViewerOpts] = useState({ open: false, data: null });
   const [currentUser, setCurrentUser] = useState({});
   const [trigger, setTrigger] = useState(0);
+  const [type, setType] = useState(null);
   const [listOptions, setListOptions] = useState({
     total: 0,
     index: 0,
@@ -41,7 +39,8 @@ const Complain = ({ appKey, smskey }) => {
 
   const timerRef = useRef(null);
 
-  const loadMoreData = (searchKey, clear, filter = {}) => {
+  const loadMoreData = (searchKey, filter = {}, page = 1, pageSize) => {
+    if (!pageSize) pageSize = 10;
     if (listOptions.loading) {
       return;
     }
@@ -51,14 +50,14 @@ const Complain = ({ appKey, smskey }) => {
       let { data } = await _.get("/api/complain/get-complains", {
         params: {
           page: 5,
-          index: clear ? 0 : listOptions.index,
           ...(filter.type ? { type: filter.type } : {}),
           searchKey,
+          page,
+          pageSize,
         },
       });
       if (data?.success) {
-        if (clear) setComplains(data?.complain);
-        else setComplains([...complains, ...data?.complain]);
+        setComplains(data?.complain);
         setLoading(false);
         setSearching(false);
         setListOptions({
@@ -86,15 +85,15 @@ const Complain = ({ appKey, smskey }) => {
       clearTimeout(timerRef.current);
     }
     timerRef.current = setTimeout(function () {
-      loadMoreData(searchKeyword, true);
+      loadMoreData(searchKeyword, { type }, 1);
     }, 500);
   };
 
   useEffect(() => {
     setLoading(true);
-    loadMoreData();
+    loadMoreData(searchWord, { type }, 1);
     setCurrentUser(JSON.parse(Cookies.get("currentUser")));
-  }, [trigger]);
+  }, [trigger, type]);
 
   return (
     <>
@@ -131,7 +130,7 @@ const Complain = ({ appKey, smskey }) => {
       <CompainViewer
         {...viewerOpts}
         close={() => setViewerOpts({ open: false, data: null })}
-        refresh={() => loadMoreData("", true)}
+        refresh={() => loadMoreData("", {}, 1)}
         setData={(data) => setViewerOpts({ ...viewerOpts, data })}
         smskey={smskey}
       />
@@ -152,7 +151,7 @@ const Complain = ({ appKey, smskey }) => {
             onChange={(e) => {
               setSearchWord(e.target.value);
               if (e.target.value != "") runTimer(e.target.value);
-              else loadMoreData(e, true);
+              else loadMoreData(e, { type }, 1);
             }}
             allowClear
           />
@@ -181,7 +180,7 @@ const Complain = ({ appKey, smskey }) => {
                   value: "sms",
                 },
               ]}
-              onChange={(e) => loadMoreData(searchWord, true, { type: e })}
+              onChange={(e) => setType(e)}
             />
           </>
         </Space>
@@ -210,117 +209,95 @@ const Complain = ({ appKey, smskey }) => {
           padding: 10,
         }}
       >
-        <div id="scrollableDiv" style={{ height: "75vh", overflow: "scroll" }}>
-          <InfiniteScroll
-            dataLength={complains.length}
-            next={loadMoreData}
-            hasMore={listOptions.total > complains.length}
-            loader={
-              <Skeleton
-                paragraph={{
-                  rows: 1,
-                }}
-                active
-              />
-            }
-            endMessage={
-              complains.length != 0 ? (
-                <Divider plain>
-                  <Typography.Text type="secondary" italic>
-                    No more complains to be loaded
-                  </Typography.Text>
-                </Divider>
-              ) : null
-            }
-            scrollableTarget="scrollableDiv"
-          >
-            <List
-              itemLayout="horizontal"
-              dataSource={complains}
-              loading={loading}
-              renderItem={(item, index) => (
-                <List.Item
-                  style={{
-                    marginLeft: 20,
-                    cursor: "pointer",
-                    fontFamily: "abel",
-                  }}
-                  onClick={() => setViewerOpts({ open: true, data: item })}
-                >
-                  <List.Item.Meta
-                    title={
-                      <span>
-                        Case #{index + 1}:{" "}
-                        <Typography.Text type="secondary" italic>
-                          ({item?._id?.substr(-6)})
+        <List
+          itemLayout="horizontal"
+          dataSource={complains}
+          loading={loading}
+          pagination={{
+            defaultPageSize: 10,
+            total: listOptions.total,
+            onChange: (page, pageSize) =>
+              loadMoreData(searchWord, { type }, page, pageSize),
+          }}
+          renderItem={(item, index) => (
+            <List.Item
+              style={{
+                marginLeft: 20,
+                cursor: "pointer",
+                fontFamily: "abel",
+              }}
+              onClick={() => setViewerOpts({ open: true, data: item })}
+            >
+              <List.Item.Meta
+                title={
+                  <span>
+                    Case #{index + 1}:{" "}
+                    <Typography.Text type="secondary" italic>
+                      ({item?._id?.substr(-6)})
+                    </Typography.Text>
+                  </span>
+                }
+                description={
+                  <Row>
+                    <Col span={3}>
+                      Complainer: <br />
+                      Respondent:
+                      <br />
+                      Type:
+                      <br />
+                      <br />
+                      Creation Date:
+                    </Col>
+                    <Col span={4}>
+                      {item?.residentId && item?.residentId?.name ? (
+                        <Typography.Text
+                          style={{ fontWeight: 700 }}
+                        >{`${item?.residentId?.name[0].toLocaleUpperCase()}${item?.residentId?.name.slice(
+                          1
+                        )} ${item?.residentId?.lastname[0].toLocaleUpperCase()}${item?.residentId?.lastname.slice(
+                          1
+                        )}`}</Typography.Text>
+                      ) : (
+                        <Typography.Text type="secondary" strong>
+                          N/A
                         </Typography.Text>
-                      </span>
-                    }
-                    description={
-                      <Row>
-                        <Col span={3}>
-                          Complainer: <br />
-                          Respondent:
-                          <br />
-                          Type:
-                          <br />
-                          <br />
-                          Creation Date:
-                        </Col>
-                        <Col span={4}>
-                          {item?.residentId && item?.residentId?.name ? (
-                            <Typography.Text
-                              style={{ fontWeight: 700 }}
-                            >{`${item?.residentId?.name[0].toLocaleUpperCase()}${item?.residentId?.name.slice(
-                              1
-                            )} ${item?.residentId?.lastname[0].toLocaleUpperCase()}${item?.residentId?.lastname.slice(
-                              1
-                            )}`}</Typography.Text>
-                          ) : (
-                            <Typography.Text type="secondary" strong>
-                              N/A
-                            </Typography.Text>
-                          )}
-                          <br />
-                          <Typography.Text style={{ fontWeight: 700 }}>
-                            {item?.respondentName}
-                          </Typography.Text>
-                          <br />
-                          {item?.type && (
-                            <Tag
-                              color={
-                                item?.type == "walk-in"
-                                  ? "green"
-                                  : item?.type == "web"
-                                  ? "cyan"
-                                  : "blue"
-                              }
-                            >
-                              {item?.type.toLocaleUpperCase()}
-                            </Tag>
-                          )}
-                          <br />
-                          <br />
-                          {dayjs(item.createdAt).format("MMMM DD, YYYY HH:mma")}
-                        </Col>
-                        <Col span={5}>
-                          <strong style={{ color: "#000" }}>
-                            Description:
-                          </strong>
-                          <br />
-                          <Typography.Paragraph>
-                            {item?.description}
-                          </Typography.Paragraph>
-                        </Col>
-                        {/* <Col span={8}>Nothing goes from here</Col> */}
-                      </Row>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
-          </InfiniteScroll>
-        </div>
+                      )}
+                      <br />
+                      <Typography.Text style={{ fontWeight: 700 }}>
+                        {item?.respondentName}
+                      </Typography.Text>
+                      <br />
+                      {item?.type && (
+                        <Tag
+                          color={
+                            item?.type == "walk-in"
+                              ? "green"
+                              : item?.type == "web"
+                              ? "cyan"
+                              : "blue"
+                          }
+                        >
+                          {item?.type.toLocaleUpperCase()}
+                        </Tag>
+                      )}
+                      <br />
+                      <br />
+                      {dayjs(item.createdAt).format("MMMM DD, YYYY HH:mma")}
+                    </Col>
+                    <Col span={5}>
+                      <strong style={{ color: "#000" }}>Description:</strong>
+                      <br />
+                      <Typography.Paragraph>
+                        {item?.description}
+                      </Typography.Paragraph>
+                    </Col>
+                    {/* <Col span={8}>Nothing goes from here</Col> */}
+                  </Row>
+                }
+              />
+            </List.Item>
+          )}
+        />
       </Card>
     </>
   );

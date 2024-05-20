@@ -212,6 +212,21 @@ a.remove-focus {
   min-height: 500px;
 }
 
+.privacy-policy h1,
+h2 {
+  color: #333;
+  font-size: 1.5em !important;
+}
+
+.privacy-policy p,
+.privacy-policy ul {
+  margin: 10px;
+}
+
+.contact-info {
+  margin-top: 20px;
+}
+
 @-webkit-keyframes spinner {
   0% {
     -webkit-transform: rotate(0deg);

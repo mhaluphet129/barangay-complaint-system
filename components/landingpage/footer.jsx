@@ -59,6 +59,9 @@ const Footer = () => {
           <a href="/faq" className="hover:underline">
             Frequently Asked Questions
           </a>
+          <a href="/privacy-policy" className="hover:underline">
+            Privacy Policy
+          </a>
           <Tooltip title="WAY KAMO">
             <a href="#">About Us</a>
           </Tooltip>

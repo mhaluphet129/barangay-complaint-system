@@ -14,13 +14,34 @@ export default async function handler(req, res) {
   let residentsCount = 0;
   let adminCount = 0;
 
+  const { year } = req.query;
+
   try {
-    smsCount = await SMS.countDocuments();
-    complainCount = await Complain.countDocuments();
-    residentsCount = await Resident.countDocuments();
+    smsCount = await SMS.countDocuments({
+      $expr: {
+        $eq: [{ $year: "$createdAt" }, parseInt(year)],
+      },
+    });
+    complainCount = await Complain.countDocuments({
+      $expr: {
+        $eq: [{ $year: "$createdAt" }, parseInt(year)],
+      },
+    });
+    residentsCount = await Resident.countDocuments({
+      $expr: {
+        $eq: [{ $year: "$createdAt" }, parseInt(year)],
+      },
+    });
     adminCount = await Admin.countDocuments({ role: "admin" });
 
     let pieData = await Complaint.aggregate([
+      {
+        $match: {
+          $expr: {
+            $eq: [{ $year: "$createdAt" }, parseInt(year)],
+          },
+        },
+      },
       {
         $project: {
           lastStatus: { $arrayElemAt: ["$settlement", -1] },
@@ -38,7 +59,7 @@ export default async function handler(req, res) {
       {
         $match: {
           $expr: {
-            $eq: [{ $year: "$createdAt" }, { $year: "$$NOW" }],
+            $eq: [{ $year: "$createdAt" }, parseInt(year)],
           },
         },
       },
@@ -125,6 +146,13 @@ export default async function handler(req, res) {
       });
 
     let graphData = await Complaint.aggregate([
+      {
+        $match: {
+          $expr: {
+            $eq: [{ $year: "$createdAt" }, parseInt(year)],
+          },
+        },
+      },
       {
         $match: {
           northBarangay: {

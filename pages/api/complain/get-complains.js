@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   if (req.method != "GET") throw Error("Request Method is not acceptable");
 
   try {
-    const { page, index, type, searchKey } = req.query;
+    const { page, pageSize, type, searchKey } = req.query;
     var re = new RegExp(searchKey?.trim(), "i");
 
     const query = [
@@ -43,6 +43,9 @@ export default async function handler(req, res) {
         $unwind: { path: "$inchargeId", preserveNullAndEmptyArrays: true },
       },
       {
+        $unwind: { path: "$smsId", preserveNullAndEmptyArrays: true },
+      },
+      {
         $addFields: {
           tempId1: { $toString: "$_id" },
         },
@@ -59,39 +62,42 @@ export default async function handler(req, res) {
           },
         },
       },
-      {
-        $match: {
-          $and: [
-            {
-              ...(type == undefined ? {} : { type }),
-            },
-            {
-              $or: [
-                { tempId: { $regex: re } },
-                { tempId1: { $regex: re } },
-                { "residentId.name": { $regex: re } },
-                { "lastname.name": { $regex: re } },
-                { fullName: { $regex: re } },
-                { respondentName: { $regex: re } },
-              ],
-            },
-          ],
-        },
-      },
     ];
 
     if (page) {
       query.push({
-        $skip: Number.parseInt(page * index),
+        $skip: (Number.parseInt(page) - 1) * Number.parseInt(pageSize),
       });
       query.push({
-        $limit: Number.parseInt(page),
+        $limit: Number.parseInt(pageSize),
+      });
+    }
+
+    if (type != undefined || searchKey != "") {
+      query.push({
+        $match: {
+          $and: [
+            ...(type != undefined ? { type } : {}),
+            ...(searchKey == ""
+              ? {}
+              : {
+                  $or: [
+                    { tempId: { $regex: re } },
+                    { tempId1: { $regex: re } },
+                    { "residentId.name": { $regex: re } },
+                    { "lastname.name": { $regex: re } },
+                    { fullName: { $regex: re } },
+                    { respondentName: { $regex: re } },
+                  ],
+                }),
+          ],
+        },
       });
     }
 
     let complain = await Complain.aggregate(query);
 
-    const doc2 = await Complain.aggregate([
+    const query2 = [
       {
         $lookup: {
           from: "residents",
@@ -120,26 +126,31 @@ export default async function handler(req, res) {
           },
         },
       },
-      {
+    ];
+
+    if (type != undefined || searchKey != "") {
+      query2.push({
         $match: {
           $and: [
-            {
-              ...(type == undefined ? {} : { type }),
-            },
-            {
-              $or: [
-                { tempId: { $regex: re } },
-                { tempId1: { $regex: re } },
-                { "residentId.name": { $regex: re } },
-                { "lastname.name": { $regex: re } },
-                { fullName: { $regex: re } },
-                { respondentName: { $regex: re } },
-              ],
-            },
+            ...(type != undefined ? { type } : {}),
+            ...(searchKey == ""
+              ? {}
+              : {
+                  $or: [
+                    { tempId: { $regex: re } },
+                    { tempId1: { $regex: re } },
+                    { "residentId.name": { $regex: re } },
+                    { "lastname.name": { $regex: re } },
+                    { fullName: { $regex: re } },
+                    { respondentName: { $regex: re } },
+                  ],
+                }),
           ],
         },
-      },
-    ]);
+      });
+    }
+
+    const doc2 = await Complain.aggregate(query2);
 
     return res.json({
       success: true,

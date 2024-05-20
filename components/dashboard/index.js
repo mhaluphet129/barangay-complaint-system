@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 // icons
-import { Card, Col, Row, Skeleton } from "antd";
+import { Card, Col, Row, Select, Skeleton } from "antd";
 import { IoChatbubblesSharp } from "react-icons/io5";
 import { IoIosPersonAdd } from "react-icons/io";
 import { MdAdminPanelSettings } from "react-icons/md";
@@ -44,6 +44,7 @@ const Dashboard = ({ setSelectedKey }) => {
   const [pieData, setPieData] = useState([]);
   const [graphData, setGraphData] = useState([]);
   const [graphData2, setGraphData2] = useState([]);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   let dashboardDataValue = [
     {
@@ -89,7 +90,11 @@ const Dashboard = ({ setSelectedKey }) => {
   useEffect(() => {
     (async (_) => {
       setNotLoading(false);
-      let { data } = await _.get("/api/admin/dashboard-data");
+      let { data } = await _.get("/api/admin/dashboard-data", {
+        params: {
+          year: currentYear,
+        },
+      });
 
       if (data.success) {
         setNotLoading(true);
@@ -101,10 +106,27 @@ const Dashboard = ({ setSelectedKey }) => {
         setNotLoading(true);
       }
     })(axios);
-  }, []);
+  }, [currentYear]);
 
   return (
     <>
+      <div style={{ display: "flex", justifyContent: "end" }}>
+        <Select
+          style={{
+            width: 150,
+            marginBottom: 5,
+          }}
+          defaultValue={currentYear}
+          size="large"
+          onChange={(e) => setCurrentYear(e)}
+          options={Array(new Date().getFullYear() - 1900 + 1)
+            .fill(null)
+            .map((_, i) => ({
+              label: new Date().getFullYear() - i,
+              value: new Date().getFullYear() - i,
+            }))}
+        />
+      </div>
       <Row gutter={[16, 16]}>
         {dashboardDataValue.map((e, i) => {
           const [hovered, setHovered] = useState(false);
@@ -262,316 +284,324 @@ const Dashboard = ({ setSelectedKey }) => {
         })}
       </Row>
 
-      <div style={{ marginTop: 10 }}>
-        <Card
-          bodyStyle={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          hoverable
-        >
-          <div style={{ width: "30vw" }}>
-            <Pie
-              options={{
-                plugins: {
-                  title: {
-                    display: true,
-                    text: "Complaint Status",
-                    position: "top",
-                    font: {
-                      size: 20,
+      <Row gutter={[32, 32]}>
+        <Col span={9}>
+          {Object.keys(pieData).length != 0 && (
+            <div style={{ marginTop: 10 }}>
+              <Card
+                bodyStyle={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "64vh",
+                }}
+                hoverable
+              >
+                <div style={{ width: "30vw", marginTop: 25 }}>
+                  <Pie
+                    options={{
+                      plugins: {
+                        title: {
+                          display: true,
+                          text: "Complaint Status",
+                          position: "top",
+                          font: {
+                            size: 20,
+                          },
+                        },
+                        legend: {
+                          position: "bottom",
+                          align: "center",
+                          // display: false,
+                        },
+                      },
+                    }}
+                    data={{
+                      labels: [
+                        "Processed",
+                        "Solved",
+                        "Unsolved",
+                        "Disregard",
+                        "Dismissed",
+                      ],
+                      datasets: [
+                        {
+                          label: "count: ",
+                          data: parsedPieData(),
+                          backgroundColor: [
+                            "rgba(52,152,219)",
+                            "rgba(46,204,113)",
+                            "rgba(231,76,60)",
+                            "rgba(85,85,85)",
+                            "rgba(41,50,65)",
+                          ],
+                          borderColor: [
+                            "rgba(0,0,0, 0.5)",
+                            "rgba(0,0,0, 0.5)",
+                            "rgba(0,0,0, 0.5)",
+                            "rgba(0,0,0, 0.5)",
+                            "rgba(0,0,0, 0.5)",
+                          ],
+                          borderWidth: 1,
+                        },
+                      ],
+                    }}
+                  />
+                </div>
+              </Card>
+            </div>
+          )}
+        </Col>
+        <Col span={15}>
+          {Object.keys(graphData).length != 0 && (
+            <div style={{ marginTop: 10 }}>
+              <Card
+                bodyStyle={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "64vh",
+                }}
+                hoverable
+              >
+                <Bar
+                  data={{
+                    labels: jason.months,
+                    datasets: graphData.map((e) => {
+                      return {
+                        label: e.label,
+                        data: e.data,
+                        backgroundColor: `#${Math.floor(
+                          Math.random() * 16777215
+                        ).toString(16)}`,
+                        type: "bar",
+                      };
+                    }),
+                  }}
+                  options={{
+                    responsive: true,
+                    hover: {
+                      mode: "point",
                     },
-                  },
-                  legend: {
-                    position: "bottom",
-                    align: "center",
-                    // display: false,
-                  },
-                },
+                    // interaction: {
+                    //   mode: "index",
+                    //   intersect: false,
+                    // },
+                    animations: {
+                      y: {
+                        easing: "easeInOutElastic",
+                        from: (ctx) => {
+                          if (ctx.type === "data") {
+                            if (ctx.mode === "default" && !ctx.dropped) {
+                              ctx.dropped = true;
+                              return 0;
+                            }
+                          }
+                        },
+                      },
+                    },
+                    plugins: {
+                      legend: {
+                        position: "top",
+                      },
+                      title: {
+                        display: true,
+                        text: "SMS Complaints by Sitio",
+                        font: {
+                          size: 20,
+                        },
+                      },
+                    },
+                    scales: {
+                      y: {
+                        min: 0,
+                        stacked: false,
+                        title: {
+                          display: true,
+                          text: "Number of Complaints",
+                        },
+                        ticks: {
+                          stepSize: 2,
+                        },
+                      },
+                      x: {
+                        title: {
+                          display: true,
+                          text: "SMS Complaints by Sitio",
+                        },
+                        grid: {
+                          display: false,
+                        },
+                      },
+                    },
+                    onHover: function (event, chartElement) {},
+                  }}
+                  plugins={[
+                    {
+                      id: "intersectDataVerticalLine",
+                      beforeDraw: (chart) => {
+                        if (chart.getActiveElements().length) {
+                          const activePoint = chart.getActiveElements()[0];
+                          const chartArea = chart.chartArea;
+                          const ctx = chart.ctx;
+                          ctx.save();
+                          // grey vertical hover line - full chart height
+                          ctx.beginPath();
+                          ctx.moveTo(activePoint.element.x, chartArea.top);
+                          ctx.lineTo(activePoint.element.x, chartArea.bottom);
+                          ctx.lineWidth = 2;
+                          ctx.strokeStyle = "rgba(0,0,0, 0.1)";
+                          ctx.stroke();
+                          ctx.restore();
+
+                          // colored vertical hover line - ['data point' to chart bottom] - only for charts 1 dataset
+                          if (chart.data.datasets.length === 1) {
+                            ctx.beginPath();
+                            ctx.moveTo(
+                              activePoint.element.x,
+                              activePoint.element.y
+                            );
+                            ctx.lineTo(activePoint.element.x, chartArea.bottom);
+                            ctx.lineWidth = 2;
+                            ctx.strokeStyle =
+                              chart.data.datasets[0].borderColor;
+                            ctx.stroke();
+                            ctx.restore();
+                          }
+                        }
+                      },
+                    },
+                  ]}
+                />
+              </Card>
+            </div>
+          )}
+        </Col>
+        {Object.keys(graphData2).length != 0 && (
+          <div style={{ marginTop: 10, marginLeft: "1vw" }}>
+            <Card
+              bodyStyle={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-              data={{
-                labels: [
-                  "Processed",
-                  "Solved",
-                  "Unsolved",
-                  "Disregard",
-                  "Dismissed",
-                ],
-                datasets: [
-                  {
-                    label: "count: ",
-                    data: parsedPieData(),
-                    backgroundColor: [
-                      "rgba(52,152,219)",
-                      "rgba(46,204,113)",
-                      "rgba(231,76,60)",
-                      "rgba(85,85,85)",
-                      "rgba(41,50,65)",
-                    ],
-                    borderColor: [
-                      "rgba(0,0,0, 0.5)",
-                      "rgba(0,0,0, 0.5)",
-                      "rgba(0,0,0, 0.5)",
-                      "rgba(0,0,0, 0.5)",
-                      "rgba(0,0,0, 0.5)",
-                    ],
-                    borderWidth: 1,
-                  },
-                ],
-              }}
-            />
+              hoverable
+            >
+              <div style={{ width: "79vw" }}>
+                <Bar
+                  data={{
+                    labels: jason.months,
+                    datasets: graphData2.map((e) => {
+                      return {
+                        label: e.label,
+                        data: e.data,
+                        backgroundColor: `#${Math.floor(
+                          Math.random() * 16777215
+                        ).toString(16)}`,
+                        type: "bar",
+                      };
+                    }),
+                  }}
+                  options={{
+                    responsive: true,
+                    hover: {
+                      mode: "point",
+                    },
+                    // interaction: {
+                    //   mode: "index",
+                    //   intersect: false,
+                    // },
+                    animations: {
+                      y: {
+                        easing: "easeInOutElastic",
+                        from: (ctx) => {
+                          if (ctx.type === "data") {
+                            if (ctx.mode === "default" && !ctx.dropped) {
+                              ctx.dropped = true;
+                              return 0;
+                            }
+                          }
+                        },
+                      },
+                    },
+                    plugins: {
+                      legend: {
+                        position: "top",
+                      },
+                      title: {
+                        display: true,
+                        text: "Complaints by Type",
+                        font: {
+                          size: 20,
+                        },
+                      },
+                    },
+                    scales: {
+                      y: {
+                        min: 0,
+                        stacked: false,
+                        title: {
+                          display: true,
+                          text: "Number of Complaints",
+                        },
+                        ticks: {
+                          stepSize: 2,
+                        },
+                      },
+                      x: {
+                        title: {
+                          display: true,
+                          text: "SMS Complaints by Sitio",
+                        },
+                        grid: {
+                          display: false,
+                        },
+                      },
+                    },
+                    onHover: function (event, chartElement) {},
+                  }}
+                  plugins={[
+                    {
+                      id: "intersectDataVerticalLine",
+                      beforeDraw: (chart) => {
+                        if (chart.getActiveElements().length) {
+                          const activePoint = chart.getActiveElements()[0];
+                          const chartArea = chart.chartArea;
+                          const ctx = chart.ctx;
+                          ctx.save();
+                          // grey vertical hover line - full chart height
+                          ctx.beginPath();
+                          ctx.moveTo(activePoint.element.x, chartArea.top);
+                          ctx.lineTo(activePoint.element.x, chartArea.bottom);
+                          ctx.lineWidth = 2;
+                          ctx.strokeStyle = "rgba(0,0,0, 0.1)";
+                          ctx.stroke();
+                          ctx.restore();
+
+                          // colored vertical hover line - ['data point' to chart bottom] - only for charts 1 dataset
+                          if (chart.data.datasets.length === 1) {
+                            ctx.beginPath();
+                            ctx.moveTo(
+                              activePoint.element.x,
+                              activePoint.element.y
+                            );
+                            ctx.lineTo(activePoint.element.x, chartArea.bottom);
+                            ctx.lineWidth = 2;
+                            ctx.strokeStyle =
+                              chart.data.datasets[0].borderColor;
+                            ctx.stroke();
+                            ctx.restore();
+                          }
+                        }
+                      },
+                    },
+                  ]}
+                />
+              </div>
+            </Card>
           </div>
-        </Card>
-      </div>
-
-      {Object.keys(graphData).length != 0 && (
-        <div style={{ marginTop: 10 }}>
-          <Card
-            bodyStyle={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            hoverable
-          >
-            <div style={{ width: "70vw" }}>
-              <Bar
-                data={{
-                  labels: jason.months,
-                  datasets: graphData.map((e) => {
-                    return {
-                      label: e.label,
-                      data: e.data,
-                      backgroundColor: `#${Math.floor(
-                        Math.random() * 16777215
-                      ).toString(16)}`,
-                      type: "bar",
-                    };
-                  }),
-                }}
-                options={{
-                  responsive: true,
-                  hover: {
-                    mode: "point",
-                  },
-                  // interaction: {
-                  //   mode: "index",
-                  //   intersect: false,
-                  // },
-                  animations: {
-                    y: {
-                      easing: "easeInOutElastic",
-                      from: (ctx) => {
-                        if (ctx.type === "data") {
-                          if (ctx.mode === "default" && !ctx.dropped) {
-                            ctx.dropped = true;
-                            return 0;
-                          }
-                        }
-                      },
-                    },
-                  },
-                  plugins: {
-                    legend: {
-                      position: "top",
-                    },
-                    title: {
-                      display: true,
-                      text: "SMS Complaints by Sitio",
-                      font: {
-                        size: 20,
-                      },
-                    },
-                  },
-                  scales: {
-                    y: {
-                      min: 0,
-                      stacked: false,
-                      title: {
-                        display: true,
-                        text: "Number of Complaints",
-                      },
-                      ticks: {
-                        stepSize: 2,
-                      },
-                    },
-                    x: {
-                      title: {
-                        display: true,
-                        text: "SMS Complaints by Sitio",
-                      },
-                      grid: {
-                        display: false,
-                      },
-                    },
-                  },
-                  onHover: function (event, chartElement) {},
-                }}
-                plugins={[
-                  {
-                    id: "intersectDataVerticalLine",
-                    beforeDraw: (chart) => {
-                      if (chart.getActiveElements().length) {
-                        const activePoint = chart.getActiveElements()[0];
-                        const chartArea = chart.chartArea;
-                        const ctx = chart.ctx;
-                        ctx.save();
-                        // grey vertical hover line - full chart height
-                        ctx.beginPath();
-                        ctx.moveTo(activePoint.element.x, chartArea.top);
-                        ctx.lineTo(activePoint.element.x, chartArea.bottom);
-                        ctx.lineWidth = 2;
-                        ctx.strokeStyle = "rgba(0,0,0, 0.1)";
-                        ctx.stroke();
-                        ctx.restore();
-
-                        // colored vertical hover line - ['data point' to chart bottom] - only for charts 1 dataset
-                        if (chart.data.datasets.length === 1) {
-                          ctx.beginPath();
-                          ctx.moveTo(
-                            activePoint.element.x,
-                            activePoint.element.y
-                          );
-                          ctx.lineTo(activePoint.element.x, chartArea.bottom);
-                          ctx.lineWidth = 2;
-                          ctx.strokeStyle = chart.data.datasets[0].borderColor;
-                          ctx.stroke();
-                          ctx.restore();
-                        }
-                      }
-                    },
-                  },
-                ]}
-              />
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {Object.keys(graphData2).length != 0 && (
-        <div style={{ marginTop: 10 }}>
-          <Card
-            bodyStyle={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            hoverable
-          >
-            <div style={{ width: "70vw" }}>
-              <Bar
-                data={{
-                  labels: jason.months,
-                  datasets: graphData2.map((e) => {
-                    return {
-                      label: e.label,
-                      data: e.data,
-                      backgroundColor: `#${Math.floor(
-                        Math.random() * 16777215
-                      ).toString(16)}`,
-                      type: "bar",
-                    };
-                  }),
-                }}
-                options={{
-                  responsive: true,
-                  hover: {
-                    mode: "point",
-                  },
-                  // interaction: {
-                  //   mode: "index",
-                  //   intersect: false,
-                  // },
-                  animations: {
-                    y: {
-                      easing: "easeInOutElastic",
-                      from: (ctx) => {
-                        if (ctx.type === "data") {
-                          if (ctx.mode === "default" && !ctx.dropped) {
-                            ctx.dropped = true;
-                            return 0;
-                          }
-                        }
-                      },
-                    },
-                  },
-                  plugins: {
-                    legend: {
-                      position: "top",
-                    },
-                    title: {
-                      display: true,
-                      text: "Complaints by Type",
-                      font: {
-                        size: 20,
-                      },
-                    },
-                  },
-                  scales: {
-                    y: {
-                      min: 0,
-                      stacked: false,
-                      title: {
-                        display: true,
-                        text: "Number of Complaints",
-                      },
-                      ticks: {
-                        stepSize: 2,
-                      },
-                    },
-                    x: {
-                      title: {
-                        display: true,
-                        text: "SMS Complaints by Sitio",
-                      },
-                      grid: {
-                        display: false,
-                      },
-                    },
-                  },
-                  onHover: function (event, chartElement) {},
-                }}
-                plugins={[
-                  {
-                    id: "intersectDataVerticalLine",
-                    beforeDraw: (chart) => {
-                      if (chart.getActiveElements().length) {
-                        const activePoint = chart.getActiveElements()[0];
-                        const chartArea = chart.chartArea;
-                        const ctx = chart.ctx;
-                        ctx.save();
-                        // grey vertical hover line - full chart height
-                        ctx.beginPath();
-                        ctx.moveTo(activePoint.element.x, chartArea.top);
-                        ctx.lineTo(activePoint.element.x, chartArea.bottom);
-                        ctx.lineWidth = 2;
-                        ctx.strokeStyle = "rgba(0,0,0, 0.1)";
-                        ctx.stroke();
-                        ctx.restore();
-
-                        // colored vertical hover line - ['data point' to chart bottom] - only for charts 1 dataset
-                        if (chart.data.datasets.length === 1) {
-                          ctx.beginPath();
-                          ctx.moveTo(
-                            activePoint.element.x,
-                            activePoint.element.y
-                          );
-                          ctx.lineTo(activePoint.element.x, chartArea.bottom);
-                          ctx.lineWidth = 2;
-                          ctx.strokeStyle = chart.data.datasets[0].borderColor;
-                          ctx.stroke();
-                          ctx.restore();
-                        }
-                      }
-                    },
-                  },
-                ]}
-              />
-            </div>
-          </Card>
-        </div>
-      )}
+        )}
+      </Row>
     </>
   );
 };
