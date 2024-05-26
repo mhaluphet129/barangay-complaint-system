@@ -2,7 +2,6 @@ import dbConnect from "../../../database/dbConnect";
 import SMS from "@/database/models/sms";
 import Resident from "@/database/models/resident";
 import Complain from "@/database/models/complaint";
-import { parsedPhoneNumber } from "@/assets/utilities/phonenumber_utils";
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -47,3 +46,9 @@ export default async function handler(req, res) {
       });
     });
 }
+
+const parsedPhoneNumber = (num) => {
+  if (num.startsWith("09")) return num.slice(1);
+  if (num.startsWith("639")) return num.slice(2);
+  return num;
+};

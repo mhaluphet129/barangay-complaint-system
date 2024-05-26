@@ -125,8 +125,8 @@ const SMS = ({ sms_key }) => {
   const columns2 = [
     {
       title: "Number",
-      dataIndex: "number",
-      render: (_) => `+${_}`,
+      render: (_, row) =>
+        row?.complainer ? row?.complainer?.respondentName : `+${row?.number}`,
     },
     {
       title: "Message",
