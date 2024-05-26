@@ -13,12 +13,18 @@ import {
 } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
+import Cookies from "js-cookie";
+import SMS from "@/assets/utilities/sms";
 
-const ResidentForm = ({ open, close, refresh, mode, data }) => {
+const ResidentForm = ({ open, close, refresh, mode, data, smskey }) => {
   const [form] = Form.useForm();
   const [loading, setLoader] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
   const [inputDate, setInputData] = useState({});
+  const [deviceId, setDeviceId] = useState("");
+  const [currentUser, setCurrentUser] = useState("");
+
+  const sms = new SMS(smskey);
 
   const handleFinish = () => {
     if (mode == "new") {
@@ -46,6 +52,27 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
             });
       if (res?.data.success) {
         message.success(res?.data?.message ?? "Success");
+
+        if (mode == "new" && deviceId != "") {
+          // deviceId
+          let res2 = await _.post("/api/sms/send-sms", {
+            number: inputDate.phoneNumber,
+            message:
+              "You are now registered in the North Maramag Barangay Complaint System, You may start to complaint via Online Web Complaint.",
+            originator: currentUser._id,
+            residentId: res?.data?.data?._id,
+            type: "outbound",
+            deviceId,
+          });
+
+          // if (res2.data.success) {
+          // } else {
+          //   message.error(res2.data?.message ?? "Error in the server");
+          // }
+        } else if (deviceId == "") {
+          message.warning("Cannot send sms as there is no devices detected.");
+        }
+
         setLoader("");
         refresh();
         close();
@@ -101,6 +128,19 @@ const ResidentForm = ({ open, close, refresh, mode, data }) => {
       form.setFieldsValue(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    setCurrentUser(JSON.parse(Cookies.get("currentUser")));
+    (async (_) => {
+      await _.getDevices().then((e) => {
+        const device = e.data.filter((e) => e.online)[0];
+        console.log(device);
+
+        if (device) setDeviceId(device.unique);
+        else message.warning("Device not detected");
+      });
+    })(sms);
+  }, []);
 
   return (
     <Modal

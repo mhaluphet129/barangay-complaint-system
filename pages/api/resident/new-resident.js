@@ -8,10 +8,11 @@ export default async function handler(req, res) {
 
   return await Residents(req.body)
     .save()
-    .then(() => {
+    .then((e) => {
       res.json({
         success: true,
         message: "Created Successfully",
+        data: e,
       });
     })
     .catch((e) => {

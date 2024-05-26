@@ -175,7 +175,7 @@ const MyApp = ({ app_key, sms_key }) => {
             {selectedKey == "dashboard" ? (
               <Dashboard setSelectedKey={setSelectedKey} />
             ) : null}
-            {selectedKey == "residents" ? <Residents /> : null}
+            {selectedKey == "residents" ? <Residents smskey={sms_key} /> : null}
             {selectedKey == "admin" ? <Admin /> : null}
             {selectedKey == "complaints" ? (
               <Complain appKey={app_key} smskey={sms_key} />

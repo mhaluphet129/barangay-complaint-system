@@ -6,7 +6,7 @@ import axios from "axios";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import ResidentForm from "./components/resident_form";
 
-const Residents = () => {
+const Residents = ({ smskey }) => {
   const [openNewResident, setOpenNewResident] = useState({
     open: false,
     mode: "",
@@ -134,6 +134,7 @@ const Residents = () => {
         {...openNewResident}
         close={() => setOpenNewResident({ open: false, mode: "", data: {} })}
         refresh={() => setTrigger(trigger + 1)}
+        smskey={smskey}
       />
       <Table
         title={tableHeader}
